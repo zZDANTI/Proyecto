@@ -1,4 +1,4 @@
-package org.practica.proyecto;
+package org.practica.proyecto.views;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -14,7 +14,8 @@ import java.util.Objects;
 public class Login extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("hello-view.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/org/practica/proyecto/login-view.fxml")));
+
 
         //Crea una nueva escena (Scene) utilizando el nodo raíz (root) que se obtuvo al cargar el archivo FXML.
         Scene scene = new Scene(root);

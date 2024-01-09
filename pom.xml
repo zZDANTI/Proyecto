@@ -17,12 +17,12 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
-      <version>17.0.6</version>
+      <version>21</version>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
-      <version>17.0.6</version>
+      <version>21</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -44,12 +44,17 @@
     <dependency>
       <groupId>org.controlsfx</groupId>
       <artifactId>controlsfx</artifactId>
-      <version>11.2.0</version>
+      <version>11.1.2</version>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-graphics</artifactId>
       <version>21</version>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>8.0.23</version>
     </dependency>
   </dependencies>
   <build>
@@ -70,7 +75,7 @@
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <configuration>
-          <mainClass>org.practica.proyecto/org.practica.proyecto.Login</mainClass>
+          <mainClass>org.practica.proyecto/org.practica.proyecto.views.Login</mainClass>
         </configuration>
       </plugin>
     </plugins>

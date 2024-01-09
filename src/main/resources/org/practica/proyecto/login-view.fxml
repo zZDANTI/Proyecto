@@ -9,11 +9,11 @@
 <?import org.controlsfx.control.textfield.CustomPasswordField?>
 <?import org.controlsfx.control.textfield.CustomTextField?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.practica.proyecto.LoginController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.practica.proyecto.controllers.LoginController">
    <children>
       <AnchorPane prefHeight="600.0" prefWidth="500.0" style="-fx-background-color: black;">
          <children>
-            <Label contentDisplay="CENTER" layoutX="57.0" layoutY="447.0" prefHeight="74.0" prefWidth="402.0" text="STUDIENT MANAGEMENT" textAlignment="CENTER" textFill="WHITE" textOverrun="CLIP">
+            <Label contentDisplay="CENTER" layoutX="77.0" layoutY="447.0" prefHeight="66.0" prefWidth="356.0" text="STUDENT MANAGEMENT" textAlignment="CENTER" textFill="WHITE" textOverrun="CLIP">
                <font>
                   <Font name="System Bold" size="30.0" />
                </font>
@@ -32,7 +32,7 @@
                   <Font size="28.0" />
                </font>
             </Label>
-            <Label layoutX="141.0" layoutY="68.0" text="Bienvenido">
+            <Label layoutX="141.0" layoutY="68.0" prefHeight="48.0" prefWidth="195.0" text="Bienvenido">
                <font>
                   <Font name="System Bold" size="40.0" />
                </font>
@@ -47,7 +47,7 @@
                   <Font name="System Bold" size="12.0" />
                </font>
             </CustomPasswordField>
-            <Button fx:id="loginButton" layoutX="140.0" layoutY="431.0" mnemonicParsing="false" prefHeight="66.0" prefWidth="220.0" style="-fx-background-color: #262626;" text="Iniciar Sesión" textFill="WHITE" />
+            <Button fx:id="loginButton" layoutX="140.0" layoutY="431.0" mnemonicParsing="false" onAction="#loginUser" prefHeight="66.0" prefWidth="220.0" style="-fx-background-color: #262626;" text="Iniciar Sesión" textFill="WHITE" />
          </children>
       </AnchorPane>
    </children>
