@@ -51,6 +51,11 @@
       <artifactId>controlsfx</artifactId>
       <version>8.40.11</version>
     </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-graphics</artifactId>
+      <version>17.0.6</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -71,7 +76,7 @@
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <configuration>
-          <mainClass>org.practica.proyecto/org.practica.proyecto.HelloApplication</mainClass>
+          <mainClass>org.practica.proyecto/org.practica.proyecto.Login</mainClass>
         </configuration>
       </plugin>
     </plugins>
