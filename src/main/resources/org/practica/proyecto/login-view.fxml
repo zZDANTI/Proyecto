@@ -13,14 +13,14 @@
    <children>
       <AnchorPane prefHeight="600.0" prefWidth="500.0" style="-fx-background-color: black;">
          <children>
-            <Label contentDisplay="CENTER" layoutX="77.0" layoutY="447.0" prefHeight="66.0" prefWidth="356.0" text="STUDENT MANAGEMENT" textAlignment="CENTER" textFill="WHITE" textOverrun="CLIP">
+            <Label contentDisplay="CENTER" layoutX="66.0" layoutY="447.0" prefHeight="66.0" prefWidth="413.0" text="STUDENT MANAGEMENT" textAlignment="CENTER" textFill="WHITE" textOverrun="CLIP">
                <font>
                   <Font name="System Bold" size="30.0" />
                </font>
             </Label>
             <ImageView fitHeight="500.0" fitWidth="500.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../../../com.imagen.logos/logo_app.gif" />
+                  <Image url="@logos/logo_app.gif" />
                </image>
             </ImageView>
          </children>
@@ -32,22 +32,22 @@
                   <Font size="28.0" />
                </font>
             </Label>
-            <Label layoutX="141.0" layoutY="68.0" prefHeight="48.0" prefWidth="195.0" text="Bienvenido">
+            <Label layoutX="141.0" layoutY="68.0" prefHeight="57.0" prefWidth="211.0" text="Bienvenido">
                <font>
                   <Font name="System Bold" size="40.0" />
                </font>
             </Label>
             <Label layoutX="80.0" layoutY="361.0" text="¿Contraseña olvidada?" />
-            <CustomTextField fx:id="textUser" focusTraversable="false" layoutX="80.0" layoutY="242.0" prefHeight="48.0" prefWidth="333.0" promptText="Usuario">
+            <CustomTextField fx:id="textUser" focusTraversable="false" layoutX="80.0" layoutY="242.0" prefHeight="48.0" prefWidth="333.0" promptText="Usuario" styleClass="textUser">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font></CustomTextField>
-            <CustomPasswordField fx:id="textPass" focusTraversable="false" layoutX="80.0" layoutY="305.0" prefHeight="48.0" prefWidth="333.0" promptText="Contraseña">
+            <CustomPasswordField fx:id="textPass" focusTraversable="false" layoutX="80.0" layoutY="305.0" prefHeight="48.0" prefWidth="333.0" promptText="Contraseña" styleClass="textPassword">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
             </CustomPasswordField>
-            <Button fx:id="loginButton" layoutX="140.0" layoutY="431.0" mnemonicParsing="false" onAction="#loginUser" prefHeight="66.0" prefWidth="220.0" style="-fx-background-color: #262626;" text="Iniciar Sesión" textFill="WHITE" />
+            <Button fx:id="loginButton" layoutX="140.0" layoutY="431.0" mnemonicParsing="false" onAction="#loginUser" prefHeight="66.0" prefWidth="220.0" styleClass="loginButton" text="Iniciar Sesión" textFill="WHITE" />
          </children>
       </AnchorPane>
    </children>
