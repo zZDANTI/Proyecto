@@ -46,3 +46,12 @@
     -fx-background-color: #a0a0a0; /* Cambia el color de fondo cuando se presiona */
     -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.8), 5, 0, 0, 1);
 }
+
+.boton-exit{
+    -fx-background-color: rgba(255,204,153);
+}
+
+.boton-exit:hover{
+    -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.8) , 10,0,0,1 );
+    -fx-background-color: #ffcc99;
+}

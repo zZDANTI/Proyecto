@@ -23,9 +23,13 @@ public class Login extends Application {
 
         scene.getStylesheets().add(getClass().getResource("/org/practica/proyecto/css/style.css").toExternalForm());
 
+        //bloquea para que no se pueda ha
+        stage.setMinWidth(1250);
+        stage.setMinHeight(850);
+
 
         //Dependiendo lo que pongas en StageStyle cambia la ventana
-        stage.initStyle(StageStyle.UNDECORATED);
+        stage.initStyle(StageStyle.DECORATED);
 
         //Configuración para que la ventana no sea redimensionable (no se puede maximizar)
         //stage.setResizable(false);
