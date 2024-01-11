@@ -20,7 +20,7 @@
             </Label>
             <ImageView fitHeight="500.0" fitWidth="500.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@logos/logo_app.gif" />
+                  <Image url="@imagen/logo_app.gif" />
                </image>
             </ImageView>
          </children>

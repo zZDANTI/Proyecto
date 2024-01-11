@@ -25,7 +25,7 @@ public class Login extends Application {
 
 
         //Dependiendo lo que pongas en StageStyle cambia la ventana
-        stage.initStyle(StageStyle.DECORATED);
+        stage.initStyle(StageStyle.UNDECORATED);
 
         //Configuración para que la ventana no sea redimensionable (no se puede maximizar)
         //stage.setResizable(false);
