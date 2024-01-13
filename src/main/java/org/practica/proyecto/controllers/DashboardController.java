@@ -52,6 +52,8 @@ public class DashboardController {
     @FXML
     public void initialize() {
 
+        botonAlumnos.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
+
         // Obtén los datos de los alumnos
         List<Alumnos> listaAlumnos = obtenerDatosDeAlumnos();
 
