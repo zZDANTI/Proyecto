@@ -1,7 +1,6 @@
 package org.practica.proyecto.controllers;
 
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -79,36 +78,53 @@ public class DashboardController {
     //BOTONES PARA PODER NAVEGAR
     @FXML
     private void botonHome() {
-        // Acciones a realizar cuando se presiona el botón
-        panelHome.setVisible(true);
-        panelEditar.setVisible(false);
-        panelAdd.setVisible(false);
-        panelPerfil.setVisible(false);
+        setBotonActivo(botonHome, panelHome);
+        botonAlumnos.setStyle("");
+        botonAdd.setStyle("");
+        botonPerfil.setStyle("");
     }
+
     @FXML
     private void botonAlumnos() {
-        // Acciones a realizar cuando se presiona el botón
-        panelHome.setVisible(false);
-        panelEditar.setVisible(true);
-        panelAdd.setVisible(false);
-        panelPerfil.setVisible(false);
+        setBotonActivo(botonAlumnos, panelEditar);
+        botonHome.setStyle("");
+        botonAdd.setStyle("");
+        botonPerfil.setStyle("");
     }
+
     @FXML
     private void botonAdd() {
-        // Acciones a realizar cuando se presiona el botón
-        panelHome.setVisible(false);
-        panelEditar.setVisible(false);
-        panelAdd.setVisible(true);
-        panelPerfil.setVisible(false);
+        setBotonActivo(botonAdd, panelAdd);
+        botonHome.setStyle("");
+        botonAlumnos.setStyle("");
+        botonPerfil.setStyle("");
+
     }
+
     @FXML
     private void botonPerfil() {
-        // Acciones a realizar cuando se presiona el botón
+        setBotonActivo(botonPerfil, panelPerfil);
+        botonHome.setStyle("");
+        botonAlumnos.setStyle("");
+        botonAdd.setStyle("");
+    }
+
+    private void setBotonActivo(Button boton, AnchorPane panel) {
+        // Aplicar el estilo al nuevo botón activo
+        boton.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
+
+
+        // Ocultar todos los paneles
         panelHome.setVisible(false);
         panelEditar.setVisible(false);
         panelAdd.setVisible(false);
-        panelPerfil.setVisible(true);
+        panelPerfil.setVisible(false);
+
+        // Mostrar el panel correspondiente
+        panel.setVisible(true);
     }
-    
+
+
+
 
 }
