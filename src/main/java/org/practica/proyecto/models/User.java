@@ -13,7 +13,6 @@ public class User {
     //private String tokenValido;
 
     public User(String usuario, String contrasenya) {
-        this.singleton = new Singleton();
         this.usuario = usuario;
         this.contrasenya = contrasenya;
     }

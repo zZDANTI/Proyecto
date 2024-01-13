@@ -28,6 +28,7 @@ public class Login extends Application {
         stage.setMinHeight(850);
 
 
+
         //Dependiendo lo que pongas en StageStyle cambia la ventana
         stage.initStyle(StageStyle.DECORATED);
 
