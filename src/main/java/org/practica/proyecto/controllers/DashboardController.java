@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.AnchorPane;
 import org.practica.proyecto.models.Alumnos;
 
 import java.util.Date;
@@ -14,8 +15,24 @@ import java.util.List;
 import static org.practica.proyecto.models.Alumnos.obtenerDatosDeAlumnos;
 
 public class DashboardController {
-    public Button home;
 
+    //BOTONES NAVEGACION
+    public Button botonHome;
+    public Button botonAlumnos;
+    public Button botonPerfil;
+    public Button botonAdd;
+
+    //PANELES DE NAVEGACION
+
+    public AnchorPane panelHome;
+
+    public AnchorPane panelEditar;
+
+    public AnchorPane panelAdd;
+
+    public AnchorPane panelPerfil;
+
+    //TABLA ALUMNOS
     @FXML
     public TableView<Alumnos> tabla_alumnos;
     public TableColumn<Alumnos, String> dni_tabla;
@@ -27,7 +44,11 @@ public class DashboardController {
     public TableColumn<Alumnos, String> provincia_tabla;
     public TableColumn<Alumnos, Date> fecha_nacimiento_tabla;
 
+
+
+
     // Instancia de la clase Alumnos
+
 
     @FXML
     public void initialize() {
@@ -53,10 +74,41 @@ public class DashboardController {
                 new SimpleObjectProperty<>(cellData.getValue().fechaNacimientoProperty().getValue())
         );
 
-
-
     }
 
-
+    //BOTONES PARA PODER NAVEGAR
+    @FXML
+    private void botonHome() {
+        // Acciones a realizar cuando se presiona el botón
+        panelHome.setVisible(true);
+        panelEditar.setVisible(false);
+        panelAdd.setVisible(false);
+        panelPerfil.setVisible(false);
+    }
+    @FXML
+    private void botonAlumnos() {
+        // Acciones a realizar cuando se presiona el botón
+        panelHome.setVisible(false);
+        panelEditar.setVisible(true);
+        panelAdd.setVisible(false);
+        panelPerfil.setVisible(false);
+    }
+    @FXML
+    private void botonAdd() {
+        // Acciones a realizar cuando se presiona el botón
+        panelHome.setVisible(false);
+        panelEditar.setVisible(false);
+        panelAdd.setVisible(true);
+        panelPerfil.setVisible(false);
+    }
+    @FXML
+    private void botonPerfil() {
+        // Acciones a realizar cuando se presiona el botón
+        panelHome.setVisible(false);
+        panelEditar.setVisible(false);
+        panelAdd.setVisible(false);
+        panelPerfil.setVisible(true);
+    }
+    
 
 }

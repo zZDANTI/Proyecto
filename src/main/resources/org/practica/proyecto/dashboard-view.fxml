@@ -43,7 +43,7 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Text>
-            <Button fx:id="home" mnemonicParsing="false" prefHeight="45.0" prefWidth="163.0" styleClass="boton-menu" text="Home" textFill="#999999">
+            <Button fx:id="botonHome" mnemonicParsing="false" onAction="#botonHome" prefHeight="45.0" prefWidth="163.0" styleClass="boton-menu" text="Home" textFill="#999999">
                <VBox.margin>
                   <Insets left="26.0" top="60.0" />
                </VBox.margin>
@@ -58,7 +58,7 @@
                   <Font name="Segoe UI Semibold" size="22.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="163.0" styleClass="boton-menu" text="Home" textFill="#999999">
+            <Button fx:id="botonAlumnos" mnemonicParsing="false" onAction="#botonAlumnos" prefHeight="45.0" prefWidth="163.0" styleClass="boton-menu" text="Alumnos" textFill="#999999">
                <graphic>
                   <ImageView fitHeight="36.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -73,7 +73,7 @@
                   <Insets left="26.0" top="20.0" />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="163.0" styleClass="boton-menu" text="Home" textFill="#999999">
+            <Button fx:id="botonAdd" mnemonicParsing="false" onAction="#botonAdd" prefHeight="45.0" prefWidth="163.0" styleClass="boton-menu" text="Añadir" textFill="#999999">
                <graphic>
                   <ImageView fitHeight="36.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -88,7 +88,7 @@
                   <Insets left="26.0" top="20.0" />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="163.0" styleClass="boton-menu" text="Home" textFill="#999999">
+            <Button fx:id="botonPerfil" mnemonicParsing="false" onAction="#botonPerfil" prefHeight="45.0" prefWidth="163.0" styleClass="boton-menu" text="Perfil" textFill="#999999">
                <graphic>
                   <ImageView fitHeight="36.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -105,7 +105,7 @@
             </Button>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" />
             <AnchorPane prefHeight="228.0" prefWidth="216.0" />
-            <Button mnemonicParsing="false" prefHeight="46.0" prefWidth="193.0" styleClass="boton-exit" text="Salir" textFill="#262626">
+            <Button mnemonicParsing="false" prefHeight="46.0" prefWidth="193.0" styleClass="boton-exit" text="Cerrar Sesión" textFill="#262626">
                <font>
                   <Font name="Segoe UI Semibold" size="22.0" />
                </font>
@@ -119,7 +119,8 @@
    <center>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="background" BorderPane.alignment="CENTER">
          <children>
-            <AnchorPane layoutX="6.0" layoutY="47.0" prefHeight="200.0" prefWidth="200.0" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
+            <AnchorPane fx:id="panelHome" focusTraversable="true" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: yellow;" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0" />
+            <AnchorPane fx:id="panelEditar" layoutX="6.0" layoutY="47.0" prefHeight="200.0" prefWidth="200.0" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
                <children>
                   <AnchorPane prefHeight="399.0" prefWidth="938.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
                      <children>
@@ -142,6 +143,8 @@
                   </AnchorPane>
                   <AnchorPane layoutY="399.0" prefHeight="323.0" prefWidth="940.0" style="-fx-background-color: red;" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="440.0" />
                </children></AnchorPane>
+            <AnchorPane fx:id="panelAdd" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: blue;" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0" />
+            <AnchorPane fx:id="panelPerfil" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: pink;" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0" />
          </children>
       </AnchorPane>
    </center>
