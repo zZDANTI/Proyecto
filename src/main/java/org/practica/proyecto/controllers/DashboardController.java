@@ -1,12 +1,15 @@
 package org.practica.proyecto.controllers;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import org.practica.proyecto.models.Alumnos;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -81,41 +84,44 @@ public class DashboardController {
                 new SimpleObjectProperty<>(cellData.getValue().fechaNacimientoProperty().getValue())
         );
 
-
         alumnoClick();
 
     }
 
     //Funcion para saber que alumno se ha clickeado en la tabla
     public void alumnoClick() {
-
-        // Configuración del RowFactory para la TableView de Alumnos
         tabla_alumnos.setRowFactory(tv -> {
-            // Crear una nueva fila para la tabla de tipo Alumnos
             TableRow<Alumnos> alumnoClickeado = new TableRow<>();
-
             alumnoClickeado.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
                     Alumnos alumnoSeleccionado = alumnoClickeado.getItem();
                     if (alumnoSeleccionado != null) {
                         System.out.println("Clic en la fila. Alumno seleccionado: " + alumnoSeleccionado);
-                        System.out.println("DNI: " + alumnoSeleccionado.nombreProperty().get());
-                        dniClick.setText(alumnoSeleccionado.dniProperty().get());
-                        nombreClick.setText(alumnoSeleccionado.nombreProperty().get());
-                        apellido_1Click.setText(alumnoSeleccionado.apellido1Property().get());
-                        apellido_2Click.setText(alumnoSeleccionado.apellido2Property().get());
-                        direccionClick.setText(alumnoSeleccionado.direccionProperty().get());
-                        localidadClick.setText(alumnoSeleccionado.localidadProperty().get());
-                        provinciaClick.setText(alumnoSeleccionado.provinciaProperty().get());
+                        setTextIfNotNull(dniClick, alumnoSeleccionado.dniProperty());
+                        setTextIfNotNull(nombreClick, alumnoSeleccionado.nombreProperty());
+                        setTextIfNotNull(apellido_1Click, alumnoSeleccionado.apellido1Property());
+                        setTextIfNotNull(apellido_2Click, alumnoSeleccionado.apellido2Property());
+                        setTextIfNotNull(direccionClick, alumnoSeleccionado.direccionProperty());
+                        setTextIfNotNull(localidadClick, alumnoSeleccionado.localidadProperty());
+                        setTextIfNotNull(provinciaClick, alumnoSeleccionado.provinciaProperty());
                         nacimientoClick.setValue(alumnoSeleccionado.fechaNacimientoProperty().get().toLocalDate());
-                        // Añade más líneas según sea necesario para imprimir otras propiedades
+                    } else {
+                        System.out.println("Nulo");
                     }
                 }
             });
-
             return alumnoClickeado;
         });
     }
+
+    private void setTextIfNotNull(TextInputControl control, StringProperty property) {
+        if (property != null && property.get() != null) {
+            control.setText(property.get());
+        } else {
+            control.clear();
+        }
+    }
+
 
     public void guardarAlumno() {
 

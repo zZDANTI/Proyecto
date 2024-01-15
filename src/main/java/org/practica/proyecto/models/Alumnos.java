@@ -74,14 +74,17 @@ public class Alumnos {
 
         try {
             // Consulta SQL para obtener todos los datos de la tabla "alumno"
-            preparedStatement = connection.prepareStatement("SELECT * FROM alumno limit ?");
-            preparedStatement.setInt(1, 30);
+            preparedStatement = connection.prepareStatement("SELECT * FROM alumno");
             resultSet = preparedStatement.executeQuery();
 
+
+            int count = 0;
             // Procesar los resultados
-            while (resultSet.next()) {
+            while (resultSet.next()&& count < 3) {
+
                 // Crear un nuevo objeto Alumnos para cada fila y almacenarlo en la lista
                 Alumnos alumno = new Alumnos(
+
                         resultSet.getString("dni"),
                         resultSet.getString("apellido_1"),
                         resultSet.getString("apellido_2"),
@@ -90,9 +93,13 @@ public class Alumnos {
                         resultSet.getString("localidad"),
                         resultSet.getString("provincia"),
                         resultSet.getDate("fecha_nacimiento")
-                );
 
+                );
+                count++;
+                int rowNum = resultSet.getRow();
+                System.out.println("Fila actual: " + rowNum +" "+  resultSet.getString("dni"));
                 listaAlumnos.add(alumno);
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
