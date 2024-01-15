@@ -2,9 +2,9 @@ package org.practica.proyecto.controllers;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import org.practica.proyecto.models.Alumnos;
 
@@ -42,8 +42,8 @@ public class DashboardController {
     public TableColumn<Alumnos, String> localidad_tabla;
     public TableColumn<Alumnos, String> provincia_tabla;
     public TableColumn<Alumnos, Date> fecha_nacimiento_tabla;
-
-
+    public TextField dniAlumno;
+    public Button guardarAlumno;
 
 
     // Instancia de la clase Alumnos
@@ -75,6 +75,29 @@ public class DashboardController {
                 new SimpleObjectProperty<>(cellData.getValue().fechaNacimientoProperty().getValue())
         );
 
+        alumnoClick();
+
+
+
+
+
+
+
+
+
+    }
+
+    public void guardarAlumno(){
+
+        if (!dniAlumno.getText().isEmpty()){
+            System.out.println(dniAlumno.getText());
+
+
+        }else{
+            System.out.println("No hay alumnos");
+
+        }
+        
     }
 
     //BOTONES PARA PODER NAVEGAR
@@ -89,6 +112,7 @@ public class DashboardController {
     @FXML
     private void botonAlumnos() {
         setBotonActivo(botonAlumnos, panelEditar);
+        dniAlumno.clear();
         botonHome.setStyle("");
         botonAdd.setStyle("");
         botonPerfil.setStyle("");
@@ -115,7 +139,6 @@ public class DashboardController {
         // Aplicar el estilo al nuevo botón activo
         boton.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
 
-
         // Ocultar todos los paneles
         panelHome.setVisible(false);
         panelEditar.setVisible(false);
@@ -124,9 +147,29 @@ public class DashboardController {
 
         // Mostrar el panel correspondiente
         panel.setVisible(true);
+
     }
 
 
+    public void alumnoClick() {
 
+        // Configuración del RowFactory para la TableView de Alumnos
+        tabla_alumnos.setRowFactory(tv -> {
+            // Crear una nueva fila para la tabla de tipo Alumnos
+            TableRow<Alumnos> alumnoClickeado = new TableRow<>();
 
+            alumnoClickeado.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
+                    Alumnos alumnoSeleccionado = alumnoClickeado.getItem();
+                    if (alumnoSeleccionado != null) {
+                        System.out.println("Clic en la fila. Alumno seleccionado: " + alumnoSeleccionado);
+                        System.out.println("DNI: " + alumnoSeleccionado.nombreProperty().get());
+                        dniAlumno.setText(alumnoSeleccionado.nombreProperty().get());
+                        // Añade más líneas según sea necesario para imprimir otras propiedades
+                    }
+                }
+            });
+            return alumnoClickeado;
+        });
+    }
 }

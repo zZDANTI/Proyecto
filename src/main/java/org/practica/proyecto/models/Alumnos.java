@@ -10,6 +10,7 @@ import java.util.List;
 
 public class Alumnos {
 
+    static Singleton singleton = new Singleton();
     private SimpleStringProperty dni;
     private SimpleStringProperty nombre;
     private SimpleStringProperty apellido1;
@@ -65,7 +66,7 @@ public class Alumnos {
     }
 
     public static List<Alumnos> obtenerDatosDeAlumnos() {
-        Singleton singleton = new Singleton();
+
         Connection connection = singleton.obtenerConexion();
         ResultSet resultSet = null;
         PreparedStatement preparedStatement = null;
@@ -73,8 +74,8 @@ public class Alumnos {
 
         try {
             // Consulta SQL para obtener todos los datos de la tabla "alumno"
-            String consulta = "SELECT * FROM alumno";
-            preparedStatement = connection.prepareStatement(consulta);
+            preparedStatement = connection.prepareStatement("SELECT * FROM alumno limit ?");
+            preparedStatement.setInt(1, 10);
             resultSet = preparedStatement.executeQuery();
 
             // Procesar los resultados
