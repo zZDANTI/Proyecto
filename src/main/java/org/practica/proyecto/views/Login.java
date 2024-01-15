@@ -21,7 +21,7 @@ public class Login extends Application {
         //Crea una nueva escena (Scene) utilizando el nodo raíz (root) que se obtuvo al cargar el archivo FXML.
         Scene scene = new Scene(root);
 
-        scene.getStylesheets().add(getClass().getResource("/org/practica/proyecto/css/style.css").toExternalForm());
+        //scene.getStylesheets().add(getClass().getResource("/org/practica/proyecto/css/style.css").toExternalForm());
 
         //bloquea para que no se pueda ha
         stage.setMinWidth(1250);
