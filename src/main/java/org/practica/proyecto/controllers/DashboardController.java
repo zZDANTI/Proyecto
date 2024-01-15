@@ -4,7 +4,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import org.practica.proyecto.models.Alumnos;
 
@@ -14,6 +13,7 @@ import java.util.List;
 import static org.practica.proyecto.models.Alumnos.obtenerDatosDeAlumnos;
 
 public class DashboardController {
+
 
     //BOTONES NAVEGACION
     public Button botonHome;
@@ -42,13 +42,19 @@ public class DashboardController {
     public TableColumn<Alumnos, String> localidad_tabla;
     public TableColumn<Alumnos, String> provincia_tabla;
     public TableColumn<Alumnos, Date> fecha_nacimiento_tabla;
-    public TextField dniAlumno;
-    public Button guardarAlumno;
 
 
-    // Instancia de la clase Alumnos
+    //DATOS DEL ALUMNO SELECCIONADO
+    public TextField dniClick;
+    public TextField provinciaClick;
+    public TextField direccionClick;
+    public TextField localidadClick;
+    public TextField nombreClick;
+    public TextField apellido_1Click;
+    public TextField apellido_2Click;
+    public DatePicker nacimientoClick;
 
-
+    // Arranca la clase con el initialize
     @FXML
     public void initialize() {
 
@@ -75,29 +81,51 @@ public class DashboardController {
                 new SimpleObjectProperty<>(cellData.getValue().fechaNacimientoProperty().getValue())
         );
 
+
         alumnoClick();
-
-
-
-
-
-
-
-
 
     }
 
-    public void guardarAlumno(){
+    //Funcion para saber que alumno se ha clickeado en la tabla
+    public void alumnoClick() {
 
-        if (!dniAlumno.getText().isEmpty()){
-            System.out.println(dniAlumno.getText());
+        // Configuración del RowFactory para la TableView de Alumnos
+        tabla_alumnos.setRowFactory(tv -> {
+            // Crear una nueva fila para la tabla de tipo Alumnos
+            TableRow<Alumnos> alumnoClickeado = new TableRow<>();
 
+            alumnoClickeado.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
+                    Alumnos alumnoSeleccionado = alumnoClickeado.getItem();
+                    if (alumnoSeleccionado != null) {
+                        System.out.println("Clic en la fila. Alumno seleccionado: " + alumnoSeleccionado);
+                        System.out.println("DNI: " + alumnoSeleccionado.nombreProperty().get());
+                        dniClick.setText(alumnoSeleccionado.dniProperty().get());
+                        nombreClick.setText(alumnoSeleccionado.nombreProperty().get());
+                        apellido_1Click.setText(alumnoSeleccionado.apellido1Property().get());
+                        apellido_2Click.setText(alumnoSeleccionado.apellido2Property().get());
+                        direccionClick.setText(alumnoSeleccionado.direccionProperty().get());
+                        localidadClick.setText(alumnoSeleccionado.localidadProperty().get());
+                        provinciaClick.setText(alumnoSeleccionado.provinciaProperty().get());
+                        nacimientoClick.setValue(alumnoSeleccionado.fechaNacimientoProperty().get().toLocalDate());
+                        // Añade más líneas según sea necesario para imprimir otras propiedades
+                    }
+                }
+            });
 
-        }else{
+            return alumnoClickeado;
+        });
+    }
+
+    public void guardarAlumno() {
+
+        if (!dniClick.getText().isEmpty()) {
+            System.out.println(dniClick.getText());
+        } else {
             System.out.println("No hay alumnos");
 
         }
-        
+
     }
 
     //BOTONES PARA PODER NAVEGAR
@@ -112,7 +140,18 @@ public class DashboardController {
     @FXML
     private void botonAlumnos() {
         setBotonActivo(botonAlumnos, panelEditar);
-        dniAlumno.clear();
+
+        //Limpia lo seleccionado en la tabla
+        dniClick.clear();
+        nombreClick.clear();
+        apellido_1Click.clear();
+
+        apellido_2Click.clear();
+        direccionClick.clear();
+        localidadClick.clear();
+        provinciaClick.clear();
+        nacimientoClick.setValue(null);
+
         botonHome.setStyle("");
         botonAdd.setStyle("");
         botonPerfil.setStyle("");
@@ -151,25 +190,4 @@ public class DashboardController {
     }
 
 
-    public void alumnoClick() {
-
-        // Configuración del RowFactory para la TableView de Alumnos
-        tabla_alumnos.setRowFactory(tv -> {
-            // Crear una nueva fila para la tabla de tipo Alumnos
-            TableRow<Alumnos> alumnoClickeado = new TableRow<>();
-
-            alumnoClickeado.setOnMouseClicked(event -> {
-                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
-                    Alumnos alumnoSeleccionado = alumnoClickeado.getItem();
-                    if (alumnoSeleccionado != null) {
-                        System.out.println("Clic en la fila. Alumno seleccionado: " + alumnoSeleccionado);
-                        System.out.println("DNI: " + alumnoSeleccionado.nombreProperty().get());
-                        dniAlumno.setText(alumnoSeleccionado.nombreProperty().get());
-                        // Añade más líneas según sea necesario para imprimir otras propiedades
-                    }
-                }
-            });
-            return alumnoClickeado;
-        });
-    }
 }

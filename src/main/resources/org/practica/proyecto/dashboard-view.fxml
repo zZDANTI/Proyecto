@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -63,7 +64,7 @@
                <graphic>
                   <ImageView fitHeight="36.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@imagen/hogar.png" />
+                        <Image url="@imagen/editar.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -78,7 +79,7 @@
                <graphic>
                   <ImageView fitHeight="36.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@imagen/hogar.png" />
+                        <Image url="@imagen/añadir.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -93,7 +94,7 @@
                <graphic>
                   <ImageView fitHeight="36.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@imagen/hogar.png" />
+                        <Image url="@imagen/perfil.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -123,9 +124,9 @@
             <AnchorPane fx:id="panelHome" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: yellow;" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0" />
             <AnchorPane fx:id="panelEditar" focusTraversable="true" layoutX="6.0" layoutY="47.0" prefHeight="200.0" prefWidth="200.0" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
                <children>
-                  <AnchorPane prefHeight="399.0" prefWidth="938.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
+                  <AnchorPane prefHeight="399.0" prefWidth="938.0" AnchorPane.bottomAnchor="340.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <TableView fx:id="tabla_alumnos" prefHeight="375.0" prefWidth="912.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="17.0">
+                        <TableView fx:id="tabla_alumnos" layoutX="-1.0" layoutY="47.0" prefHeight="348.0" prefWidth="926.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="47.0">
                           <columns>
                             <TableColumn fx:id="dni_tabla" prefWidth="105.0" text="DNI" />
                             <TableColumn fx:id="nombre_tabla" minWidth="4.0" prefWidth="88.0" text="NOMBRE" />
@@ -140,32 +141,37 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
+                        <TextField layoutX="-1.0" layoutY="10.0" prefHeight="29.0" prefWidth="170.0" promptText="Buscar alumno" />
                      </children>
                   </AnchorPane>
-                  <AnchorPane layoutY="399.0" prefHeight="323.0" prefWidth="940.0" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="440.0">
+                  <AnchorPane layoutX="16.0" layoutY="397.0" prefHeight="291.0" prefWidth="922.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="15.0">
                      <children>
-                        <Button layoutX="681.0" layoutY="231.0" mnemonicParsing="false" onAction="#guardarAlumno" prefHeight="37.0" prefWidth="218.0" text="Button" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="681.0" AnchorPane.topAnchor="233.0" />
-                        <AnchorPane prefHeight="282.0" prefWidth="311.0" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <children>
-                              <TextField layoutX="40.0" layoutY="85.0" prefHeight="43.0" prefWidth="306.0" promptText="DNI" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="58.0" AnchorPane.topAnchor="85.0" />
-                              <TextField fx:id="dniAlumno1" layoutX="40.0" layoutY="205.0" prefHeight="43.0" prefWidth="306.0" promptText="DNI" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="58.0" AnchorPane.topAnchor="205.0" />
-                              <TextField fx:id="dniAlumno" layoutX="40.0" layoutY="25.0" prefHeight="43.0" prefWidth="306.0" promptText="DNI" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="58.0" AnchorPane.topAnchor="25.0" />
-                              <TextField fx:id="dniAlumno21" layoutX="40.0" layoutY="145.0" prefHeight="43.0" prefWidth="306.0" promptText="DNI" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="58.0" AnchorPane.topAnchor="145.0" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane layoutX="335.0" prefHeight="282.0" prefWidth="311.0" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <children>
-                              <TextField fx:id="dniAlumno1" layoutX="40.0" layoutY="85.0" prefHeight="43.0" prefWidth="306.0" promptText="DNI" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="58.0" AnchorPane.topAnchor="85.0" />
-                              <TextField fx:id="dniAlumno11" layoutX="40.0" layoutY="205.0" prefHeight="43.0" prefWidth="306.0" promptText="DNI" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="58.0" AnchorPane.topAnchor="205.0" />
-                              <TextField fx:id="dniAlumno21" layoutX="40.0" layoutY="25.0" prefHeight="43.0" prefWidth="306.0" promptText="DNI" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="58.0" AnchorPane.topAnchor="25.0" />
-                              <TextField fx:id="dniAlumno211" layoutX="40.0" layoutY="145.0" prefHeight="43.0" prefWidth="306.0" promptText="DNI" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="58.0" AnchorPane.topAnchor="145.0" />
-                           </children>
-                        </AnchorPane>
-                        <ImageView fitHeight="187.0" fitWidth="261.0" layoutX="657.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="68.0" AnchorPane.leftAnchor="657.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="29.0">
+                        <Button layoutX="684.0" layoutY="229.0" mnemonicParsing="false" onAction="#guardarAlumno" prefHeight="37.0" prefWidth="218.0" text="Guardar" AnchorPane.leftAnchor="684.0" AnchorPane.topAnchor="229.0" />
+                        <ImageView fitHeight="178.0" fitWidth="241.0" layoutX="672.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="27.0">
                            <image>
                               <Image url="@imagen/foto-perfil.png" />
                            </image>
                         </ImageView>
+                        <TextField fx:id="localidadClick" layoutX="342.0" layoutY="92.0" prefHeight="43.0" prefWidth="306.0" promptText="Localidad" />
+                        <TextField fx:id="direccionClick" layoutX="342.0" layoutY="24.0" prefHeight="43.0" prefWidth="306.0" promptText="Direccion" />
+                        <TextField fx:id="provinciaClick" layoutX="342.0" layoutY="159.0" prefHeight="43.0" prefWidth="306.0" promptText="Provincia" />
+                        <TextField fx:id="dniClick" disable="true" layoutX="1.0" layoutY="24.0" prefHeight="43.0" prefWidth="306.0" promptText="DNI" />
+                        <TextField fx:id="nombreClick" layoutX="1.0" layoutY="92.0" prefHeight="43.0" prefWidth="306.0" promptText="Nombre" />
+                        <TextField fx:id="apellido_1Click" layoutX="1.0" layoutY="159.0" prefHeight="43.0" prefWidth="306.0" promptText="1ºApellido" />
+                        <TextField fx:id="apellido_2Click" layoutX="1.0" layoutY="226.0" prefHeight="43.0" prefWidth="306.0" promptText="2ºApellido" />
+                        <DatePicker fx:id="nacimientoClick" layoutX="342.0" layoutY="226.0" prefHeight="43.0" prefWidth="306.0" promptText="Fecha Nacimiento" />
+                        <Text fill="WHITE" layoutX="2.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dni" wrappingWidth="32.111328125">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Text>
+                        <Text fill="WHITE" layoutX="1.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nombre" wrappingWidth="65.111328125" />
+                        <Text fill="WHITE" layoutX="2.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1ºApellido" wrappingWidth="88.111328125" />
+                        <Text fill="WHITE" layoutX="2.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2ºApellido" wrappingWidth="88.111328125" />
+                        <Text fill="WHITE" layoutX="342.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Direccion" wrappingWidth="88.111328125" />
+                        <Text fill="WHITE" layoutX="342.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Localidad" wrappingWidth="88.111328125" />
+                        <Text fill="WHITE" layoutX="342.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Provincia" wrappingWidth="88.111328125" />
+                        <Text fill="WHITE" layoutX="342.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Fecha nacimiento" wrappingWidth="122.111328125" />
                      </children></AnchorPane>
                </children></AnchorPane>
             <AnchorPane fx:id="panelAdd" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: blue;" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0" />

@@ -75,7 +75,7 @@ public class Alumnos {
         try {
             // Consulta SQL para obtener todos los datos de la tabla "alumno"
             preparedStatement = connection.prepareStatement("SELECT * FROM alumno limit ?");
-            preparedStatement.setInt(1, 10);
+            preparedStatement.setInt(1, 30);
             resultSet = preparedStatement.executeQuery();
 
             // Procesar los resultados
