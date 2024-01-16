@@ -1,19 +1,19 @@
 package org.practica.proyecto.controllers;
 
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
-import org.practica.proyecto.models.Alumnos;
+import org.practica.proyecto.models.Alumno;
 
-import java.time.LocalDate;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import static org.practica.proyecto.models.Alumnos.obtenerDatosDeAlumnos;
+import static org.practica.proyecto.models.Alumno.contPanginas;
+import static org.practica.proyecto.models.Alumno.obtenerDatosDeAlumnos;
 
 public class DashboardController {
 
@@ -36,15 +36,15 @@ public class DashboardController {
 
     //TABLA ALUMNOS
     @FXML
-    public TableView<Alumnos> tabla_alumnos;
-    public TableColumn<Alumnos, String> dni_tabla;
-    public TableColumn<Alumnos, String> nombre_tabla;
-    public TableColumn<Alumnos, String> apellido_1_tabla;
-    public TableColumn<Alumnos, String> apellido_2_tabla;
-    public TableColumn<Alumnos, String> direccion_tabla;
-    public TableColumn<Alumnos, String> localidad_tabla;
-    public TableColumn<Alumnos, String> provincia_tabla;
-    public TableColumn<Alumnos, Date> fecha_nacimiento_tabla;
+    public TableView<Alumno> tabla_alumnos;
+    public TableColumn<Alumno, String> dni_tabla;
+    public TableColumn<Alumno, String> nombre_tabla;
+    public TableColumn<Alumno, String> apellido_1_tabla;
+    public TableColumn<Alumno, String> apellido_2_tabla;
+    public TableColumn<Alumno, String> direccion_tabla;
+    public TableColumn<Alumno, String> localidad_tabla;
+    public TableColumn<Alumno, String> provincia_tabla;
+    public TableColumn<Alumno, Date> fecha_nacimiento_tabla;
 
 
     //DATOS DEL ALUMNO SELECCIONADO
@@ -59,12 +59,15 @@ public class DashboardController {
 
     // Arranca la clase con el initialize
     @FXML
-    public void initialize() {
+    public void initialize() throws SQLException {
 
         botonAlumnos.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
 
         // Obtén los datos de los alumnos
-        List<Alumnos> listaAlumnos = obtenerDatosDeAlumnos();
+        List<Alumno> listaAlumnos = obtenerDatosDeAlumnos(70);
+
+        contPanginas(70);
+
 
         // Limpia la tabla
         tabla_alumnos.getItems().clear();
@@ -86,17 +89,20 @@ public class DashboardController {
 
         alumnoClick();
 
+
+
     }
 
     //Funcion para saber que alumno se ha clickeado en la tabla
     public void alumnoClick() {
         tabla_alumnos.setRowFactory(tv -> {
-            TableRow<Alumnos> alumnoClickeado = new TableRow<>();
+            TableRow<Alumno> alumnoClickeado = new TableRow<>();
             alumnoClickeado.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
-                    Alumnos alumnoSeleccionado = alumnoClickeado.getItem();
+                    Alumno alumnoSeleccionado = alumnoClickeado.getItem();
                     if (alumnoSeleccionado != null) {
-                        System.out.println("Clic en la fila. Alumno seleccionado: " + alumnoSeleccionado);
+                        //System.out.println("Clic en la fila. Alumno seleccionado: " + alumnoSeleccionado);
+                        System.out.println(dniClick.getText());
                         setTextIfNotNull(dniClick, alumnoSeleccionado.dniProperty());
                         setTextIfNotNull(nombreClick, alumnoSeleccionado.nombreProperty());
                         setTextIfNotNull(apellido_1Click, alumnoSeleccionado.apellido1Property());
@@ -105,8 +111,6 @@ public class DashboardController {
                         setTextIfNotNull(localidadClick, alumnoSeleccionado.localidadProperty());
                         setTextIfNotNull(provinciaClick, alumnoSeleccionado.provinciaProperty());
                         nacimientoClick.setValue(alumnoSeleccionado.fechaNacimientoProperty().get().toLocalDate());
-                    } else {
-                        System.out.println("Nulo");
                     }
                 }
             });
@@ -129,7 +133,6 @@ public class DashboardController {
             System.out.println(dniClick.getText());
         } else {
             System.out.println("No hay alumnos");
-
         }
 
     }

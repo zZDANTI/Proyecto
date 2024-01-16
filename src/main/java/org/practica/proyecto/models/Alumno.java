@@ -2,15 +2,16 @@ package org.practica.proyecto.models;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Alumnos {
+public class Alumno {
 
-    static Singleton singleton = new Singleton();
+    protected static ResultSet resultSet = null;
+    protected static Statement statement = null;
+
     private SimpleStringProperty dni;
     private SimpleStringProperty nombre;
     private SimpleStringProperty apellido1;
@@ -20,7 +21,7 @@ public class Alumnos {
     private SimpleStringProperty provincia;
     private SimpleObjectProperty<Date> fechaNacimiento;
 
-    public Alumnos(String dni, String apellido1, String apellido2, String nombre, String direccion, String localidad, String provincia, Date fechaNacimiento) {
+    public Alumno(String dni, String apellido1, String apellido2, String nombre, String direccion, String localidad, String provincia, Date fechaNacimiento) {
         this.dni = new SimpleStringProperty(dni);
         this.nombre = new SimpleStringProperty(nombre);
         this.apellido1 = new SimpleStringProperty(apellido1);
@@ -29,6 +30,36 @@ public class Alumnos {
         this.localidad = new SimpleStringProperty(localidad);
         this.provincia = new SimpleStringProperty(provincia);
         this.fechaNacimiento = new SimpleObjectProperty<>(fechaNacimiento);
+    }
+
+    public Alumno() {
+
+    }
+
+    static {
+        initResultSet();
+    }
+
+    private static void initResultSet() {
+        Connection connection;
+
+        try {
+            // Obtener una conexión a la base de datos
+            connection = Singleton.obtenerConexion();
+
+            // Crear un Statement a partir de la conexión
+            statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+
+            // Ejecutar una consulta y obtener el ResultSet
+            resultSet = statement.executeQuery("SELECT * FROM alumno");
+
+            // Ahora el resultSet está listo para su uso
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 
@@ -65,25 +96,21 @@ public class Alumnos {
         return fechaNacimiento;
     }
 
-    public static List<Alumnos> obtenerDatosDeAlumnos() {
+    public static List<Alumno> obtenerDatosDeAlumnos(int registros) {
 
-        Connection connection = singleton.obtenerConexion();
-        ResultSet resultSet = null;
-        PreparedStatement preparedStatement = null;
-        List<Alumnos> listaAlumnos = new ArrayList<>();
 
+        List<Alumno> listaAlumnos = new ArrayList<>();
         try {
-            // Consulta SQL para obtener todos los datos de la tabla "alumno"
-            preparedStatement = connection.prepareStatement("SELECT * FROM alumno");
-            resultSet = preparedStatement.executeQuery();
+
+
 
 
             int count = 0;
             // Procesar los resultados
-            while (resultSet.next()&& count < 3) {
+            while (resultSet.next()&& count < registros) {
 
                 // Crear un nuevo objeto Alumnos para cada fila y almacenarlo en la lista
-                Alumnos alumno = new Alumnos(
+                Alumno alumno = new Alumno(
 
                         resultSet.getString("dni"),
                         resultSet.getString("apellido_1"),
@@ -97,7 +124,7 @@ public class Alumnos {
                 );
                 count++;
                 int rowNum = resultSet.getRow();
-                System.out.println("Fila actual: " + rowNum +" "+  resultSet.getString("dni"));
+                //System.out.println("Fila actual: " + rowNum +" "+  resultSet.getString("dni"));
                 listaAlumnos.add(alumno);
 
             }
@@ -105,16 +132,28 @@ public class Alumnos {
             e.printStackTrace();
         } finally {
             // Cerrar ResultSet y PreparedStatement en el bloque finally
-            try {
-                if (resultSet != null) resultSet.close();
-                if (preparedStatement != null) preparedStatement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         // Devolver la lista de alumnos
         return listaAlumnos;
+    }
+
+    public static int contPanginas(int registros) throws SQLException {
+
+        int total = 0;
+        int count2 = 0;
+
+        resultSet.beforeFirst();
+        while (resultSet.next()){
+            count2++;
+        }
+
+        total = (int) Math.ceil((double) count2 / registros);
+
+        System.out.println(total);
+        return total;
+
+
     }
 
 
