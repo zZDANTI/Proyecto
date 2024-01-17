@@ -10,6 +10,8 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Arc?>
 <?import javafx.scene.shape.Circle?>
@@ -125,9 +127,8 @@
          <children>
             <AnchorPane fx:id="panelHome" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: yellow;" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0" />
             <AnchorPane fx:id="panelEditar" focusTraversable="true" layoutX="6.0" layoutY="47.0" prefHeight="200.0" prefWidth="200.0" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
-               <children>
+
                   <AnchorPane prefHeight="399.0" prefWidth="938.0" AnchorPane.bottomAnchor="340.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0.0">
-                     <children>
                         <TableView fx:id="tabla_alumnos" layoutX="-1.0" layoutY="47.0" prefHeight="348.0" prefWidth="926.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="47.0">
                           <columns>
                             <TableColumn fx:id="dni_tabla" prefWidth="105.0" text="DNI" />
@@ -144,41 +145,50 @@
                            </columnResizePolicy>
                         </TableView>
                         <TextField layoutX="-1.0" layoutY="10.0" prefHeight="29.0" prefWidth="170.0" promptText="Buscar alumno" />
-                     </children>
                   </AnchorPane>
+                  <HBox layoutX="17.0" layoutY="398.0" prefHeight="37.0" prefWidth="924.0" spacing="10.0" AnchorPane.bottomAnchor="304.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="17.0">
+                     <!-- ... (otro contenido del panelEditar) ... -->
+                     <Region HBox.hgrow="ALWAYS" />
+                     <Button fx:id="primeraPag" mnemonicParsing="false" onAction="#paginador" text="Button 1" textAlignment="CENTER" />
+                     <Button fx:id="anteriorPag" mnemonicParsing="false" onAction="#paginador" text="Button 2" textAlignment="CENTER" />
+                     <TextField fx:id="actualPag" alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" text="1" />
+                     <Button fx:id="siguientePag" mnemonicParsing="false" onAction="#paginador" text="Button 3" textAlignment="CENTER" />
+                     <Button fx:id="ultimaPag" mnemonicParsing="false" onAction="#paginador" text="Button 4" textAlignment="CENTER" />
+                     <Region HBox.hgrow="ALWAYS" />
+                  </HBox>
                   <AnchorPane layoutX="16.0" layoutY="397.0" prefHeight="291.0" prefWidth="922.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="15.0">
-                     <children>
-                        <ImageView fitHeight="220.0" fitWidth="237.0" layoutX="670.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="35.0">
-                           <image>
-                              <Image url="@imagen/foto-perfil.png" />
-                           </image>
-                        </ImageView>
-                        <Arc fill="#262626" layoutX="695.0" layoutY="123.0" length="270.0" radiusX="40.0" radiusY="113.0" startAngle="45.0" stroke="#262626" strokeType="INSIDE" type="ROUND" />
-                        <Arc fill="#262626" layoutX="893.0" layoutY="119.0" length="270.0" radiusX="44.0" radiusY="110.0" rotate="180.0" startAngle="45.0" stroke="#262626" strokeType="INSIDE" type="ROUND" />
-                        <Circle fill="#ffffff00" layoutX="788.0" layoutY="120.0" radius="96.0" stroke="#262626" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeWidth="25.0" />
-                        <Button layoutX="679.0" layoutY="229.0" mnemonicParsing="false" onAction="#guardarAlumno" prefHeight="37.0" prefWidth="218.0" text="Guardar" AnchorPane.leftAnchor="679.0" AnchorPane.topAnchor="229.0" />
-                        <TextField fx:id="localidadClick" layoutX="342.0" layoutY="92.0" prefHeight="43.0" prefWidth="306.0" promptText="Localidad" />
-                        <TextField fx:id="direccionClick" layoutX="342.0" layoutY="24.0" prefHeight="43.0" prefWidth="306.0" promptText="Direccion" />
-                        <TextField fx:id="provinciaClick" layoutX="342.0" layoutY="159.0" prefHeight="43.0" prefWidth="306.0" promptText="Provincia" />
-                        <TextField fx:id="dniClick" disable="true" layoutX="1.0" layoutY="24.0" prefHeight="43.0" prefWidth="306.0" promptText="DNI" />
-                        <TextField fx:id="nombreClick" layoutX="1.0" layoutY="92.0" prefHeight="43.0" prefWidth="306.0" promptText="Nombre" />
-                        <TextField fx:id="apellido_1Click" layoutX="1.0" layoutY="159.0" prefHeight="43.0" prefWidth="306.0" promptText="1ºApellido" />
-                        <TextField fx:id="apellido_2Click" layoutX="1.0" layoutY="226.0" prefHeight="43.0" prefWidth="306.0" promptText="2ºApellido" />
-                        <DatePicker fx:id="nacimientoClick" layoutX="342.0" layoutY="226.0" prefHeight="43.0" prefWidth="306.0" promptText="Fecha Nacimiento" />
-                        <Text fill="WHITE" layoutX="2.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dni" wrappingWidth="32.111328125">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                        </Text>
-                        <Text fill="WHITE" layoutX="1.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nombre" wrappingWidth="65.111328125" />
-                        <Text fill="WHITE" layoutX="2.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1ºApellido" wrappingWidth="88.111328125" />
-                        <Text fill="WHITE" layoutX="2.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2ºApellido" wrappingWidth="88.111328125" />
-                        <Text fill="WHITE" layoutX="342.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Direccion" wrappingWidth="88.111328125" />
-                        <Text fill="WHITE" layoutX="342.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Localidad" wrappingWidth="88.111328125" />
-                        <Text fill="WHITE" layoutX="342.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Provincia" wrappingWidth="88.111328125" />
-                        <Text fill="WHITE" layoutX="342.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Fecha nacimiento" wrappingWidth="122.111328125" />
-                     </children></AnchorPane>
-               </children></AnchorPane>
+                     <ImageView fitHeight="220.0" fitWidth="237.0" layoutX="670.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="35.0">
+                        <image>
+                           <Image url="@imagen/foto-perfil.png" />
+                        </image>
+                     </ImageView>
+                     <Arc fill="#262626" layoutX="695.0" layoutY="123.0" length="270.0" radiusX="40.0" radiusY="113.0" startAngle="45.0" stroke="#262626" strokeType="INSIDE" type="ROUND" />
+                     <Arc fill="#262626" layoutX="893.0" layoutY="119.0" length="270.0" radiusX="44.0" radiusY="110.0" rotate="180.0" startAngle="45.0" stroke="#262626" strokeType="INSIDE" type="ROUND" />
+                     <Circle fill="#ffffff00" layoutX="788.0" layoutY="120.0" radius="96.0" stroke="#262626" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeWidth="25.0" />
+                     <Button layoutX="679.0" layoutY="229.0" mnemonicParsing="false" onAction="#guardarAlumno" prefHeight="37.0" prefWidth="218.0" text="Guardar" AnchorPane.leftAnchor="679.0" AnchorPane.topAnchor="229.0" />
+                     <TextField fx:id="localidadClick" layoutX="342.0" layoutY="92.0" prefHeight="43.0" prefWidth="306.0" promptText="Localidad" />
+                     <TextField fx:id="direccionClick" layoutX="342.0" layoutY="24.0" prefHeight="43.0" prefWidth="306.0" promptText="Direccion" />
+                     <TextField fx:id="provinciaClick" layoutX="342.0" layoutY="159.0" prefHeight="43.0" prefWidth="306.0" promptText="Provincia" />
+                     <TextField fx:id="dniClick" disable="true" layoutX="1.0" layoutY="24.0" prefHeight="43.0" prefWidth="306.0" promptText="DNI" />
+                     <TextField fx:id="nombreClick" layoutX="1.0" layoutY="92.0" prefHeight="43.0" prefWidth="306.0" promptText="Nombre" />
+                     <TextField fx:id="apellido_1Click" layoutX="1.0" layoutY="159.0" prefHeight="43.0" prefWidth="306.0" promptText="1ºApellido" />
+                     <TextField fx:id="apellido_2Click" layoutX="1.0" layoutY="226.0" prefHeight="43.0" prefWidth="306.0" promptText="2ºApellido" />
+                     <DatePicker fx:id="nacimientoClick" layoutX="342.0" layoutY="226.0" prefHeight="43.0" prefWidth="306.0" promptText="Fecha Nacimiento" />
+                     <Text fill="WHITE" layoutX="2.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dni" wrappingWidth="32.111328125">
+                        <font>
+                           <Font name="System Bold" size="12.0" />
+                        </font>
+                     </Text>
+                     <Text fill="WHITE" layoutX="1.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nombre" wrappingWidth="65.111328125" />
+                     <Text fill="WHITE" layoutX="2.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1ºApellido" wrappingWidth="88.111328125" />
+                     <Text fill="WHITE" layoutX="2.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2ºApellido" wrappingWidth="88.111328125" />
+                     <Text fill="WHITE" layoutX="342.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Direccion" wrappingWidth="88.111328125" />
+                     <Text fill="WHITE" layoutX="342.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Localidad" wrappingWidth="88.111328125" />
+                     <Text fill="WHITE" layoutX="342.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Provincia" wrappingWidth="88.111328125" />
+                     <Text fill="WHITE" layoutX="342.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Fecha nacimiento" wrappingWidth="122.111328125" />
+                     
+                  </AnchorPane>
+               </AnchorPane>
             <AnchorPane fx:id="panelAdd" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: blue;" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0" />
             <AnchorPane fx:id="panelPerfil" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: pink;" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0" />
          </children>

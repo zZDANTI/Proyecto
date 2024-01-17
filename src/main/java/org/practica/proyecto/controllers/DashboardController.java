@@ -2,6 +2,7 @@ package org.practica.proyecto.controllers;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
@@ -11,8 +12,6 @@ import org.practica.proyecto.models.Alumno;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
-
-import static org.practica.proyecto.models.Alumno.contPanginas;
 import static org.practica.proyecto.models.Alumno.obtenerDatosDeAlumnos;
 
 public class DashboardController {
@@ -57,20 +56,26 @@ public class DashboardController {
     public TextField apellido_2Click;
     public DatePicker nacimientoClick;
 
-    //Variables
 
+    //PAGINADOR
+    public TextField actualPag;
     int maxRegistros = 20;
+    int paginaActual = 1;
+
 
     // Arranca la clase con el initialize
     @FXML
     public void initialize() throws SQLException {
+        cargarDatos();
+    }
 
+
+    // Obtiene los datos y los inserta en la tabla
+    private void cargarDatos() throws SQLException {
         botonAlumnos.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
 
         // Obtén los datos de los alumnos
-        List<Alumno> listaAlumnos = obtenerDatosDeAlumnos(maxRegistros);
-
-        contPanginas(maxRegistros);
+        List<Alumno> listaAlumnos = obtenerDatosDeAlumnos(maxRegistros, paginaActual);
 
 
         // Limpia la tabla
@@ -90,10 +95,7 @@ public class DashboardController {
         fecha_nacimiento_tabla.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().fechaNacimientoProperty().getValue())
         );
-
         alumnoClick();
-
-
 
     }
 
@@ -115,6 +117,8 @@ public class DashboardController {
                         setTextIfNotNull(localidadClick, alumnoSeleccionado.localidadProperty());
                         setTextIfNotNull(provinciaClick, alumnoSeleccionado.provinciaProperty());
                         nacimientoClick.setValue(alumnoSeleccionado.fechaNacimientoProperty().get().toLocalDate());
+                    }else{
+                        System.out.println("nulo");
                     }
                 }
             });
@@ -130,7 +134,6 @@ public class DashboardController {
         }
     }
 
-
     public void guardarAlumno() {
 
         if (!dniClick.getText().isEmpty()) {
@@ -141,7 +144,57 @@ public class DashboardController {
 
     }
 
-    //BOTONES PARA PODER NAVEGAR
+
+
+    //PAGINADOR
+    @FXML
+    private void paginador(ActionEvent event) throws SQLException {
+        Button botonPresionado = (Button) event.getSource();
+        int totalPaginas = Alumno.contPanginas(maxRegistros);
+
+        switch (botonPresionado.getId()) {
+            case "primeraPag":
+                // primera pagina
+                paginaActual = 1;
+                actualPag.setText(String.valueOf(paginaActual));
+                break;
+            case "anteriorPag":
+                // Debe ser mayor a 1 para permitir retroceder desde la primera página
+                if (paginaActual > 1) {
+                    paginaActual--;
+                    actualPag.setText(String.valueOf(paginaActual));
+                }
+                break;
+            case "siguientePag":
+                // Debe ser menor al total de páginas para permitir avanzar desde la última página
+                if (paginaActual < totalPaginas) {
+                    paginaActual++;
+                    actualPag.setText(String.valueOf(paginaActual));
+                }
+                break;
+            case "ultimaPag":
+                // Lógica para ir a la última pagina
+                paginaActual = totalPaginas;
+                actualPag.setText(String.valueOf(paginaActual));
+                break;
+        }
+        initialize();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //BOTONES PARA PODER NAVEGAR POR LA NAV
     @FXML
     private void botonHome() {
         setBotonActivo(botonHome, panelHome);

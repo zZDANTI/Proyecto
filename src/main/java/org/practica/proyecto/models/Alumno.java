@@ -62,8 +62,6 @@ public class Alumno {
 
     }
 
-
-
     public SimpleStringProperty dniProperty() {
         return dni;
     }
@@ -96,22 +94,16 @@ public class Alumno {
         return fechaNacimiento;
     }
 
-    public static List<Alumno> obtenerDatosDeAlumnos(int registros) {
-
-
+    public static List<Alumno> obtenerDatosDeAlumnos(int registros,int paginaActual){
         List<Alumno> listaAlumnos = new ArrayList<>();
         try {
-
-
-
-
             int count = 0;
+            posicionarResultSet(resultSet, paginaActual,registros);
             // Procesar los resultados
             while (resultSet.next()&& count < registros) {
 
                 // Crear un nuevo objeto Alumnos para cada fila y almacenarlo en la lista
                 Alumno alumno = new Alumno(
-
                         resultSet.getString("dni"),
                         resultSet.getString("apellido_1"),
                         resultSet.getString("apellido_2"),
@@ -120,7 +112,6 @@ public class Alumno {
                         resultSet.getString("localidad"),
                         resultSet.getString("provincia"),
                         resultSet.getDate("fecha_nacimiento")
-
                 );
                 count++;
                 int rowNum = resultSet.getRow();
@@ -130,13 +121,31 @@ public class Alumno {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            // Cerrar ResultSet y PreparedStatement en el bloque finally
         }
-
         // Devolver la lista de alumnos
         return listaAlumnos;
     }
+
+    public static void posicionarResultSet(ResultSet resultSet, int paginaActual, int registrosPorPagina) throws SQLException {
+        if (resultSet == null || paginaActual < 1 || registrosPorPagina < 1) {
+            throw new IllegalArgumentException("ResultSet nulo, página o registros por página inválidos.");
+        }
+
+        // Calcula la posición inicial para la página actual
+        int posicionInicial = (paginaActual - 1) * registrosPorPagina;
+
+        // Mueve el cursor al inicio del conjunto de resultados
+        resultSet.beforeFirst();
+
+        // Salta a la posición inicial
+        for (int i = 0; i < posicionInicial; i++) {
+            if (!resultSet.next()) {
+                // Manejar casos donde la posición excede el tamaño total de resultados
+                throw new SQLException("La posición especificada excede el tamaño total de resultados.");
+            }
+        }
+    }
+
 
     public static int contPanginas(int registros) throws SQLException {
 
@@ -150,7 +159,7 @@ public class Alumno {
 
         total = (int) Math.ceil((double) count2 / registros);
 
-        System.out.println(total);
+        System.out.println("Total de paginas" + " " + total);
         return total;
 
 
