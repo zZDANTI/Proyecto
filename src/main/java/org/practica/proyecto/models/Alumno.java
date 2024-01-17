@@ -9,6 +9,8 @@ import java.util.List;
 
 public class Alumno {
 
+
+    //Variables
     protected static ResultSet resultSet = null;
     protected static Statement statement = null;
 
@@ -21,6 +23,8 @@ public class Alumno {
     private SimpleStringProperty provincia;
     private SimpleObjectProperty<Date> fechaNacimiento;
 
+
+    //CONSTRUCTORES
     public Alumno(String dni, String apellido1, String apellido2, String nombre, String direccion, String localidad, String provincia, Date fechaNacimiento) {
         this.dni = new SimpleStringProperty(dni);
         this.nombre = new SimpleStringProperty(nombre);
@@ -36,6 +40,7 @@ public class Alumno {
 
     }
 
+    //INICIALIZAR RESULTSET CON STATEMENT
     static {
         initResultSet();
     }
@@ -61,6 +66,9 @@ public class Alumno {
 
 
     }
+
+
+    //GETTER Y SETTERS
 
     public SimpleStringProperty dniProperty() {
         return dni;
@@ -94,13 +102,18 @@ public class Alumno {
         return fechaNacimiento;
     }
 
-    public static List<Alumno> obtenerDatosDeAlumnos(int registros,int paginaActual){
+
+    //FUNCIONES DE LA CLASE ALUMNO
+
+
+    //Carga de la base de datos al resultset todos los datos de la consulta que se haya pedido
+    public static List<Alumno> obtenerDatosDeAlumnos(int maxRegistros,int paginaActual){
         List<Alumno> listaAlumnos = new ArrayList<>();
         try {
             int count = 0;
-            posicionarResultSet(resultSet, paginaActual,registros);
+            posicionarResultSet(resultSet, maxRegistros, paginaActual);
             // Procesar los resultados
-            while (resultSet.next()&& count < registros) {
+            while (resultSet.next()&& count < maxRegistros) {
 
                 // Crear un nuevo objeto Alumnos para cada fila y almacenarlo en la lista
                 Alumno alumno = new Alumno(
@@ -114,10 +127,8 @@ public class Alumno {
                         resultSet.getDate("fecha_nacimiento")
                 );
                 count++;
-                int rowNum = resultSet.getRow();
-                //System.out.println("Fila actual: " + rowNum +" "+  resultSet.getString("dni"));
-                listaAlumnos.add(alumno);
 
+                listaAlumnos.add(alumno);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -126,10 +137,8 @@ public class Alumno {
         return listaAlumnos;
     }
 
-    public static void posicionarResultSet(ResultSet resultSet, int paginaActual, int registrosPorPagina) throws SQLException {
-        if (resultSet == null || paginaActual < 1 || registrosPorPagina < 1) {
-            throw new IllegalArgumentException("ResultSet nulo, página o registros por página inválidos.");
-        }
+    //Posiciona el cursor del resulset dependiendo en que pagina está
+    public static void posicionarResultSet(ResultSet resultSet, int registrosPorPagina, int paginaActual ) throws SQLException {
 
         // Calcula la posición inicial para la página actual
         int posicionInicial = (paginaActual - 1) * registrosPorPagina;
@@ -146,8 +155,8 @@ public class Alumno {
         }
     }
 
-
-    public static int contPanginas(int registros) throws SQLException {
+    //Cuenta el total de pagina de todos los registros que se haya traido
+    public static int contPanginas(int maxRegistros) throws SQLException {
 
         int total = 0;
         int count2 = 0;
@@ -157,7 +166,7 @@ public class Alumno {
             count2++;
         }
 
-        total = (int) Math.ceil((double) count2 / registros);
+        total = (int) Math.ceil((double) count2 / maxRegistros);
 
         System.out.println("Total de paginas" + " " + total);
         return total;

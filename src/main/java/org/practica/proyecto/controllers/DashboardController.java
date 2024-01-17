@@ -8,7 +8,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import org.practica.proyecto.models.Alumno;
-
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -134,19 +133,7 @@ public class DashboardController {
         }
     }
 
-    public void guardarAlumno() {
-
-        if (!dniClick.getText().isEmpty()) {
-            System.out.println(dniClick.getText());
-        } else {
-            System.out.println("No hay alumnos");
-        }
-
-    }
-
-
-
-    //PAGINADOR
+    //paginador con los botones de acciones
     @FXML
     private void paginador(ActionEvent event) throws SQLException {
         Button botonPresionado = (Button) event.getSource();
@@ -181,18 +168,16 @@ public class DashboardController {
         initialize();
     }
 
+    //Boton para guardar los datos de lo clientes que se hayan modificado de la tabla
+    public void guardarAlumno() {
 
+        if (!dniClick.getText().isEmpty()) {
+            System.out.println(dniClick.getText());
+        } else {
+            System.out.println("No hay alumnos");
+        }
 
-
-
-
-
-
-
-
-
-
-
+    }
 
     //BOTONES PARA PODER NAVEGAR POR LA NAV
     @FXML
