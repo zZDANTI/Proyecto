@@ -8,6 +8,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import org.practica.proyecto.models.Alumno;
+
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -59,7 +61,7 @@ public class DashboardController {
     //PAGINADOR
     public TextField actualPag;
 
-    int maxRegistros = 20;
+    int maxRegistros = 10;
     int paginaActual = 1;
 
     public TextField buscarAlumno;
@@ -67,7 +69,7 @@ public class DashboardController {
 
     // Arranca la clase con el initialize
     @FXML
-    public void initialize() throws SQLException {
+    public void initialize(){
         cargarDatos();
     }
 
@@ -75,39 +77,31 @@ public class DashboardController {
     // Obtiene los datos y los inserta en la tabla
     private void cargarDatos() {
 
-
-        if(buscarAlumno.getText().isEmpty()){
-
-            botonAlumnos.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
-
-            // Obtén los datos de los alumnos
-            List<Alumno> listaAlumnos = obtenerDatosDeAlumnos(maxRegistros, paginaActual);
+        botonAlumnos.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
 
 
-            // Limpia la tabla
-            tabla_alumnos.getItems().clear();
-
-            // Agrega los datos a la tabla
-            tabla_alumnos.getItems().addAll(listaAlumnos);
-
-            // Configura las celdas de las columnas
-            dni_tabla.setCellValueFactory(cellData -> cellData.getValue().dniProperty());
-            nombre_tabla.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
-            apellido_1_tabla.setCellValueFactory(cellData -> cellData.getValue().apellido1Property());
-            apellido_2_tabla.setCellValueFactory(cellData -> cellData.getValue().apellido2Property());
-            direccion_tabla.setCellValueFactory(cellData -> cellData.getValue().direccionProperty());
-            localidad_tabla.setCellValueFactory(cellData -> cellData.getValue().localidadProperty());
-            provincia_tabla.setCellValueFactory(cellData -> cellData.getValue().provinciaProperty());
-            fecha_nacimiento_tabla.setCellValueFactory(cellData ->
-                    new SimpleObjectProperty<>(cellData.getValue().fechaNacimientoProperty().getValue())
-            );
-            alumnoClick();
-        }else{
-            // Limpia la tabla
-            tabla_alumnos.getItems().clear();
+        // Obtén los datos de los alumnos
+        List<Alumno> listaAlumnos = obtenerDatosDeAlumnos(maxRegistros,paginaActual,buscarAlumno.getText());
 
 
-        }
+        // Limpia la tabla
+        tabla_alumnos.getItems().clear();
+
+        // Agrega los datos a la tabla
+        tabla_alumnos.getItems().addAll(listaAlumnos);
+
+        // Configura las celdas de las columnas
+        dni_tabla.setCellValueFactory(cellData -> cellData.getValue().dniProperty());
+        nombre_tabla.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
+        apellido_1_tabla.setCellValueFactory(cellData -> cellData.getValue().apellido1Property());
+        apellido_2_tabla.setCellValueFactory(cellData -> cellData.getValue().apellido2Property());
+        direccion_tabla.setCellValueFactory(cellData -> cellData.getValue().direccionProperty());
+        localidad_tabla.setCellValueFactory(cellData -> cellData.getValue().localidadProperty());
+        provincia_tabla.setCellValueFactory(cellData -> cellData.getValue().provinciaProperty());
+        fecha_nacimiento_tabla.setCellValueFactory(cellData ->
+                new SimpleObjectProperty<>(cellData.getValue().fechaNacimientoProperty().getValue())
+        );
+        alumnoClick();
 
 
     }
@@ -152,7 +146,7 @@ public class DashboardController {
     @FXML
     private void paginador(ActionEvent event) throws SQLException {
         Button botonPresionado = (Button) event.getSource();
-        int totalPaginas = Alumno.contPanginas(maxRegistros);
+        int totalPaginas = Alumno.contPaginas(maxRegistros);
 
         switch (botonPresionado.getId()) {
             case "primeraPag":

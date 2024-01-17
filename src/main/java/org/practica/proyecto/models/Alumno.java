@@ -42,23 +42,33 @@ public class Alumno {
 
     //INICIALIZAR RESULTSET CON STATEMENT
     static {
-        initResultSet();
+
     }
 
-    private static void initResultSet() {
+    private static void initResultSet(String filtro) {
         Connection connection;
-
         try {
             // Obtener una conexión a la base de datos
             connection = Singleton.obtenerConexion();
 
-            // Crear un Statement a partir de la conexión
             statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
-            // Ejecutar una consulta y obtener el ResultSet
-            resultSet = statement.executeQuery("SELECT * FROM alumno");
 
-            // Ahora el resultSet está listo para su uso
+            // Construir la consulta en función del filtro
+            String consultaSQL = "SELECT * FROM alumno";
+
+            if (filtro != null && !filtro.isEmpty()) {
+                consultaSQL += " WHERE dni LIKE ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(consultaSQL,ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+                preparedStatement.setString(1,"%"+ filtro + "%");
+                resultSet = preparedStatement.executeQuery();
+            }else{
+                resultSet = statement.executeQuery(consultaSQL);
+            }
+
+
+
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -107,7 +117,8 @@ public class Alumno {
 
 
     //Carga de la base de datos al resultset todos los datos de la consulta que se haya pedido
-    public static List<Alumno> obtenerDatosDeAlumnos(int maxRegistros,int paginaActual){
+    public static List<Alumno> obtenerDatosDeAlumnos(int maxRegistros,int paginaActual,String filtro){
+        initResultSet(filtro);
         List<Alumno> listaAlumnos = new ArrayList<>();
         try {
             int count = 0;
@@ -130,6 +141,7 @@ public class Alumno {
 
                 listaAlumnos.add(alumno);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -138,12 +150,11 @@ public class Alumno {
     }
 
     //Posiciona el cursor del resulset dependiendo en que pagina está
-    public static void posicionarResultSet(ResultSet resultSet, int registrosPorPagina, int paginaActual ) throws SQLException {
-
+    public static void posicionarResultSet(ResultSet resultSet, int registrosPorPagina, int paginaActual) throws SQLException {
         // Calcula la posición inicial para la página actual
         int posicionInicial = (paginaActual - 1) * registrosPorPagina;
 
-        // Mueve el cursor al inicio del conjunto de resultados
+        // Mueve el cursor al inicio del conjunto de resultados si es de tipo SCROLL_SENSITIVE
         resultSet.beforeFirst();
 
         // Salta a la posición inicial
@@ -155,24 +166,25 @@ public class Alumno {
         }
     }
 
-    //Cuenta el total de pagina de todos los registros que se haya traido
-    public static int contPanginas(int maxRegistros) throws SQLException {
 
+    //Cuenta el total de pagina de todos los registros que se haya traido
+    public static int contPaginas(int maxRegistros) throws SQLException {
         int total = 0;
         int count2 = 0;
 
         resultSet.beforeFirst();
-        while (resultSet.next()){
+
+        while (resultSet.next()) {
             count2++;
         }
 
         total = (int) Math.ceil((double) count2 / maxRegistros);
 
-        System.out.println("Total de paginas" + " " + total);
+        System.out.println("Total de páginas: " + total);
         return total;
-
-
     }
+
+
 
 
 }
