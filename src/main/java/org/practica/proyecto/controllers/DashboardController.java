@@ -57,6 +57,10 @@ public class DashboardController {
     public TextField apellido_2Click;
     public DatePicker nacimientoClick;
 
+    //Variables
+
+    int maxRegistros = 20;
+
     // Arranca la clase con el initialize
     @FXML
     public void initialize() throws SQLException {
@@ -64,9 +68,9 @@ public class DashboardController {
         botonAlumnos.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
 
         // Obtén los datos de los alumnos
-        List<Alumno> listaAlumnos = obtenerDatosDeAlumnos(70);
+        List<Alumno> listaAlumnos = obtenerDatosDeAlumnos(maxRegistros);
 
-        contPanginas(70);
+        contPanginas(maxRegistros);
 
 
         // Limpia la tabla
