@@ -58,8 +58,11 @@ public class DashboardController {
 
     //PAGINADOR
     public TextField actualPag;
+
     int maxRegistros = 20;
     int paginaActual = 1;
+
+    public TextField buscarAlumno;
 
 
     // Arranca la clase con el initialize
@@ -70,33 +73,45 @@ public class DashboardController {
 
 
     // Obtiene los datos y los inserta en la tabla
-    private void cargarDatos() throws SQLException {
-        botonAlumnos.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
-
-        // Obtén los datos de los alumnos
-        List<Alumno> listaAlumnos = obtenerDatosDeAlumnos(maxRegistros, paginaActual);
+    private void cargarDatos() {
 
 
-        // Limpia la tabla
-        tabla_alumnos.getItems().clear();
+        if(buscarAlumno.getText().isEmpty()){
 
-        // Agrega los datos a la tabla
-        tabla_alumnos.getItems().addAll(listaAlumnos);
+            botonAlumnos.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
 
-        // Configura las celdas de las columnas
-        dni_tabla.setCellValueFactory(cellData -> cellData.getValue().dniProperty());
-        nombre_tabla.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
-        apellido_1_tabla.setCellValueFactory(cellData -> cellData.getValue().apellido1Property());
-        apellido_2_tabla.setCellValueFactory(cellData -> cellData.getValue().apellido2Property());
-        direccion_tabla.setCellValueFactory(cellData -> cellData.getValue().direccionProperty());
-        localidad_tabla.setCellValueFactory(cellData -> cellData.getValue().localidadProperty());
-        provincia_tabla.setCellValueFactory(cellData -> cellData.getValue().provinciaProperty());
-        fecha_nacimiento_tabla.setCellValueFactory(cellData ->
-                new SimpleObjectProperty<>(cellData.getValue().fechaNacimientoProperty().getValue())
-        );
-        alumnoClick();
+            // Obtén los datos de los alumnos
+            List<Alumno> listaAlumnos = obtenerDatosDeAlumnos(maxRegistros, paginaActual);
+
+
+            // Limpia la tabla
+            tabla_alumnos.getItems().clear();
+
+            // Agrega los datos a la tabla
+            tabla_alumnos.getItems().addAll(listaAlumnos);
+
+            // Configura las celdas de las columnas
+            dni_tabla.setCellValueFactory(cellData -> cellData.getValue().dniProperty());
+            nombre_tabla.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
+            apellido_1_tabla.setCellValueFactory(cellData -> cellData.getValue().apellido1Property());
+            apellido_2_tabla.setCellValueFactory(cellData -> cellData.getValue().apellido2Property());
+            direccion_tabla.setCellValueFactory(cellData -> cellData.getValue().direccionProperty());
+            localidad_tabla.setCellValueFactory(cellData -> cellData.getValue().localidadProperty());
+            provincia_tabla.setCellValueFactory(cellData -> cellData.getValue().provinciaProperty());
+            fecha_nacimiento_tabla.setCellValueFactory(cellData ->
+                    new SimpleObjectProperty<>(cellData.getValue().fechaNacimientoProperty().getValue())
+            );
+            alumnoClick();
+        }else{
+            // Limpia la tabla
+            tabla_alumnos.getItems().clear();
+
+
+        }
+
 
     }
+
 
     //Funcion para saber que alumno se ha clickeado en la tabla
     public void alumnoClick() {

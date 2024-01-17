@@ -126,7 +126,7 @@
       <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="background" BorderPane.alignment="CENTER">
          <children>
             <AnchorPane fx:id="panelHome" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: yellow;" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0" />
-            <AnchorPane fx:id="panelEditar" focusTraversable="true" layoutX="6.0" layoutY="47.0" prefHeight="200.0" prefWidth="200.0" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
+            <AnchorPane fx:id="panelEditar" focusTraversable="true" layoutX="6.0" layoutY="47.0" onKeyReleased="#initialize" prefHeight="200.0" prefWidth="200.0" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
 
                   <AnchorPane prefHeight="399.0" prefWidth="938.0" AnchorPane.bottomAnchor="340.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0.0">
                         <TableView fx:id="tabla_alumnos" layoutX="-1.0" layoutY="47.0" prefHeight="348.0" prefWidth="926.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="47.0">
@@ -144,7 +144,7 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TextField layoutX="-1.0" layoutY="10.0" prefHeight="29.0" prefWidth="170.0" promptText="Buscar alumno" />
+                        <TextField fx:id="buscarAlumno" layoutX="-1.0" layoutY="10.0" onAction="#initialize" prefHeight="29.0" prefWidth="170.0" promptText="Buscar alumno" />
                   </AnchorPane>
                   <HBox layoutX="17.0" layoutY="398.0" prefHeight="37.0" prefWidth="924.0" spacing="10.0" AnchorPane.bottomAnchor="304.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="17.0">
                      <!-- ... (otro contenido del panelEditar) ... -->
