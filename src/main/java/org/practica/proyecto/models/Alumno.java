@@ -40,44 +40,6 @@ public class Alumno {
 
     }
 
-    //INICIALIZAR RESULTSET CON STATEMENT
-    static {
-
-    }
-
-    private static void initResultSet(String filtro) {
-        Connection connection;
-        try {
-            // Obtener una conexión a la base de datos
-            connection = Singleton.obtenerConexion();
-
-            statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-
-
-            // Construir la consulta en función del filtro
-            String consultaSQL = "SELECT * FROM alumno";
-
-            if (filtro != null && !filtro.isEmpty()) {
-                consultaSQL += " WHERE dni LIKE ?";
-                PreparedStatement preparedStatement = connection.prepareStatement(consultaSQL,ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-                preparedStatement.setString(1,"%"+ filtro + "%");
-                resultSet = preparedStatement.executeQuery();
-            }else{
-                resultSet = statement.executeQuery(consultaSQL);
-            }
-
-
-
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
-
     //GETTER Y SETTERS
 
     public SimpleStringProperty dniProperty() {
@@ -115,6 +77,30 @@ public class Alumno {
 
     //FUNCIONES DE LA CLASE ALUMNO
 
+    //Inicia la sql del resultset
+    private static void initResultSet(String filtro) {
+        Connection connection;
+        try {
+            // Obtener una conexión a la base de datos
+            connection = Singleton.obtenerConexion();
+            String consultaSQL = "SELECT * FROM alumno";
+
+            if (filtro != null && !filtro.isEmpty()) {
+                consultaSQL += " WHERE dni LIKE ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(consultaSQL,ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+                preparedStatement.setString(1,"%"+ filtro + "%");
+                resultSet = preparedStatement.executeQuery();
+            }else{
+                statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+                resultSet = statement.executeQuery(consultaSQL);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+    }
 
     //Carga de la base de datos al resultset todos los datos de la consulta que se haya pedido
     public static List<Alumno> obtenerDatosDeAlumnos(int maxRegistros,int paginaActual,String filtro){
@@ -165,7 +151,6 @@ public class Alumno {
             }
         }
     }
-
 
     //Cuenta el total de pagina de todos los registros que se haya traido
     public static int contPaginas(int maxRegistros) throws SQLException {

@@ -145,11 +145,6 @@
                            </columnResizePolicy>
                         </TableView>
                         <TextField fx:id="buscarAlumno" layoutX="-1.0" layoutY="10.0" onAction="#initialize" prefHeight="29.0" prefWidth="170.0" promptText="Buscar alumno" />
-                  <Text layoutX="269.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="306.13671875">
-                     <font>
-                        <Font size="28.0" />
-                     </font>
-                  </Text>
                   </AnchorPane>
                   <HBox layoutX="17.0" layoutY="398.0" prefHeight="37.0" prefWidth="924.0" spacing="10.0" AnchorPane.bottomAnchor="304.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="17.0">
                      <!-- ... (otro contenido del panelEditar) ... -->
