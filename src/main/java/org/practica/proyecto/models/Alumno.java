@@ -22,10 +22,11 @@ public class Alumno {
     private SimpleStringProperty localidad;
     private SimpleStringProperty provincia;
     private SimpleObjectProperty<Date> fechaNacimiento;
+    private int row;
 
 
     //CONSTRUCTORES
-    public Alumno(String dni, String apellido1, String apellido2, String nombre, String direccion, String localidad, String provincia, Date fechaNacimiento) {
+    public Alumno(String dni, String apellido1, String apellido2, String nombre, String direccion, String localidad, String provincia, Date fechaNacimiento, int row) {
         this.dni = new SimpleStringProperty(dni);
         this.nombre = new SimpleStringProperty(nombre);
         this.apellido1 = new SimpleStringProperty(apellido1);
@@ -34,13 +35,23 @@ public class Alumno {
         this.localidad = new SimpleStringProperty(localidad);
         this.provincia = new SimpleStringProperty(provincia);
         this.fechaNacimiento = new SimpleObjectProperty<>(fechaNacimiento);
+        this.row = row;
+
     }
+
 
     public Alumno() {
 
     }
 
+
     //GETTER Y SETTERS
+
+
+    public int rowProperty() {
+        return this.row;
+    }
+
 
     public SimpleStringProperty dniProperty() {
         return dni;
@@ -72,10 +83,6 @@ public class Alumno {
 
     public SimpleObjectProperty<Date> fechaNacimientoProperty() {
         return fechaNacimiento;
-    }
-
-    static {
-
     }
 
     //FUNCIONES DE LA CLASE ALUMNO
@@ -135,7 +142,9 @@ public class Alumno {
                         resultSet.getString("direccion"),
                         resultSet.getString("localidad"),
                         resultSet.getString("provincia"),
-                        resultSet.getDate("fecha_nacimiento")
+                        resultSet.getDate("fecha_nacimiento"),
+                        resultSet.getRow()
+
                 );
                 count++;
 

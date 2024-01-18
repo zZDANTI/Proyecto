@@ -1,5 +1,6 @@
 package org.practica.proyecto.controllers;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
@@ -43,6 +44,7 @@ public class DashboardController {
     public TableColumn<Alumno, String> localidad_tabla;
     public TableColumn<Alumno, String> provincia_tabla;
     public TableColumn<Alumno, Date> fecha_nacimiento_tabla;
+    public TableColumn<Alumno, Integer> rowRs;
 
 
     //DATOS DEL ALUMNO SELECCIONADO
@@ -59,22 +61,46 @@ public class DashboardController {
     //PAGINADOR
     public TextField actualPag;
 
+
+
     int maxRegistros = 10;
     int paginaActual = 1;
     String filtroAnterior = "";
+    Boolean inicializado = true;
 
+    //BUSCADOR Y MAXIMOS REGISTROS
     public TextField buscarAlumno;
+    public ChoiceBox<Integer> myChoiceBox;
+    public Integer[] elegirRegistros = {10,20,30,40,50};
 
 
     // Arranca la clase con el initialize
     @FXML
     public void initialize(){
+
+        if(inicializado){
+            myChoiceBox.getItems().addAll(elegirRegistros);
+            myChoiceBox.setValue(10);
+            inicializado = false;
+        }
+
+        myChoiceBox.setOnAction(this::elegirRegistros);
         cargarDatos();
+    }
+
+    public void elegirRegistros(ActionEvent event){
+
+        maxRegistros = myChoiceBox.getValue();
+        paginaActual=1;
+        actualPag.setText(String.valueOf(paginaActual));
+        cargarDatos();
+
     }
 
 
     // Obtiene los datos y los inserta en la tabla
     private void cargarDatos() {
+
 
         botonAlumnos.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
         if (buscarAlumno.getText() != null && !buscarAlumno.getText().isEmpty() && !buscarAlumno.getText().equals(filtroAnterior)) {
@@ -93,6 +119,9 @@ public class DashboardController {
         tabla_alumnos.getItems().addAll(listaAlumnos);
 
         // Configura las celdas de las columnas
+
+
+
         dni_tabla.setCellValueFactory(cellData -> cellData.getValue().dniProperty());
         nombre_tabla.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
         apellido_1_tabla.setCellValueFactory(cellData -> cellData.getValue().apellido1Property());
@@ -103,10 +132,10 @@ public class DashboardController {
         fecha_nacimiento_tabla.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().fechaNacimientoProperty().getValue())
         );
+        rowRs.setCellValueFactory(rowRs.);
+
 
         alumnoClick();
-
-
     }
 
     //Funcion para saber que alumno se ha clickeado en la tabla
