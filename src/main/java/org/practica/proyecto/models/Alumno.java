@@ -74,33 +74,47 @@ public class Alumno {
         return fechaNacimiento;
     }
 
+    static {
+
+    }
 
     //FUNCIONES DE LA CLASE ALUMNO
 
     //Inicia la sql del resultset
+    private static boolean resultSetInicializado = false;
+    private static String filtroAnterior = "";
+
     private static void initResultSet(String filtro) {
         Connection connection;
         try {
-            // Obtener una conexión a la base de datos
             connection = Singleton.obtenerConexion();
             String consultaSQL = "SELECT * FROM alumno";
 
-            if (filtro != null && !filtro.isEmpty()) {
-                consultaSQL += " WHERE dni LIKE ?";
-                PreparedStatement preparedStatement = connection.prepareStatement(consultaSQL,ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-                preparedStatement.setString(1,"%"+ filtro + "%");
-                resultSet = preparedStatement.executeQuery();
-            }else{
+            if (!resultSetInicializado && (filtro == null || filtro.isEmpty())) {
+                // Inicializar el ResultSet sin filtro
                 statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
                 resultSet = statement.executeQuery(consultaSQL);
+                System.out.println("Datos cogidos de la base de datos de alumno");
+                resultSetInicializado = true;
             }
+            if (filtro != null && !filtro.isEmpty() && !filtro.equals(filtroAnterior)) {
+                // Inicializar el ResultSet con filtro si el filtro actual es diferente al anterior
+                consultaSQL += " WHERE dni LIKE ? OR nombre LIKE ? OR apellido_1 LIKE ? OR apellido_2 LIKE ? OR direccion LIKE ? OR localidad LIKE ? OR provincia LIKE ? OR fecha_nacimiento LIKE ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(consultaSQL, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+                    for (int i = 1; i <= 8; i++) {
+                        preparedStatement.setString(i, "%" + filtro + "%");
+                    }
+                    resultSet = preparedStatement.executeQuery();
+                    System.err.println("Datos filtrados cogidos de la base de datos de alumno");
+                    resultSetInicializado = false;
+                    filtroAnterior = filtro; // Almacenar el nuevo filtro actual
 
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
     }
+
 
     //Carga de la base de datos al resultset todos los datos de la consulta que se haya pedido
     public static List<Alumno> obtenerDatosDeAlumnos(int maxRegistros,int paginaActual,String filtro){
@@ -108,7 +122,7 @@ public class Alumno {
         List<Alumno> listaAlumnos = new ArrayList<>();
         try {
             int count = 0;
-            posicionarResultSet(resultSet, maxRegistros, paginaActual);
+            posicionarResultSet(maxRegistros, paginaActual);
             // Procesar los resultados
             while (resultSet.next()&& count < maxRegistros) {
 
@@ -136,8 +150,9 @@ public class Alumno {
     }
 
     //Posiciona el cursor del resulset dependiendo en que pagina está
-    public static void posicionarResultSet(ResultSet resultSet, int registrosPorPagina, int paginaActual) throws SQLException {
+    public static void posicionarResultSet(int registrosPorPagina, int paginaActual) throws SQLException {
         // Calcula la posición inicial para la página actual
+
         int posicionInicial = (paginaActual - 1) * registrosPorPagina;
 
         // Mueve el cursor al inicio del conjunto de resultados si es de tipo SCROLL_SENSITIVE
@@ -158,7 +173,6 @@ public class Alumno {
         int count2 = 0;
 
         resultSet.beforeFirst();
-
         while (resultSet.next()) {
             count2++;
         }

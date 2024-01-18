@@ -61,6 +61,7 @@ public class DashboardController {
 
     int maxRegistros = 10;
     int paginaActual = 1;
+    String filtroAnterior = "";
 
     public TextField buscarAlumno;
 
@@ -76,11 +77,14 @@ public class DashboardController {
     private void cargarDatos() {
 
         botonAlumnos.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
-
+        if (buscarAlumno.getText() != null && !buscarAlumno.getText().isEmpty() && !buscarAlumno.getText().equals(filtroAnterior)) {
+            filtroAnterior = buscarAlumno.getText();
+            paginaActual=1;
+            actualPag.setText(String.valueOf(paginaActual));
+        }
 
         // Obtén los datos de los alumnos
         List<Alumno> listaAlumnos = obtenerDatosDeAlumnos(maxRegistros,paginaActual,buscarAlumno.getText());
-
 
         // Limpia la tabla
         tabla_alumnos.getItems().clear();
@@ -99,11 +103,11 @@ public class DashboardController {
         fecha_nacimiento_tabla.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>(cellData.getValue().fechaNacimientoProperty().getValue())
         );
+
         alumnoClick();
 
 
     }
-
 
     //Funcion para saber que alumno se ha clickeado en la tabla
     public void alumnoClick() {
