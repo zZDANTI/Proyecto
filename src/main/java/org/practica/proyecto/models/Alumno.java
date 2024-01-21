@@ -37,8 +37,15 @@ public class Alumno {
         this.row = row;
     }
 
-    public Alumno() {
-
+    public Alumno(String dni, String nombre, String apellido1, String apellido2, String direccion, String localidad, String provincia, int row) {
+        this.dni = dni;
+        this.nombre = nombre;
+        this.apellido1 = apellido1;
+        this.apellido2 = apellido2;
+        this.direccion = direccion;
+        this.localidad = localidad;
+        this.provincia = provincia;
+        this.row = row;
     }
 
 
@@ -154,7 +161,6 @@ public class Alumno {
         }
     }
 
-
     //Carga de la base de datos al resultset todos los datos de la consulta que se haya pedido
     public static List<Alumno> obtenerDatosDeAlumnos(int maxRegistros,int paginaActual,String filtro){
         initResultSet(filtro);
@@ -168,9 +174,9 @@ public class Alumno {
                 // Crear un nuevo objeto Alumnos para cada fila y almacenarlo en la lista
                 Alumno alumno = new Alumno(
                         resultSet.getString("dni"),
+                        resultSet.getString("nombre"),
                         resultSet.getString("apellido_1"),
                         resultSet.getString("apellido_2"),
-                        resultSet.getString("nombre"),
                         resultSet.getString("direccion"),
                         resultSet.getString("localidad"),
                         resultSet.getString("provincia"),
@@ -223,6 +229,30 @@ public class Alumno {
         System.out.println("Total de páginas: " + total);
         return total;
     }
+
+    public void guardarAlumno() {
+        try {
+            resultSet.absolute(getRow());
+
+            // Actualiza los valores en el ResultSet
+            resultSet.updateString("nombre", nombre);
+            resultSet.updateString("apellido_1", apellido1);
+            resultSet.updateString("apellido_2", apellido2);
+            resultSet.updateString("direccion", direccion);
+            resultSet.updateString("localidad", localidad);
+            resultSet.updateString("provincia", provincia);
+
+            // Actualiza la fila en la base de datos
+            resultSet.updateRow();
+
+            System.out.println("Alumno actualizado en la base de datos: " + getRow() + nombre);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Manejo de la excepción según tus necesidades
+        }
+    }
+
+
 
 
 

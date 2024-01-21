@@ -58,7 +58,11 @@ public class DashboardController {
 
     //PAGINADOR
     public TextField actualPag;
+    
+    //BOTONES AL GUARDAR ALUMNOS
 
+    public Button botonGuardarAlumno;
+    public Button botonEliminarAlumno;
 
 
     int maxRegistros = 10;
@@ -83,6 +87,7 @@ public class DashboardController {
         }
 
         myChoiceBox.setOnAction(this::elegirRegistros);
+        botonDesactivado();
         cargarDatos();
     }
 
@@ -95,11 +100,11 @@ public class DashboardController {
 
     }
 
-
     // Obtiene los datos y los inserta en la tabla
     private void cargarDatos() {
 
 
+        limpiarAlumno();
         botonAlumnos.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
         if (buscarAlumno.getText() != null && !buscarAlumno.getText().isEmpty() && !buscarAlumno.getText().equals(filtroAnterior)) {
             filtroAnterior = buscarAlumno.getText();
@@ -118,8 +123,6 @@ public class DashboardController {
 
         // Configura las celdas de las columnas
 
-
-
         rowRs.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getRow()));
         dni_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getDni()));
         nombre_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getNombre()));
@@ -130,38 +133,52 @@ public class DashboardController {
         provincia_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getProvincia()));
         fecha_nacimiento_tabla.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getFechaNacimiento()));
 
-
-
-
-
-
         alumnoClick();
     }
 
     //Funcion para saber que alumno se ha clickeado en la tabla
     public void alumnoClick() {
-        tabla_alumnos.setRowFactory(tv -> {
-            TableRow<Alumno> alumnoClickeado = new TableRow<>();
-            alumnoClickeado.setOnMouseClicked(event -> {
-                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
-                    Alumno alumnoSeleccionado = alumnoClickeado.getItem();
-                    if (alumnoSeleccionado != null) {
-                        //System.out.println("Clic en la fila. Alumno seleccionado: " + alumnoSeleccionado);
-                        System.out.println(dniClick.getText());
-                        dniClick.setText(alumnoSeleccionado.getDni());
-
-                        nacimientoClick.setValue(alumnoSeleccionado.getFechaNacimiento().toLocalDate());
-
-                    }else{
-                        System.out.println("nulo");
-                    }
+        tabla_alumnos.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
+                Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
+                if (alumnoSeleccionado != null) {
+                    dniClick.setText(alumnoSeleccionado.getDni());
+                    nombreClick.setText(alumnoSeleccionado.getNombre());
+                    apellido_1Click.setText(alumnoSeleccionado.getApellido1());
+                    apellido_2Click.setText(alumnoSeleccionado.getApellido2());
+                    direccionClick.setText(alumnoSeleccionado.getDireccion());
+                    localidadClick.setText(alumnoSeleccionado.getLocalidad());
+                    provinciaClick.setText(alumnoSeleccionado.getProvincia());
+                    nacimientoClick.setValue(alumnoSeleccionado.getFechaNacimiento().toLocalDate());
                 }
-            });
-            return alumnoClickeado;
+            }
         });
     }
 
-    //paginador con los botones de acciones
+    //ACCIONES PARA EL GUARDADO O ELIMINADO DEL ALUMNO
+
+    //Boton para guardar los datos de lo clientes que se hayan modificado de la tabla
+    public void guardarAlumnoSeleccionado() {
+        Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
+
+        int rowsAlumno = alumnoSeleccionado.getRow();
+        Alumno alumno = new Alumno(dniClick.getText(),nombreClick.getText(),apellido_1Click.getText(),apellido_2Click.getText(),
+                direccionClick.getText(),localidadClick.getText(),provinciaClick.getText(),rowsAlumno);
+        // Llama un método para guardar los datos del alumno
+        alumno.guardarAlumno();
+        limpiarAlumno();
+        cargarDatos();
+
+    }
+
+    public void eliminarAlumnoSeleccionado(){
+        Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
+
+        limpiarAlumno();
+        cargarDatos();
+    }
+
+    //HACE QUE CAMBIE EL NUMERO Y A LA VEZ SE LO MANDE AL RESULTSET
     @FXML
     private void paginador(ActionEvent event) throws SQLException {
         Button botonPresionado = (Button) event.getSource();
@@ -196,17 +213,6 @@ public class DashboardController {
         initialize();
     }
 
-    //Boton para guardar los datos de lo clientes que se hayan modificado de la tabla
-    public void guardarAlumno() {
-
-        if (!dniClick.getText().isEmpty()) {
-            System.out.println(dniClick.getText());
-        } else {
-            System.out.println("No hay alumnos");
-        }
-
-    }
-
     //BOTONES PARA PODER NAVEGAR POR LA NAV
     @FXML
     private void botonHome() {
@@ -219,18 +225,6 @@ public class DashboardController {
     @FXML
     private void botonAlumnos() {
         setBotonActivo(botonAlumnos, panelEditar);
-
-        //Limpia lo seleccionado en la tabla
-        dniClick.clear();
-        nombreClick.clear();
-        apellido_1Click.clear();
-
-        apellido_2Click.clear();
-        direccionClick.clear();
-        localidadClick.clear();
-        provinciaClick.clear();
-        nacimientoClick.setValue(null);
-
         botonHome.setStyle("");
         botonAdd.setStyle("");
         botonPerfil.setStyle("");
@@ -268,5 +262,28 @@ public class DashboardController {
 
     }
 
+
+    //COMPLEMENTO PARA LA EDICION DEL ALUMNO
+
+    //limpia los datos donde se puede editar el alumno
+    public void limpiarAlumno(){
+        dniClick.clear();
+        nombreClick.clear();
+        apellido_1Click.clear();
+
+        apellido_2Click.clear();
+        direccionClick.clear();
+        localidadClick.clear();
+        provinciaClick.clear();
+        nacimientoClick.setValue(null);
+    }
+
+    //Si el campo del dni esta vacio se desactiva el boton de guardar y el de eliminar
+    public void botonDesactivado() {
+        botonGuardarAlumno.disableProperty().bind(dniClick.textProperty().isEmpty());
+        botonEliminarAlumno.disableProperty().bind(dniClick.textProperty().isEmpty());
+
+
+    }
 
 }
