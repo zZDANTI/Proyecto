@@ -48,6 +48,8 @@ public class Alumno {
         this.row = row;
     }
 
+    public Alumno() {
+    }
 
     //GETTER Y SETTERS
 
@@ -232,6 +234,7 @@ public class Alumno {
 
     public void guardarAlumno() {
         try {
+            //Posiciona el resultset
             resultSet.absolute(getRow());
 
             // Actualiza los valores en el ResultSet
@@ -248,7 +251,20 @@ public class Alumno {
             System.out.println("Alumno actualizado en la base de datos: " + getRow() + nombre);
         } catch (SQLException e) {
             e.printStackTrace();
-            // Manejo de la excepción según tus necesidades
+        }
+    }
+
+    public void eliminarAlumno(int row) {
+        try {
+            //Posiciona el resultset
+            resultSet.absolute(row);
+
+            //Elimina la row seleccionada
+            resultSet.deleteRow();
+            System.out.println("Alumno eliminado en la base de datos: " + row);
+
+        } catch (Exception e) {
+            System.err.println("Alumno contiene clave Ajena");
         }
     }
 

@@ -173,7 +173,10 @@ public class DashboardController {
 
     public void eliminarAlumnoSeleccionado(){
         Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
+        int rowsAlumno = alumnoSeleccionado.getRow();
 
+        Alumno alumno = new Alumno();
+        alumno.eliminarAlumno(rowsAlumno);
         limpiarAlumno();
         cargarDatos();
     }
