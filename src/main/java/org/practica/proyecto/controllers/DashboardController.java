@@ -160,7 +160,6 @@ public class DashboardController {
     //Boton para guardar los datos de lo clientes que se hayan modificado de la tabla
     public void guardarAlumnoSeleccionado() {
         Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
-
         int rowsAlumno = alumnoSeleccionado.getRow();
         Alumno alumno = new Alumno(dniClick.getText(),nombreClick.getText(),apellido_1Click.getText(),apellido_2Click.getText(),
                 direccionClick.getText(),localidadClick.getText(),provinciaClick.getText(),rowsAlumno);

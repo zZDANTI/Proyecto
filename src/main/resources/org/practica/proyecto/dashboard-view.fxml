@@ -173,14 +173,14 @@
                      <font>
                         <Font name="Segoe UI Semibold" size="15.0" />
                      </font></Button>
-                     <TextField fx:id="localidadClick" layoutX="342.0" layoutY="92.0" prefHeight="43.0" prefWidth="306.0" promptText="Localidad" />
-                     <TextField fx:id="direccionClick" layoutX="342.0" layoutY="24.0" prefHeight="43.0" prefWidth="306.0" promptText="Direccion" />
-                     <TextField fx:id="provinciaClick" layoutX="342.0" layoutY="159.0" prefHeight="43.0" prefWidth="306.0" promptText="Provincia" />
-                     <TextField fx:id="dniClick" disable="true" layoutX="1.0" layoutY="24.0" prefHeight="43.0" prefWidth="306.0" promptText="DNI" />
-                     <TextField fx:id="nombreClick" layoutX="1.0" layoutY="92.0" prefHeight="43.0" prefWidth="306.0" promptText="Nombre" />
-                     <TextField fx:id="apellido_1Click" layoutX="1.0" layoutY="159.0" prefHeight="43.0" prefWidth="306.0" promptText="1ºApellido" />
-                     <TextField fx:id="apellido_2Click" layoutX="1.0" layoutY="226.0" prefHeight="43.0" prefWidth="306.0" promptText="2ºApellido" />
-                     <DatePicker fx:id="nacimientoClick" layoutX="342.0" layoutY="226.0" prefHeight="43.0" prefWidth="306.0" promptText="Fecha Nacimiento" />
+                     <TextField fx:id="localidadClick" focusTraversable="false" layoutX="342.0" layoutY="92.0" prefHeight="43.0" prefWidth="306.0" promptText="Localidad" />
+                     <TextField fx:id="direccionClick" focusTraversable="false" layoutX="342.0" layoutY="24.0" prefHeight="43.0" prefWidth="306.0" promptText="Direccion" />
+                     <TextField fx:id="provinciaClick" focusTraversable="false" layoutX="342.0" layoutY="159.0" prefHeight="43.0" prefWidth="306.0" promptText="Provincia" />
+                     <TextField fx:id="dniClick" disable="true" focusTraversable="false" layoutX="1.0" layoutY="24.0" prefHeight="43.0" prefWidth="306.0" promptText="DNI" />
+                     <TextField fx:id="nombreClick" focusTraversable="false" layoutX="1.0" layoutY="92.0" prefHeight="43.0" prefWidth="306.0" promptText="Nombre" />
+                     <TextField fx:id="apellido_1Click" focusTraversable="false" layoutX="1.0" layoutY="159.0" prefHeight="43.0" prefWidth="306.0" promptText="1ºApellido" />
+                     <TextField fx:id="apellido_2Click" focusTraversable="false" layoutX="1.0" layoutY="226.0" prefHeight="43.0" prefWidth="306.0" promptText="2ºApellido" />
+                     <DatePicker fx:id="nacimientoClick" focusTraversable="false" layoutX="342.0" layoutY="226.0" prefHeight="43.0" prefWidth="306.0" promptText="Fecha Nacimiento" />
                      <Text fill="WHITE" layoutX="2.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dni" wrappingWidth="32.111328125">
                         <font>
                            <Font name="System Bold" size="12.0" />

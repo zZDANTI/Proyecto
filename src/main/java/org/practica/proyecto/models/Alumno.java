@@ -238,12 +238,12 @@ public class Alumno {
             resultSet.absolute(getRow());
 
             // Actualiza los valores en el ResultSet
-            resultSet.updateString("nombre", nombre);
-            resultSet.updateString("apellido_1", apellido1);
-            resultSet.updateString("apellido_2", apellido2);
-            resultSet.updateString("direccion", direccion);
-            resultSet.updateString("localidad", localidad);
-            resultSet.updateString("provincia", provincia);
+            resultSet.updateString("nombre", nombre.toUpperCase());
+            resultSet.updateString("apellido_1", apellido1.toUpperCase());
+            resultSet.updateString("apellido_2", apellido2.toUpperCase());
+            resultSet.updateString("direccion", direccion.toUpperCase());
+            resultSet.updateString("localidad", localidad.toUpperCase());
+            resultSet.updateString("provincia", provincia.toUpperCase());
 
             // Actualiza la fila en la base de datos
             resultSet.updateRow();
