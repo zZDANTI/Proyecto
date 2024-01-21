@@ -1,8 +1,6 @@
 package org.practica.proyecto.controllers;
 
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -122,17 +120,19 @@ public class DashboardController {
 
 
 
-        dni_tabla.setCellValueFactory(cellData -> cellData.getValue().dniProperty());
-        nombre_tabla.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
-        apellido_1_tabla.setCellValueFactory(cellData -> cellData.getValue().apellido1Property());
-        apellido_2_tabla.setCellValueFactory(cellData -> cellData.getValue().apellido2Property());
-        direccion_tabla.setCellValueFactory(cellData -> cellData.getValue().direccionProperty());
-        localidad_tabla.setCellValueFactory(cellData -> cellData.getValue().localidadProperty());
-        provincia_tabla.setCellValueFactory(cellData -> cellData.getValue().provinciaProperty());
-        fecha_nacimiento_tabla.setCellValueFactory(cellData ->
-                new SimpleObjectProperty<>(cellData.getValue().fechaNacimientoProperty().getValue())
-        );
-        rowRs.setCellValueFactory(rowRs.);
+        rowRs.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getRow()));
+        dni_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getDni()));
+        nombre_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getNombre()));
+        apellido_1_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getApellido1()));
+        apellido_2_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getApellido2()));
+        direccion_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getDireccion()));
+        localidad_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getLocalidad()));
+        provincia_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getProvincia()));
+        fecha_nacimiento_tabla.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getFechaNacimiento()));
+
+
+
+
 
 
         alumnoClick();
@@ -148,14 +148,10 @@ public class DashboardController {
                     if (alumnoSeleccionado != null) {
                         //System.out.println("Clic en la fila. Alumno seleccionado: " + alumnoSeleccionado);
                         System.out.println(dniClick.getText());
-                        setTextIfNotNull(dniClick, alumnoSeleccionado.dniProperty());
-                        setTextIfNotNull(nombreClick, alumnoSeleccionado.nombreProperty());
-                        setTextIfNotNull(apellido_1Click, alumnoSeleccionado.apellido1Property());
-                        setTextIfNotNull(apellido_2Click, alumnoSeleccionado.apellido2Property());
-                        setTextIfNotNull(direccionClick, alumnoSeleccionado.direccionProperty());
-                        setTextIfNotNull(localidadClick, alumnoSeleccionado.localidadProperty());
-                        setTextIfNotNull(provinciaClick, alumnoSeleccionado.provinciaProperty());
-                        nacimientoClick.setValue(alumnoSeleccionado.fechaNacimientoProperty().get().toLocalDate());
+                        dniClick.setText(alumnoSeleccionado.getDni());
+
+                        nacimientoClick.setValue(alumnoSeleccionado.getFechaNacimiento().toLocalDate());
+
                     }else{
                         System.out.println("nulo");
                     }
@@ -163,14 +159,6 @@ public class DashboardController {
             });
             return alumnoClickeado;
         });
-    }
-
-    private void setTextIfNotNull(TextInputControl control, StringProperty property) {
-        if (property != null && property.get() != null) {
-            control.setText(property.get());
-        } else {
-            control.clear();
-        }
     }
 
     //paginador con los botones de acciones

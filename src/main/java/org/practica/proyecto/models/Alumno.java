@@ -1,8 +1,5 @@
 package org.practica.proyecto.models;
 
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,31 +11,31 @@ public class Alumno {
     protected static ResultSet resultSet = null;
     protected static Statement statement = null;
 
-    private SimpleStringProperty dni;
-    private SimpleStringProperty nombre;
-    private SimpleStringProperty apellido1;
-    private SimpleStringProperty apellido2;
-    private SimpleStringProperty direccion;
-    private SimpleStringProperty localidad;
-    private SimpleStringProperty provincia;
-    private SimpleObjectProperty<Date> fechaNacimiento;
+    private String dni;
+    private String nombre;
+    private String apellido1;
+    private String apellido2;
+    private String direccion;
+    private String localidad;
+    private String provincia;
+    private Date fechaNacimiento;
     private int row;
 
 
     //CONSTRUCTORES
-    public Alumno(String dni, String apellido1, String apellido2, String nombre, String direccion, String localidad, String provincia, Date fechaNacimiento, int row) {
-        this.dni = new SimpleStringProperty(dni);
-        this.nombre = new SimpleStringProperty(nombre);
-        this.apellido1 = new SimpleStringProperty(apellido1);
-        this.apellido2 = new SimpleStringProperty(apellido2);
-        this.direccion = new SimpleStringProperty(direccion);
-        this.localidad = new SimpleStringProperty(localidad);
-        this.provincia = new SimpleStringProperty(provincia);
-        this.fechaNacimiento = new SimpleObjectProperty<>(fechaNacimiento);
+
+
+    public Alumno(String dni, String nombre, String apellido1, String apellido2, String direccion, String localidad, String provincia, Date fechaNacimiento, int row) {
+        this.dni = dni;
+        this.nombre = nombre;
+        this.apellido1 = apellido1;
+        this.apellido2 = apellido2;
+        this.direccion = direccion;
+        this.localidad = localidad;
+        this.provincia = provincia;
+        this.fechaNacimiento = fechaNacimiento;
         this.row = row;
-
     }
-
 
     public Alumno() {
 
@@ -47,43 +44,78 @@ public class Alumno {
 
     //GETTER Y SETTERS
 
-
-    public int rowProperty() {
-        return this.row;
-    }
-
-
-    public SimpleStringProperty dniProperty() {
+    public String getDni() {
         return dni;
     }
 
-    public SimpleStringProperty nombreProperty() {
+    public void setDni(String dni) {
+        this.dni = dni;
+    }
+
+    public String getNombre() {
         return nombre;
     }
 
-    public SimpleStringProperty apellido1Property() {
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getApellido1() {
         return apellido1;
     }
 
-    public SimpleStringProperty apellido2Property() {
+    public void setApellido1(String apellido1) {
+        this.apellido1 = apellido1;
+    }
+
+    public String getApellido2() {
         return apellido2;
     }
 
-    public SimpleStringProperty direccionProperty() {
+    public void setApellido2(String apellido2) {
+        this.apellido2 = apellido2;
+    }
+
+    public String getDireccion() {
         return direccion;
     }
 
-    public SimpleStringProperty localidadProperty() {
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getLocalidad() {
         return localidad;
     }
 
-    public SimpleStringProperty provinciaProperty() {
+    public void setLocalidad(String localidad) {
+        this.localidad = localidad;
+    }
+
+    public String getProvincia() {
         return provincia;
     }
 
-    public SimpleObjectProperty<Date> fechaNacimientoProperty() {
+    public void setProvincia(String provincia) {
+        this.provincia = provincia;
+    }
+
+    public Date getFechaNacimiento() {
         return fechaNacimiento;
     }
+
+    public void setFechaNacimiento(Date fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
 
     //FUNCIONES DE LA CLASE ALUMNO
 
