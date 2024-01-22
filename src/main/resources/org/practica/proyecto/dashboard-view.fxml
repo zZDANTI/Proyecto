@@ -149,15 +149,53 @@
                         <TextField fx:id="buscarAlumno" layoutX="-1.0" layoutY="10.0" onAction="#initialize" prefHeight="29.0" prefWidth="170.0" promptText="Buscar alumno" />
                   <ChoiceBox fx:id="myChoiceBox" layoutX="186.0" layoutY="12.0" prefHeight="21.0" prefWidth="41.0" AnchorPane.leftAnchor="186.0" AnchorPane.topAnchor="12.0" />
                   <Text fill="WHITE" layoutX="237.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="NºRegistros" AnchorPane.leftAnchor="237.0" AnchorPane.topAnchor="16.05078125" />
+                  <Text fx:id="numeroTotalPaginas" fill="WHITE" layoutX="706.0" layoutY="28.94921875" strokeType="OUTSIDE" strokeWidth="0.0" text="total paginas" AnchorPane.rightAnchor="148.412109375" AnchorPane.topAnchor="16.0">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Text>
+                  <Text fx:id="numeroTotalAlumnos" fill="WHITE" layoutX="823.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="total alumnos" AnchorPane.rightAnchor="27.15234375" AnchorPane.topAnchor="16.05078125">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Text>
                   </AnchorPane>
                   <HBox layoutX="17.0" layoutY="398.0" prefHeight="37.0" prefWidth="924.0" spacing="10.0" AnchorPane.bottomAnchor="304.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="17.0">
                      <!-- ... (otro contenido del panelEditar) ... -->
                      <Region HBox.hgrow="ALWAYS" />
-                     <Button fx:id="primeraPag" mnemonicParsing="false" onAction="#paginador" text="Button 1" textAlignment="CENTER" />
-                     <Button fx:id="anteriorPag" mnemonicParsing="false" onAction="#paginador" text="Button 2" textAlignment="CENTER" />
+                     <Button fx:id="primeraPag" mnemonicParsing="false" onAction="#paginador" textAlignment="CENTER">
+                     <graphic>
+                        <ImageView fitHeight="17.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@imagen/dobleFlechaAtras.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                     <Button fx:id="anteriorPag" mnemonicParsing="false" onAction="#paginador" textAlignment="CENTER">
+                     <graphic>
+                        <ImageView fitHeight="17.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@imagen/flechaAtras.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
                      <TextField fx:id="actualPag" alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" text="1" />
-                     <Button fx:id="siguientePag" mnemonicParsing="false" onAction="#paginador" text="Button 3" textAlignment="CENTER" />
-                     <Button fx:id="ultimaPag" mnemonicParsing="false" onAction="#paginador" text="Button 4" textAlignment="CENTER" />
+                     <Button fx:id="siguientePag" mnemonicParsing="false" onAction="#paginador" textAlignment="CENTER">
+                     <graphic>
+                        <ImageView fitHeight="17.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@imagen/flechaDelante.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                     <Button fx:id="ultimaPag" mnemonicParsing="false" onAction="#paginador" textAlignment="CENTER">
+                     <graphic>
+                        <ImageView fitHeight="17.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@imagen/dobleFlechaAdelante.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
                      <Region HBox.hgrow="ALWAYS" />
                   </HBox>
                   <AnchorPane layoutX="16.0" layoutY="397.0" prefHeight="291.0" prefWidth="922.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="15.0">

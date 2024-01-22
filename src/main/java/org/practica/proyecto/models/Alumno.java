@@ -221,6 +221,17 @@ public class Alumno {
         return total;
     }
 
+    public static int totalRegistros() throws SQLException {
+        int total = 0;
+
+        resultSet.absolute(0);
+        while (resultSet.next()) {
+            total++;
+        }
+
+        return total;
+    }
+
     public void guardarAlumno() {
         try {
             //Posiciona el resultset

@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.MediaException;
+import javafx.scene.text.Text;
 import org.controlsfx.control.Notifications;
 import org.practica.proyecto.models.Alumno;
 import javafx.scene.media.Media;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static org.practica.proyecto.models.Alumno.obtenerDatosDeAlumnos;
 
@@ -74,6 +76,8 @@ public class DashboardController {
 
     public Button botonGuardarAlumno;
     public Button botonEliminarAlumno;
+    public Text numeroTotalPaginas;
+    public Text numeroTotalAlumnos;
 
 
     int maxRegistros = 10;
@@ -144,6 +148,13 @@ public class DashboardController {
                 new SimpleStringProperty(fechaString(cellData.getValue().getFechaNacimiento())));
 
 
+        try {
+            numeroTotalPaginas.setText("Total paginas: "+Alumno.contPaginas(maxRegistros));
+            numeroTotalAlumnos.setText("Total Alumnos: " + Alumno.totalRegistros());
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         alumnoClick();
     }
@@ -172,8 +183,6 @@ public class DashboardController {
     //Boton para guardar los datos de lo clientes que se hayan modificado de la tabla
     public void guardarAlumnoSeleccionado() throws ParseException {
         Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
-
-
         int rowsAlumno = alumnoSeleccionado.getRow();
         Alumno alumno = new Alumno(dniClick.getText(),nombreClick.getText(),apellido_1Click.getText(),apellido_2Click.getText(),
                 direccionClick.getText(),localidadClick.getText(),provinciaClick.getText(), (java.sql.Date) fechaDate(nacimientoClick.getValue()),rowsAlumno);
@@ -189,8 +198,6 @@ public class DashboardController {
     public void eliminarAlumnoSeleccionado(){
         Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
         int rowsAlumno = alumnoSeleccionado.getRow();
-
-
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmación");
         alert.setHeaderText("¿Estás seguro de que deseas eliminar a este alumno?");
@@ -206,8 +213,8 @@ public class DashboardController {
                 Alumno alumno = new Alumno();
                 alumno.eliminarAlumno(rowsAlumno);
                 limpiarAlumno();
-                reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/eliminarSonido.wav");
                 mostrarNotificacionConTitulo("Notificación","Alumno eliminado correctamente");
+                reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/eliminarSonido.wav");
                 cargarDatos();
             } else {
                 // El usuario canceló la operación
@@ -350,7 +357,7 @@ public class DashboardController {
         java.util.Date utilDate = dateFormat.parse(fechaString);
         return new java.sql.Date(utilDate.getTime());
     }
-
+    
     public static void mostrarNotificacion(String mensaje) {
         Scene scene = new Scene(new javafx.scene.layout.StackPane(), 300, 200);
         scene.getStylesheets().add(DashboardController.class.getResource("/org/practica/proyecto/css/style.css").toExternalForm());
@@ -358,9 +365,10 @@ public class DashboardController {
                 .darkStyle()
                 .show();
     }
+
     public static void mostrarNotificacionConTitulo(String titulo, String mensaje) {
         Scene scene = new Scene(new javafx.scene.layout.StackPane(), 300, 200);
-        scene.getStylesheets().add(DashboardController.class.getResource("/org/practica/proyecto/css/style.css").toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(DashboardController.class.getResource("/org/practica/proyecto/css/style.css")).toExternalForm());
         Notifications.create().title(titulo).text(mensaje)
                 .darkStyle()
                 .show();
@@ -371,9 +379,7 @@ public class DashboardController {
             MediaPlayer mediaPlayer = new MediaPlayer(media);
 
             // Agregar un oyente para manejar el evento de finalización de reproducción
-            mediaPlayer.setOnEndOfMedia(() -> {
-                mediaPlayer.stop();
-            });
+            mediaPlayer.setOnEndOfMedia(mediaPlayer::stop);
 
             // Reproducir el sonido
             mediaPlayer.play();
