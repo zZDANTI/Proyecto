@@ -1,6 +1,5 @@
 package org.practica.proyecto.controllers;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -312,7 +311,6 @@ public class DashboardController {
     }
 
     public Date fechaDate(LocalDate fecha) throws ParseException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String fechaString = fecha.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         java.util.Date utilDate = dateFormat.parse(fechaString);
         return new java.sql.Date(utilDate.getTime());

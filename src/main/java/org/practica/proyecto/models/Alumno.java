@@ -37,17 +37,6 @@ public class Alumno {
         this.row = row;
     }
 
-    public Alumno(String dni, String nombre, String apellido1, String apellido2, String direccion, String localidad, String provincia, int row) {
-        this.dni = dni;
-        this.nombre = nombre;
-        this.apellido1 = apellido1;
-        this.apellido2 = apellido2;
-        this.direccion = direccion;
-        this.localidad = localidad;
-        this.provincia = provincia;
-        this.row = row;
-    }
-
     public Alumno() {
     }
 
