@@ -261,6 +261,7 @@ public class DashboardController {
         botonAlumnos.setStyle("");
         botonAdd.setStyle("");
         botonPerfil.setStyle("");
+        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
     }
 
     @FXML
@@ -269,6 +270,7 @@ public class DashboardController {
         botonHome.setStyle("");
         botonAdd.setStyle("");
         botonPerfil.setStyle("");
+        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
     }
 
     @FXML
@@ -277,6 +279,7 @@ public class DashboardController {
         botonHome.setStyle("");
         botonAlumnos.setStyle("");
         botonPerfil.setStyle("");
+        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
 
     }
 
@@ -286,6 +289,7 @@ public class DashboardController {
         botonHome.setStyle("");
         botonAlumnos.setStyle("");
         botonAdd.setStyle("");
+        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
     }
 
     private void setBotonActivo(Button boton, AnchorPane panel) {
