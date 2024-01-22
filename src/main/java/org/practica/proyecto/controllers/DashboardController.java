@@ -182,10 +182,31 @@ public class DashboardController {
         Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
         int rowsAlumno = alumnoSeleccionado.getRow();
 
-        Alumno alumno = new Alumno();
-        alumno.eliminarAlumno(rowsAlumno);
-        limpiarAlumno();
-        cargarDatos();
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmación");
+        alert.setHeaderText("¿Estás seguro de que deseas eliminar a este alumno?");
+        alert.setContentText("Alumno: " + alumnoSeleccionado.getNombre() + " "+ alumnoSeleccionado.getApellido1()+  " "+ alumnoSeleccionado.getApellido2()+
+                " con DNI: " + alumnoSeleccionado.getDni());
+
+        // Configurar botones OK y Cancelar
+        alert.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
+
+        // Mostrar el diálogo y esperar la respuesta del usuario
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                Alumno alumno = new Alumno();
+                alumno.eliminarAlumno(rowsAlumno);
+                limpiarAlumno();
+                cargarDatos();
+            } else {
+                // El usuario canceló la operación
+                System.out.println("Operación de eliminación cancelada.");
+            }
+        });
+
+
+
     }
 
     //HACE QUE CAMBIE EL NUMERO Y A LA VEZ SE LO MANDE AL RESULTSET
