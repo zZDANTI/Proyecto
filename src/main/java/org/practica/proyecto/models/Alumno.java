@@ -7,7 +7,7 @@ import java.util.List;
 public class Alumno {
 
 
-    //Variables
+    //VARIABLES
     protected static ResultSet resultSet = null;
     protected static Statement statement = null;
 
@@ -21,9 +21,7 @@ public class Alumno {
     private Date fechaNacimiento;
     private int row;
 
-
     //CONSTRUCTORES
-
 
     public Alumno(String dni, String nombre, String apellido1, String apellido2, String direccion, String localidad, String provincia, Date fechaNacimiento, int row) {
         this.dni = dni;
@@ -37,8 +35,7 @@ public class Alumno {
         this.row = row;
     }
 
-    public Alumno() {
-    }
+    public Alumno() {}
 
     //GETTER Y SETTERS
 
@@ -46,81 +43,48 @@ public class Alumno {
         return dni;
     }
 
-    public void setDni(String dni) {
-        this.dni = dni;
-    }
-
     public String getNombre() {
         return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
     }
 
     public String getApellido1() {
         return apellido1;
     }
 
-    public void setApellido1(String apellido1) {
-        this.apellido1 = apellido1;
-    }
-
     public String getApellido2() {
         return apellido2;
-    }
-
-    public void setApellido2(String apellido2) {
-        this.apellido2 = apellido2;
     }
 
     public String getDireccion() {
         return direccion;
     }
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
-
     public String getLocalidad() {
         return localidad;
-    }
-
-    public void setLocalidad(String localidad) {
-        this.localidad = localidad;
     }
 
     public String getProvincia() {
         return provincia;
     }
 
-    public void setProvincia(String provincia) {
-        this.provincia = provincia;
-    }
-
     public Date getFechaNacimiento() {
         return fechaNacimiento;
-    }
-
-    public void setFechaNacimiento(Date fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
     }
 
     public int getRow() {
         return row;
     }
 
-    public void setRow(int row) {
-        this.row = row;
-    }
 
+    //FUNCIONES DE LA CLASE ALUMNO--------------------------------------------------------------------------------------
 
-    //FUNCIONES DE LA CLASE ALUMNO
-
-    //Inicia la sql del resultset
+    //Bolean pasa saber que sql va a utilizar
     private static boolean resultSetInicializado = false;
+
+    //Se comparará para que no sea el mismo filtro
     private static String filtroAnterior = "";
 
+    //Dependiendo del filtro cambiará la sql
     private static void initResultSet(String filtro) {
         Connection connection;
         try {
@@ -207,7 +171,7 @@ public class Alumno {
 
     //Cuenta el total de pagina de todos los registros que se haya traido
     public static int contPaginas(int maxRegistros) throws SQLException {
-        int total = 0;
+        int total;
         int count2 = 0;
 
         resultSet.beforeFirst();
@@ -221,6 +185,7 @@ public class Alumno {
         return total;
     }
 
+    //Cuenta el total de Alumnos que trae el resultset
     public static int totalRegistros() throws SQLException {
         int total = 0;
 
@@ -232,7 +197,8 @@ public class Alumno {
         return total;
     }
 
-    public void guardarAlumno() {
+    //Guarda el Alumno y ejecuta el resultset
+    public void actualizarAlumno() {
         try {
             //Posiciona el resultset
             resultSet.absolute(getRow());
@@ -255,6 +221,7 @@ public class Alumno {
         }
     }
 
+    //Elimina el Alumno y ejecuta el resultset
     public void eliminarAlumno(int row) {
         try {
             //Posiciona el resultset
@@ -267,6 +234,33 @@ public class Alumno {
         } catch (Exception e) {
             System.err.println("Alumno contiene clave Ajena");
         }
+    }
+
+    //Inserta el Alumno y ejecuta el resultset
+    public void insertarAlumno(){
+        try {
+            // Mover el cursor a la fila de inserción
+            resultSet.moveToInsertRow();
+
+            resultSet.updateString("dni", dni.toUpperCase());
+            resultSet.updateString("nombre", nombre.toUpperCase());
+            resultSet.updateString("apellido_1", apellido1.toUpperCase());
+            resultSet.updateString("apellido_2", apellido2.toUpperCase());
+            resultSet.updateString("direccion", direccion.toUpperCase());
+            resultSet.updateString("localidad", localidad.toUpperCase());
+            resultSet.updateString("provincia", provincia.toUpperCase());
+            resultSet.updateDate("fecha_nacimiento", fechaNacimiento);
+
+            // Insertar la nueva fila en la base de datos
+            resultSet.insertRow();
+
+            System.out.println("Alumnom insertadfo correctamente");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
 

@@ -16,7 +16,6 @@ public class Login extends Application {
         //Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/org/practica/proyecto/login-view.fxml")));
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/org/practica/proyecto/dashboard-view.fxml")));
 
-
         //Crea una nueva escena (Scene) utilizando el nodo raíz (root) que se obtuvo al cargar el archivo FXML.
         Scene scene = new Scene(root);
 

@@ -103,7 +103,7 @@ public class DashboardController {
     public TextField insertarDNI;
 
 
-
+    //CODIGO DE LA APLICACION DASHBOARD---------------------------------------------------------------------------------
 
     // Arranca la clase con el initialize
     @FXML
@@ -119,8 +119,6 @@ public class DashboardController {
         botonDesactivado();
         cargarDatos();
     }
-
-
 
     // Obtiene los datos y los inserta en la tabla
     private void cargarDatos() {
@@ -189,16 +187,16 @@ public class DashboardController {
         });
     }
 
-    //ACCIONES PARA EL GUARDADO O ELIMINADO DEL ALUMNO
+    //ACCIONES PARA EL GUARDADO,INSERTAR Y ELIMINADO DEL ALUMNO ------------------------------------------------------------------
 
-    //Boton para guardar los datos de lo clientes que se hayan modificado de la tabla
+    //Boton para guardar los datos de lo Alumnos que se hayan modificado de la tabla
     public void guardarAlumnoSeleccionado() throws ParseException {
         Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
         int rowsAlumno = alumnoSeleccionado.getRow();
         Alumno alumno = new Alumno(dniClick.getText(),nombreClick.getText(),apellido_1Click.getText(),apellido_2Click.getText(),
                 direccionClick.getText(),localidadClick.getText(),provinciaClick.getText(), (java.sql.Date) fechaDate(nacimientoClick.getValue()),rowsAlumno);
         // Llama un método para guardar los datos del alumno
-        alumno.guardarAlumno();
+        alumno.actualizarAlumno();
         limpiarAlumno();
         mostrarNotificacionConTitulo("Notificación","Alumno editado correctamente");
         reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/guardarSonido.wav");
@@ -206,6 +204,7 @@ public class DashboardController {
 
     }
 
+    //Boton para eliminar los datos de los Alumnos
     public void eliminarAlumnoSeleccionado(){
         Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
         int rowsAlumno = alumnoSeleccionado.getRow();
@@ -237,7 +236,43 @@ public class DashboardController {
 
     }
 
-    //HACE QUE CAMBIE EL NUMERO Y A LA VEZ SE LO MANDE AL RESULTSET
+    //Boton para inserta los datos del Alumno
+    public void insertarAlumno(){
+
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmación");
+        alert.setHeaderText("¿El DNI del Alumno es correcto? No se podrá cambiar");
+        alert.setContentText("El DNI introducido es :" + insertarDNI.getText());
+
+        // Configurar botones OK y Cancelar
+        alert.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
+
+        // Mostrar el diálogo y esperar la respuesta del usuario
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+
+                try {
+                    Alumno alumno = new Alumno(insertarDNI.getText(),insertarNombre.getText(),insertarApellido1.getText(),insertarApellido2.getText(),
+                            insertarDireccion.getText(),insertarLocalidad.getText(),insertarProvincia.getText(), (java.sql.Date) fechaDate(insertarFecha.getValue()),0);
+                    alumno.insertarAlumno();
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+
+                limpiarAlumnoInsertado();
+                mostrarNotificacionConTitulo("Notificación","Alumno eliminado correctamente");
+                reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/guardarSonido.wav");
+                cargarDatos();
+            } else {
+                // El usuario canceló la operación
+                System.out.println("Operación de insercción cancelada.");
+            }
+        });
+
+    }
+
+    //HACE QUE CAMBIE EL NUMERO DEL PAGINADOR Y A LA VEZ SE LO MANDE AL RESULTSET---------------------------------------
     @FXML
     private void paginador(ActionEvent event) throws SQLException {
         Button botonPresionado = (Button) event.getSource();
@@ -272,7 +307,9 @@ public class DashboardController {
         initialize();
     }
 
-    //BOTONES PARA PODER NAVEGAR POR LA NAV
+    //BOTONES PARA PODER NAVEGAR POR BARRA LATERAL----------------------------------------------------------------------
+
+    //Boton navegacion muestra datos del Colegio sobre los alumnos
     @FXML
     private void botonHome() {
         setBotonActivo(botonHome, panelHome);
@@ -282,6 +319,7 @@ public class DashboardController {
         reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
     }
 
+    //Boton navegacion muestra todos los Alumnos y poder editarlos o eliminarlos
     @FXML
     private void botonAlumnos() {
         setBotonActivo(botonAlumnos, panelEditar);
@@ -291,6 +329,7 @@ public class DashboardController {
         reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
     }
 
+    //Boton navegacion añadir Alumno
     @FXML
     private void botonAdd() {
         setBotonActivo(botonAdd, panelAdd);
@@ -301,6 +340,7 @@ public class DashboardController {
 
     }
 
+    //Boton navegacion perfil
     @FXML
     private void botonPerfil() {
         setBotonActivo(botonPerfil, panelPerfil);
@@ -310,6 +350,7 @@ public class DashboardController {
         reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
     }
 
+    //Contiene todos los botenes de navegacion y le pone el color alrededor
     private void setBotonActivo(Button boton, AnchorPane panel) {
         // Aplicar el estilo al nuevo botón activo
         boton.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
@@ -325,8 +366,7 @@ public class DashboardController {
 
     }
 
-
-    //COMPLEMENTO PARA LA EDICION DEL ALUMNO
+    //COMPLEMENTO PARA LA EDICION DEL ALUMNO----------------------------------------------------------------------------
 
     //limpia los datos donde se puede editar el alumno
     public void limpiarAlumno(){
@@ -341,6 +381,18 @@ public class DashboardController {
         nacimientoClick.setValue(null);
     }
 
+    //Limpia los datos cuando inserta un usuario
+    public void limpiarAlumnoInsertado(){
+        insertarDNI.clear();
+        insertarNombre.clear();
+        insertarApellido1.clear();
+        insertarApellido2.clear();
+        insertarDireccion.clear();
+        insertarLocalidad.clear();
+        insertarProvincia.clear();
+        insertarFecha.setValue(null);
+    }
+
     //Si el campo del dni esta vacio se desactiva el boton de guardar y el de eliminar
     public void botonDesactivado() {
         botonGuardarAlumno.disableProperty().bind(dniClick.textProperty().isEmpty());
@@ -348,6 +400,7 @@ public class DashboardController {
 
 
     }
+
     //El usuario puede cambiar cuantos registros quiere que aparezca
     public void elegirRegistros(ActionEvent event){
 
@@ -358,17 +411,21 @@ public class DashboardController {
 
     }
 
+    //FUNCIONES QUE MODIFICAN VISUALMENTE-------------------------------------------------------------------------------
+    //Traduce la fecha de la base de datos a string y formato ESP
     public String fechaString(Date fecha) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         return dateFormat.format(fecha);
     }
 
+    //Traduce la fecha para que pueda leerlo la base de datos en formato ENG
     public Date fechaDate(LocalDate fecha) throws ParseException {
         String fechaString = fecha.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         java.util.Date utilDate = dateFormat.parse(fechaString);
         return new java.sql.Date(utilDate.getTime());
     }
-    
+
+    //Notificacion sin titulo
     public static void mostrarNotificacion(String mensaje) {
         Scene scene = new Scene(new javafx.scene.layout.StackPane(), 300, 200);
         scene.getStylesheets().add(DashboardController.class.getResource("/org/practica/proyecto/css/style.css").toExternalForm());
@@ -377,6 +434,7 @@ public class DashboardController {
                 .show();
     }
 
+    //Notificacion con titulo
     public static void mostrarNotificacionConTitulo(String titulo, String mensaje) {
         Scene scene = new Scene(new javafx.scene.layout.StackPane(), 300, 200);
         scene.getStylesheets().add(Objects.requireNonNull(DashboardController.class.getResource("/org/practica/proyecto/css/style.css")).toExternalForm());
@@ -384,6 +442,8 @@ public class DashboardController {
                 .darkStyle()
                 .show();
     }
+
+    //Le pasas un sonido y lo reproduce
     public void reproducirSonido(String rutaArchivo) {
         try {
             Media media = new Media(new File(rutaArchivo).toURI().toString());
