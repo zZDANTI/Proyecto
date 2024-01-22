@@ -1,5 +1,6 @@
 package org.practica.proyecto.controllers;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,8 +9,13 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import org.practica.proyecto.models.Alumno;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+
 import static org.practica.proyecto.models.Alumno.obtenerDatosDeAlumnos;
 
 public class DashboardController {
@@ -41,7 +47,7 @@ public class DashboardController {
     public TableColumn<Alumno, String> direccion_tabla;
     public TableColumn<Alumno, String> localidad_tabla;
     public TableColumn<Alumno, String> provincia_tabla;
-    public TableColumn<Alumno, Date> fecha_nacimiento_tabla;
+    public TableColumn<Alumno, String> fecha_nacimiento_tabla;
     public TableColumn<Alumno, Integer> rowRs;
 
 
@@ -74,6 +80,9 @@ public class DashboardController {
     public TextField buscarAlumno;
     public ChoiceBox<Integer> myChoiceBox;
     public Integer[] elegirRegistros = {10,20,30,40,50};
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+
 
 
     // Arranca la clase con el initialize
@@ -91,14 +100,7 @@ public class DashboardController {
         cargarDatos();
     }
 
-    public void elegirRegistros(ActionEvent event){
 
-        maxRegistros = myChoiceBox.getValue();
-        paginaActual=1;
-        actualPag.setText(String.valueOf(paginaActual));
-        cargarDatos();
-
-    }
 
     // Obtiene los datos y los inserta en la tabla
     private void cargarDatos() {
@@ -121,7 +123,9 @@ public class DashboardController {
         // Agrega los datos a la tabla
         tabla_alumnos.getItems().addAll(listaAlumnos);
 
+
         // Configura las celdas de las columnas
+
 
         rowRs.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getRow()));
         dni_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getDni()));
@@ -131,7 +135,10 @@ public class DashboardController {
         direccion_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getDireccion()));
         localidad_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getLocalidad()));
         provincia_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getProvincia()));
-        fecha_nacimiento_tabla.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getFechaNacimiento()));
+        fecha_nacimiento_tabla.setCellValueFactory(cellData ->
+                new SimpleStringProperty(fechaString(cellData.getValue().getFechaNacimiento())));
+
+
 
         alumnoClick();
     }
@@ -158,11 +165,13 @@ public class DashboardController {
     //ACCIONES PARA EL GUARDADO O ELIMINADO DEL ALUMNO
 
     //Boton para guardar los datos de lo clientes que se hayan modificado de la tabla
-    public void guardarAlumnoSeleccionado() {
+    public void guardarAlumnoSeleccionado() throws ParseException {
         Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
+
+
         int rowsAlumno = alumnoSeleccionado.getRow();
         Alumno alumno = new Alumno(dniClick.getText(),nombreClick.getText(),apellido_1Click.getText(),apellido_2Click.getText(),
-                direccionClick.getText(),localidadClick.getText(),provinciaClick.getText(),rowsAlumno);
+                direccionClick.getText(),localidadClick.getText(),provinciaClick.getText(), (java.sql.Date) fechaDate(nacimientoClick.getValue()),rowsAlumno);
         // Llama un método para guardar los datos del alumno
         alumno.guardarAlumno();
         limpiarAlumno();
@@ -287,5 +296,28 @@ public class DashboardController {
 
 
     }
+    //El usuario puede cambiar cuantos registros quiere que aparezca
+    public void elegirRegistros(ActionEvent event){
+
+        maxRegistros = myChoiceBox.getValue();
+        paginaActual=1;
+        actualPag.setText(String.valueOf(paginaActual));
+        cargarDatos();
+
+    }
+
+    public String fechaString(Date fecha) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        return dateFormat.format(fecha);
+    }
+
+    public Date fechaDate(LocalDate fecha) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String fechaString = fecha.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        java.util.Date utilDate = dateFormat.parse(fechaString);
+        return new java.sql.Date(utilDate.getTime());
+    }
+
+
 
 }

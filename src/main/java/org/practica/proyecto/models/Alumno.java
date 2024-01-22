@@ -244,6 +244,7 @@ public class Alumno {
             resultSet.updateString("direccion", direccion.toUpperCase());
             resultSet.updateString("localidad", localidad.toUpperCase());
             resultSet.updateString("provincia", provincia.toUpperCase());
+            resultSet.updateDate("fecha_nacimiento", fechaNacimiento);
 
             // Actualiza la fila en la base de datos
             resultSet.updateRow();
