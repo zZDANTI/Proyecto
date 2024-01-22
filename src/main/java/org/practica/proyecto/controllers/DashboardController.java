@@ -79,7 +79,7 @@ public class DashboardController {
     public Text numeroTotalPaginas;
     public Text numeroTotalAlumnos;
 
-
+    //VARIABLES PREDETERMINADAS
     int maxRegistros = 10;
     int paginaActual = 1;
     String filtroAnterior = "";
@@ -90,6 +90,17 @@ public class DashboardController {
     public ChoiceBox<Integer> myChoiceBox;
     public Integer[] elegirRegistros = {10,20,30,40,50};
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+    //VARIABLES DE INSERTAR UN NUEVO ALUMNO
+
+    public DatePicker insertarFecha;
+    public TextField insertarProvincia;
+    public TextField insertarLocalidad;
+    public TextField insertarDireccion;
+    public TextField insertarApellido2;
+    public TextField insertarApellido1;
+    public TextField insertarNombre;
+    public TextField insertarDNI;
 
 
 
