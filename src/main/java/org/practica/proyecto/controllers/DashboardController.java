@@ -3,10 +3,16 @@ package org.practica.proyecto.controllers;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.media.MediaException;
+import org.controlsfx.control.Notifications;
 import org.practica.proyecto.models.Alumno;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import java.io.File;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -174,6 +180,8 @@ public class DashboardController {
         // Llama un método para guardar los datos del alumno
         alumno.guardarAlumno();
         limpiarAlumno();
+        mostrarNotificacionConTitulo("Notificación","Alumno editado correctamente");
+        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/guardarSonido.wav");
         cargarDatos();
 
     }
@@ -198,6 +206,8 @@ public class DashboardController {
                 Alumno alumno = new Alumno();
                 alumno.eliminarAlumno(rowsAlumno);
                 limpiarAlumno();
+                reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/eliminarSonido.wav");
+                mostrarNotificacionConTitulo("Notificación","Alumno eliminado correctamente");
                 cargarDatos();
             } else {
                 // El usuario canceló la operación
@@ -336,6 +346,38 @@ public class DashboardController {
         java.util.Date utilDate = dateFormat.parse(fechaString);
         return new java.sql.Date(utilDate.getTime());
     }
+
+    public static void mostrarNotificacion(String mensaje) {
+        Scene scene = new Scene(new javafx.scene.layout.StackPane(), 300, 200);
+        scene.getStylesheets().add(DashboardController.class.getResource("/org/practica/proyecto/css/style.css").toExternalForm());
+        Notifications.create().text(mensaje)
+                .darkStyle()
+                .show();
+    }
+    public static void mostrarNotificacionConTitulo(String titulo, String mensaje) {
+        Scene scene = new Scene(new javafx.scene.layout.StackPane(), 300, 200);
+        scene.getStylesheets().add(DashboardController.class.getResource("/org/practica/proyecto/css/style.css").toExternalForm());
+        Notifications.create().title(titulo).text(mensaje)
+                .darkStyle()
+                .show();
+    }
+    public void reproducirSonido(String rutaArchivo) {
+        try {
+            Media media = new Media(new File(rutaArchivo).toURI().toString());
+            MediaPlayer mediaPlayer = new MediaPlayer(media);
+
+            // Agregar un oyente para manejar el evento de finalización de reproducción
+            mediaPlayer.setOnEndOfMedia(() -> {
+                mediaPlayer.stop();
+            });
+
+            // Reproducir el sonido
+            mediaPlayer.play();
+        } catch (MediaException e) {
+            e.printStackTrace(); // o manejo específico de la excepción
+        }
+    }
+
 
 
 

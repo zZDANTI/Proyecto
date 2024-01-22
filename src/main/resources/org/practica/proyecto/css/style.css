@@ -64,3 +64,24 @@
     -fx-background-color: #262626;
 }
 
+
+/* Notificaciones */
+
+.notification {
+    -fx-background-color: #3498db; /* Fondo de la notificación */
+    -fx-text-fill: white; /* Color del texto */
+    -fx-border-color: #2980b9; /* Color del borde */
+    -fx-border-width: 2px; /* Ancho del borde */
+    -fx-border-radius: 5px; /* Radio de la esquina del borde */
+}
+
+.notification .title {
+    -fx-font-size: 14px; /* Tamaño de fuente del título */
+    -fx-font-weight: bold; /* Negrita para el título */
+}
+
+.notification .text {
+    -fx-font-size: 12px; /* Tamaño de fuente del texto */
+}
+
+
