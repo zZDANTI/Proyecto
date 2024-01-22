@@ -149,12 +149,12 @@ public class DashboardController {
                 Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
                 if (alumnoSeleccionado != null) {
                     dniClick.setText(alumnoSeleccionado.getDni());
-                    nombreClick.setText(alumnoSeleccionado.getNombre());
-                    apellido_1Click.setText(alumnoSeleccionado.getApellido1());
-                    apellido_2Click.setText(alumnoSeleccionado.getApellido2());
-                    direccionClick.setText(alumnoSeleccionado.getDireccion());
-                    localidadClick.setText(alumnoSeleccionado.getLocalidad());
-                    provinciaClick.setText(alumnoSeleccionado.getProvincia());
+                    nombreClick.setText(alumnoSeleccionado.getNombre().toLowerCase());
+                    apellido_1Click.setText(alumnoSeleccionado.getApellido1().toLowerCase());
+                    apellido_2Click.setText(alumnoSeleccionado.getApellido2().toLowerCase());
+                    direccionClick.setText(alumnoSeleccionado.getDireccion().toLowerCase());
+                    localidadClick.setText(alumnoSeleccionado.getLocalidad().toLowerCase());
+                    provinciaClick.setText(alumnoSeleccionado.getProvincia().toLowerCase());
                     nacimientoClick.setValue(alumnoSeleccionado.getFechaNacimiento().toLocalDate());
                 }
             }
