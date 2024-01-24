@@ -1,5 +1,6 @@
 package org.practica.proyecto.controllers;
 
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -7,7 +8,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.media.MediaException;
 import javafx.scene.text.Text;
 import org.controlsfx.control.Notifications;
 import org.practica.proyecto.models.Alumno;
@@ -189,7 +189,7 @@ public class DashboardController {
 
     //ACCIONES PARA EL GUARDADO,INSERTAR Y ELIMINADO DEL ALUMNO ------------------------------------------------------------------
 
-    //Boton para guardar los datos de lo Alumnos que se hayan modificado de la tabla
+    //Boton para guardar los datos de lo Alumnos que se hayan modificado de la tabla_
     public void guardarAlumnoSeleccionado() throws ParseException {
         Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
         int rowsAlumno = alumnoSeleccionado.getRow();
@@ -450,11 +450,15 @@ public class DashboardController {
             MediaPlayer mediaPlayer = new MediaPlayer(media);
 
             // Agregar un oyente para manejar el evento de finalización de reproducción
-            mediaPlayer.setOnEndOfMedia(mediaPlayer::stop);
+            mediaPlayer.setOnEndOfMedia(() -> {
+                mediaPlayer.stop();
+                mediaPlayer.dispose(); // Liberar recursos
+            });
 
-            // Reproducir el sonido
-            mediaPlayer.play();
-        } catch (MediaException e) {
+            // Reproducir el sonido en el hilo de JavaFX
+            Platform.runLater(() -> mediaPlayer.play());
+
+        } catch (Exception e) {
             e.printStackTrace(); // o manejo específico de la excepción
         }
     }
