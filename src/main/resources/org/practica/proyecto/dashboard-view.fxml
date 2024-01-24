@@ -127,8 +127,18 @@
    <center>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="background" BorderPane.alignment="CENTER">
          <children>
+            <AnchorPane fx:id="fondoNotif" layoutX="5.0" layoutY="4.0" prefHeight="38.0" prefWidth="962.0" styleClass="paneles" visible="false" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+               <children>
+                  <Text fx:id="textoNotif" fill="WHITE" layoutX="16.0" layoutY="26.6318359375" strokeType="OUTSIDE" strokeWidth="0.0" text="Texto notificacion" textAlignment="CENTER" wrappingWidth="925.0" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="4.0">
+                     <font>
+                        <Font name="Arial Bold" size="25.0" />
+                     </font>
+                  </Text>
+               </children>
+            </AnchorPane>
+
             <AnchorPane fx:id="panelHome" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: yellow;" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0" />
-            <AnchorPane fx:id="panelEditar" layoutX="6.0" layoutY="47.0" prefHeight="200.0" prefWidth="200.0" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
+            <AnchorPane fx:id="panelEditar" layoutX="6.0" layoutY="47.0" prefHeight="200.0" prefWidth="200.0" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
 
                   <AnchorPane prefHeight="399.0" prefWidth="938.0" AnchorPane.bottomAnchor="340.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0.0">
                         <TableView fx:id="tabla_alumnos" layoutX="-1.0" layoutY="47.0" prefHeight="348.0" prefWidth="926.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="47.0">
@@ -180,7 +190,7 @@
                            </image>
                         </ImageView>
                      </graphic></Button>
-                     <TextField fx:id="actualPag" alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" text="1" />
+                     <TextField fx:id="actualPag" alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" onAction="#numeroInsertadoPag" text="1" />
                      <Button fx:id="siguientePag" mnemonicParsing="false" onAction="#paginador" textAlignment="CENTER">
                      <graphic>
                         <ImageView fitHeight="17.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
@@ -208,7 +218,7 @@
                      <Arc fill="#262626" layoutX="695.0" layoutY="123.0" length="270.0" radiusX="40.0" radiusY="113.0" startAngle="45.0" stroke="#262626" strokeType="INSIDE" type="ROUND" />
                      <Arc fill="#262626" layoutX="893.0" layoutY="119.0" length="270.0" radiusX="44.0" radiusY="110.0" rotate="180.0" startAngle="45.0" stroke="#262626" strokeType="INSIDE" type="ROUND" />
                      <Circle fill="#ffffff00" layoutX="788.0" layoutY="120.0" radius="96.0" stroke="#262626" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeWidth="25.0" />
-                     <Button fx:id="botonGuardarAlumno" focusTraversable="false" layoutX="679.0" layoutY="229.0" mnemonicParsing="false" onAction="#guardarAlumnoSeleccionado" prefHeight="38.0" prefWidth="170.0" text="Guardar" AnchorPane.leftAnchor="679.0" AnchorPane.topAnchor="229.0">
+                     <Button fx:id="botonGuardarAlumno" focusTraversable="false" layoutX="679.0" layoutY="229.0" mnemonicParsing="false" onAction="#guardarAlumnoClick" prefHeight="38.0" prefWidth="170.0" text="Guardar" AnchorPane.leftAnchor="679.0" AnchorPane.topAnchor="229.0">
                      <font>
                         <Font name="Segoe UI Semibold" size="15.0" />
                      </font></Button>
@@ -232,7 +242,7 @@
                      <Text fill="WHITE" layoutX="342.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Localidad" wrappingWidth="88.111328125" />
                      <Text fill="WHITE" layoutX="342.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Provincia" wrappingWidth="88.111328125" />
                      <Text fill="WHITE" layoutX="342.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Fecha nacimiento" wrappingWidth="122.111328125" />
-                  <Button fx:id="botonEliminarAlumno" focusTraversable="false" layoutX="868.0" layoutY="229.0" mnemonicParsing="false" onAction="#eliminarAlumnoSeleccionado" prefHeight="38.0" prefWidth="37.0" AnchorPane.leftAnchor="868.0" AnchorPane.topAnchor="229.0">
+                  <Button fx:id="botonEliminarAlumno" focusTraversable="false" layoutX="868.0" layoutY="229.0" mnemonicParsing="false" onAction="#eliminarAlumnoClick" prefHeight="38.0" prefWidth="37.0" AnchorPane.leftAnchor="868.0" AnchorPane.topAnchor="229.0">
                      <graphic>
                         <ImageView fitHeight="25.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -252,7 +262,7 @@
 
 
 
-            <AnchorPane fx:id="panelAdd" focusTraversable="true" prefHeight="200.0" prefWidth="800.0" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
+            <AnchorPane fx:id="panelAdd" focusTraversable="true" prefHeight="200.0" prefWidth="800.0" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
                <children>
                   <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
                      <!-- VBox de la imagen -->

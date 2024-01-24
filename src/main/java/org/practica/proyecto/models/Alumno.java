@@ -222,17 +222,19 @@ public class Alumno {
     }
 
     //Elimina el Alumno y ejecuta el resultset
-    public void eliminarAlumno(int row) {
+    public boolean eliminarAlumno(int row) {
         try {
-            //Posiciona el resultset
+            // Posiciona el resultset
             resultSet.absolute(row);
 
-            //Elimina la row seleccionada
+            // Elimina la row seleccionada
             resultSet.deleteRow();
             System.out.println("Alumno eliminado en la base de datos: " + row);
+            return true;  // Indica que la eliminación fue exitosa
 
-        } catch (Exception e) {
-            System.err.println("Alumno contiene clave Ajena");
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar alumno: " + e.getMessage());
+            return false;  // Indica que la eliminación falló
         }
     }
 
@@ -254,7 +256,7 @@ public class Alumno {
             // Insertar la nueva fila en la base de datos
             resultSet.insertRow();
 
-            System.out.println("Alumnom insertadfo correctamente");
+            System.out.println("Alumnom insertado correctamente");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

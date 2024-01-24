@@ -1,15 +1,17 @@
 package org.practica.proyecto.controllers;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
-import org.controlsfx.control.Notifications;
+import javafx.util.Duration;
 import org.practica.proyecto.models.Alumno;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -21,7 +23,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import static org.practica.proyecto.models.Alumno.obtenerDatosDeAlumnos;
 
@@ -68,7 +69,6 @@ public class DashboardController {
     public TextField apellido_2Click;
     public DatePicker nacimientoClick;
 
-
     //PAGINADOR
     public TextField actualPag;
     
@@ -102,6 +102,10 @@ public class DashboardController {
     public TextField insertarNombre;
     public TextField insertarDNI;
 
+    //TEXTO NOTIFICACIONES
+    public Text textoNotif;
+    public AnchorPane fondoNotif;
+
 
     //CODIGO DE LA APLICACION DASHBOARD---------------------------------------------------------------------------------
 
@@ -114,6 +118,7 @@ public class DashboardController {
             myChoiceBox.setValue(10);
             inicializado = false;
         }
+        soloNumeros(actualPag);
 
         myChoiceBox.setOnAction(this::elegirRegistros);
         botonDesactivado();
@@ -121,7 +126,7 @@ public class DashboardController {
     }
 
     // Obtiene los datos y los inserta en la tabla
-    private void cargarDatos() {
+    public void cargarDatos() {
 
 
         limpiarAlumno();
@@ -187,10 +192,10 @@ public class DashboardController {
         });
     }
 
-    //ACCIONES PARA EL GUARDADO,INSERTAR Y ELIMINADO DEL ALUMNO ------------------------------------------------------------------
+    //ACCIONES PARA EL GUARDADO,INSERTAR Y ELIMINADO DEL ALUMNO --------------------------------------------------------
 
     //Boton para guardar los datos de lo Alumnos que se hayan modificado de la tabla_
-    public void guardarAlumnoSeleccionado() throws ParseException {
+    public void guardarAlumnoClick() throws ParseException {
         Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
         int rowsAlumno = alumnoSeleccionado.getRow();
         Alumno alumno = new Alumno(dniClick.getText(),nombreClick.getText(),apellido_1Click.getText(),apellido_2Click.getText(),
@@ -198,14 +203,14 @@ public class DashboardController {
         // Llama un método para guardar los datos del alumno
         alumno.actualizarAlumno();
         limpiarAlumno();
-        mostrarNotificacionConTitulo("Notificación","Alumno editado correctamente");
+        notificacion(true,"Alumno editado correctamente");
         reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/guardarSonido.wav");
         cargarDatos();
 
     }
 
     //Boton para eliminar los datos de los Alumnos
-    public void eliminarAlumnoSeleccionado(){
+    public void eliminarAlumnoClick(){
         Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
         int rowsAlumno = alumnoSeleccionado.getRow();
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -221,16 +226,28 @@ public class DashboardController {
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 Alumno alumno = new Alumno();
-                alumno.eliminarAlumno(rowsAlumno);
-                limpiarAlumno();
-                mostrarNotificacionConTitulo("Notificación","Alumno eliminado correctamente");
-                reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/eliminarSonido.wav");
-                cargarDatos();
+                boolean eliminacionExitosa = alumno.eliminarAlumno(rowsAlumno);
+                if (eliminacionExitosa) {
+                    notificacion(true,"Alumno eliminado correctamente");
+                    reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/eliminarSonido.wav");
+                    limpiarAlumno();
+                    cargarDatos();
+                } else {
+                    // Código para manejar el caso de eliminación fallida
+                    notificacion(false,"Error al eliminar el alumno. Contiene claves ajenas.");
+                }
+
             } else {
                 // El usuario canceló la operación
-                System.out.println("Operación de eliminación cancelada.");
+                notificacion(false,"Operación de eliminación cancelada.");
             }
         });
+
+        // En el controlador
+
+
+
+
 
 
 
@@ -261,20 +278,22 @@ public class DashboardController {
                 }
 
                 limpiarAlumnoInsertado();
-                mostrarNotificacionConTitulo("Notificación","Alumno eliminado correctamente");
+                notificacion(true,"Alumno insertado correctamente");
                 reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/guardarSonido.wav");
                 cargarDatos();
             } else {
                 // El usuario canceló la operación
-                System.out.println("Operación de insercción cancelada.");
+                notificacion(false,"Operación de insercción cancelada.");
             }
         });
 
     }
 
     //HACE QUE CAMBIE EL NUMERO DEL PAGINADOR Y A LA VEZ SE LO MANDE AL RESULTSET---------------------------------------
+
+    //Hace que funcione el paginador dependiendo del boton pulsado
     @FXML
-    private void paginador(ActionEvent event) throws SQLException {
+    public void paginador(ActionEvent event) throws SQLException {
         Button botonPresionado = (Button) event.getSource();
         int totalPaginas = Alumno.contPaginas(maxRegistros);
 
@@ -304,14 +323,41 @@ public class DashboardController {
                 actualPag.setText(String.valueOf(paginaActual));
                 break;
         }
-        initialize();
+        cargarDatos();
+    }
+
+    //EL numero que se inserte en el textField del pafinado lo cambia
+    @FXML
+    private void numeroInsertadoPag() throws SQLException {
+        int totalPaginas = Alumno.contPaginas(maxRegistros);
+
+        actualPag.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                if (!actualPag.getText().isEmpty()) {
+
+                    int pag = Integer.parseInt(actualPag.getText());
+
+                    if (pag <= 0) {
+                        notificacion(false, "El número de página ingresado es inferior al mínimo permitido.");
+                    } else if (pag > totalPaginas) {
+                        notificacion(false, "El número de página ingresado supera el máximo permitido.");
+                    } else {
+                        paginaActual = pag;
+                        actualPag.setText(String.valueOf(paginaActual));
+                        cargarDatos();
+                    }
+                } else {
+                    notificacion(false, "Ingrese un valor válido para la página.");
+                }
+            }
+        });
     }
 
     //BOTONES PARA PODER NAVEGAR POR BARRA LATERAL----------------------------------------------------------------------
 
     //Boton navegacion muestra datos del Colegio sobre los alumnos
     @FXML
-    private void botonHome() {
+    public void botonHome() {
         setBotonActivo(botonHome, panelHome);
         botonAlumnos.setStyle("");
         botonAdd.setStyle("");
@@ -321,7 +367,7 @@ public class DashboardController {
 
     //Boton navegacion muestra todos los Alumnos y poder editarlos o eliminarlos
     @FXML
-    private void botonAlumnos() {
+    public void botonAlumnos() {
         setBotonActivo(botonAlumnos, panelEditar);
         botonHome.setStyle("");
         botonAdd.setStyle("");
@@ -331,7 +377,7 @@ public class DashboardController {
 
     //Boton navegacion añadir Alumno
     @FXML
-    private void botonAdd() {
+    public void botonAdd() {
         setBotonActivo(botonAdd, panelAdd);
         botonHome.setStyle("");
         botonAlumnos.setStyle("");
@@ -342,7 +388,7 @@ public class DashboardController {
 
     //Boton navegacion perfil
     @FXML
-    private void botonPerfil() {
+    public void botonPerfil() {
         setBotonActivo(botonPerfil, panelPerfil);
         botonHome.setStyle("");
         botonAlumnos.setStyle("");
@@ -351,7 +397,7 @@ public class DashboardController {
     }
 
     //Contiene todos los botenes de navegacion y le pone el color alrededor
-    private void setBotonActivo(Button boton, AnchorPane panel) {
+    public void setBotonActivo(Button boton, AnchorPane panel) {
         // Aplicar el estilo al nuevo botón activo
         boton.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
 
@@ -412,6 +458,7 @@ public class DashboardController {
     }
 
     //FUNCIONES QUE MODIFICAN VISUALMENTE-------------------------------------------------------------------------------
+
     //Traduce la fecha de la base de datos a string y formato ESP
     public String fechaString(Date fecha) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -425,42 +472,82 @@ public class DashboardController {
         return new java.sql.Date(utilDate.getTime());
     }
 
-    //Notificacion sin titulo
-    public static void mostrarNotificacion(String mensaje) {
-        Scene scene = new Scene(new javafx.scene.layout.StackPane(), 300, 200);
-        scene.getStylesheets().add(DashboardController.class.getResource("/org/practica/proyecto/css/style.css").toExternalForm());
-        Notifications.create().text(mensaje)
-                .darkStyle()
-                .show();
-    }
+    //Notificacion diseñada
+    public void notificacion(Boolean validacion, String mensaje) {
 
-    //Notificacion con titulo
-    public static void mostrarNotificacionConTitulo(String titulo, String mensaje) {
-        Scene scene = new Scene(new javafx.scene.layout.StackPane(), 300, 200);
-        scene.getStylesheets().add(Objects.requireNonNull(DashboardController.class.getResource("/org/practica/proyecto/css/style.css")).toExternalForm());
-        Notifications.create().title(titulo).text(mensaje)
-                .darkStyle()
-                .show();
+        // Configurar la notificación
+        if (validacion){
+            fondoNotif.setStyle("-fx-background-color: #00ff00");  // Verde
+        }else{
+            fondoNotif.setStyle("-fx-background-color: #ff0000;");  // Rojo
+            reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/errorSonido.wav");
+        }
+
+        textoNotif.setText(mensaje);
+        fondoNotif.setVisible(true);
+
+        // Configurar animación de desplazamiento
+        TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(0.5), fondoNotif);
+        translateTransition.setFromY(-fondoNotif.getHeight());
+        translateTransition.setToY(0);
+
+        // Configurar animación de opacidad (aparecer)
+        FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.5), fondoNotif);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+
+        // Configurar animación de opacidad (desaparecer)
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.5), fondoNotif);
+        fadeOut.setFromValue(1);
+        fadeOut.setToValue(0);
+
+        // Iniciar la animación de aparición y desaparición
+        translateTransition.play();
+        fadeIn.play();
+
+        // Configurar la duración total de la notificación
+        Duration notificacionDuration = Duration.seconds(1.5);
+
+        // Configurar la línea de tiempo para desaparecer después de un tiempo
+        fadeOut.setDelay(notificacionDuration);
+        fadeOut.play();
     }
 
     //Le pasas un sonido y lo reproduce
     public void reproducirSonido(String rutaArchivo) {
-        try {
-            Media media = new Media(new File(rutaArchivo).toURI().toString());
-            MediaPlayer mediaPlayer = new MediaPlayer(media);
+        Platform.runLater(() -> {
+            try {
+                Media media = new Media(new File(rutaArchivo).toURI().toString());
+                MediaPlayer mediaPlayer = new MediaPlayer(media);
 
-            // Agregar un oyente para manejar el evento de finalización de reproducción
-            mediaPlayer.setOnEndOfMedia(() -> {
-                mediaPlayer.stop();
-                mediaPlayer.dispose(); // Liberar recursos
-            });
+                mediaPlayer.setOnEndOfMedia(() -> {
+                    if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+                        mediaPlayer.stop();
+                    }
+                    mediaPlayer.dispose(); // Liberar recursos
+                });
 
-            // Reproducir el sonido en el hilo de JavaFX
-            Platform.runLater(() -> mediaPlayer.play());
+                mediaPlayer.play();
+            } catch (Exception e) {
+                System.err.println("Error al reproducir el sonido: " + e.getMessage());
+                e.printStackTrace();
+                // Agregar lógica de manejo de excepciones específica si es necesario
+            }
+        });
+    }
 
-        } catch (Exception e) {
-            e.printStackTrace(); // o manejo específico de la excepción
-        }
+    public void soloNumeros(TextField textField) {
+
+        TextFormatter<Object> formatter = new TextFormatter<>(change -> {
+            if (change.getText().matches("[0-9]*")) {
+                return change;
+            } else {
+                return null; // Rechazar el cambio si no es un número
+            }
+        });
+
+        textField.setTextFormatter(formatter);
+
     }
 
 
