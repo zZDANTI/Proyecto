@@ -6,15 +6,20 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.StackedBarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.practica.proyecto.models.Alumno;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import org.practica.proyecto.models.Graficos;
 import java.io.File;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -82,6 +87,7 @@ public class DashboardController {
     public Text numeroTotalAlumnos;
 
 
+
     //VARIABLES PREDETERMINADAS
     int maxRegistros = 10;
     int paginaActual = 1;
@@ -112,11 +118,17 @@ public class DashboardController {
     public AnchorPane fondoNotif;
 
 
+    public PieChart pitochat;
+    public StackedBarChart<String, Number> barraAlumno;
+
+
     //CODIGO DE LA APLICACION DASHBOARD---------------------------------------------------------------------------------
 
     // Arranca la clase con el initialize
     @FXML
-    public void initialize(){
+    public void initialize() throws SQLException {
+
+        pruebaDatos();
 
         if(inicializado){
             myChoiceBox.getItems().addAll(elegirRegistros);
@@ -129,6 +141,45 @@ public class DashboardController {
         botonDesactivado();
         cargarDatos();
     }
+
+    public void pruebaDatos() throws SQLException {
+        Graficos graficos2= new Graficos();
+        List<Graficos> graficos = graficos2.obtenerDatosPorAnio();
+
+        // Limpiar los datos existentes en el StackedBarChart
+        barraAlumno.getData().clear();
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        for (Graficos grafico : graficos) {
+            series.getData().add(new XYChart.Data<>(String.valueOf(grafico.getAnioNacimiento()), grafico.getCantidadAlumnos()));
+        }
+
+        // Añadir la serie al StackedBarChart
+        barraAlumno.getData().add(series);
+        series.setName("Alumnos agrupados por año de nacimiento");
+
+        // Mostrar los valores en etiquetas
+        for (XYChart.Series<String, Number> unaSerie : barraAlumno.getData()) {
+            for (XYChart.Data<String, Number> data : unaSerie.getData()) {
+                Label label = new Label(data.getYValue().toString());
+                StackPane stackPane = (StackPane) data.getNode();
+                stackPane.getChildren().add(label);
+                label.setStyle("-fx-font-size: 8pt;");
+            }
+        }
+
+        // Crear datos para el PieChart
+        PieChart.Data slice1 = new PieChart.Data("Santomera", 30);
+        PieChart.Data slice2 = new PieChart.Data("Categoria 2", 45);
+        PieChart.Data slice3 = new PieChart.Data("Categoria 3", 25);
+        PieChart.Data slice4 = new PieChart.Data("Categoria 3", 25);
+
+        // Crear el PieChart y agregar los datos
+
+        pitochat.getData().addAll(slice1, slice2, slice3, slice4);
+
+    }
+
 
     // Obtiene los datos y los inserta en la tabla
     public void cargarDatos() {
@@ -250,7 +301,7 @@ public class DashboardController {
     }
 
     //Boton para inserta los datos del Alumno
-    public void insertarAlumno() {
+    public void insertarAlumno() throws SQLException {
         // Verificar si el DNI tiene un formato válido
         if (!validarFormatoDNI(insertarDNI.getText())) {
             notificacion(false, "El formato del DNI no es válido.");
@@ -292,6 +343,7 @@ public class DashboardController {
                 notificacion(false, "Operación de insercción cancelada.");
             }
         });
+        pruebaDatos();
     }
 
     private boolean validarFormatoDNI(String dni) {
