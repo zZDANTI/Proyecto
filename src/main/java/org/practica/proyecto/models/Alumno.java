@@ -239,7 +239,7 @@ public class Alumno {
     }
 
     //Inserta el Alumno y ejecuta el resultset
-    public void insertarAlumno(){
+    public boolean insertarAlumno(){
         try {
             // Mover el cursor a la fila de inserción
             resultSet.moveToInsertRow();
@@ -259,10 +259,9 @@ public class Alumno {
             System.out.println("Alumnom insertado correctamente");
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return false;
         }
-
-
+        return true;
     }
 
 

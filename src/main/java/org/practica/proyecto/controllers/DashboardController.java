@@ -23,6 +23,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
 
 import static org.practica.proyecto.models.Alumno.obtenerDatosDeAlumnos;
 
@@ -79,6 +81,7 @@ public class DashboardController {
     public Text numeroTotalPaginas;
     public Text numeroTotalAlumnos;
 
+
     //VARIABLES PREDETERMINADAS
     int maxRegistros = 10;
     int paginaActual = 1;
@@ -102,6 +105,8 @@ public class DashboardController {
     public TextField insertarNombre;
     public TextField insertarDNI;
 
+    public Button botonInsertarAlumno;
+
     //TEXTO NOTIFICACIONES
     public Text textoNotif;
     public AnchorPane fondoNotif;
@@ -118,7 +123,7 @@ public class DashboardController {
             myChoiceBox.setValue(10);
             inicializado = false;
         }
-        soloNumeros(actualPag);
+        validacion();
 
         myChoiceBox.setOnAction(this::elegirRegistros);
         botonDesactivado();
@@ -242,25 +247,22 @@ public class DashboardController {
                 notificacion(false,"Operación de eliminación cancelada.");
             }
         });
-
-        // En el controlador
-
-
-
-
-
-
-
     }
 
     //Boton para inserta los datos del Alumno
-    public void insertarAlumno(){
+    public void insertarAlumno() {
+        // Verificar si el DNI tiene un formato válido
+        if (!validarFormatoDNI(insertarDNI.getText())) {
+            notificacion(false, "El formato del DNI no es válido.");
+            return;
+        }
 
+        // Agregar más validaciones según sea necesario...
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmación");
         alert.setHeaderText("¿El DNI del Alumno es correcto? No se podrá cambiar");
-        alert.setContentText("El DNI introducido es :" + insertarDNI.getText());
+        alert.setContentText("El DNI introducido es: " + insertarDNI.getText());
 
         // Configurar botones OK y Cancelar
         alert.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
@@ -268,25 +270,44 @@ public class DashboardController {
         // Mostrar el diálogo y esperar la respuesta del usuario
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-
                 try {
-                    Alumno alumno = new Alumno(insertarDNI.getText(),insertarNombre.getText(),insertarApellido1.getText(),insertarApellido2.getText(),
-                            insertarDireccion.getText(),insertarLocalidad.getText(),insertarProvincia.getText(), (java.sql.Date) fechaDate(insertarFecha.getValue()),0);
-                    alumno.insertarAlumno();
+                    // Realizar la inserción del alumno
+                    Alumno alumno = new Alumno(insertarDNI.getText(), insertarNombre.getText(), insertarApellido1.getText(),
+                            insertarApellido2.getText(), insertarDireccion.getText(), insertarLocalidad.getText(),
+                            insertarProvincia.getText(), (java.sql.Date) fechaDate(insertarFecha.getValue()), 0);
+                    if (alumno.insertarAlumno()){
+                        limpiarAlumnoInsertado();
+                        notificacion(true, "Alumno insertado correctamente");
+                        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/guardarSonido.wav");
+                        cargarDatos();
+                    }else{
+                        notificacion(false, "El DNI introducido ya existe");
+                    }
+
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
-
-                limpiarAlumnoInsertado();
-                notificacion(true,"Alumno insertado correctamente");
-                reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/guardarSonido.wav");
-                cargarDatos();
             } else {
                 // El usuario canceló la operación
-                notificacion(false,"Operación de insercción cancelada.");
+                notificacion(false, "Operación de insercción cancelada.");
             }
         });
+    }
 
+    private boolean validarFormatoDNI(String dni) {
+        if (dni.length() == 9) { // DNI debe tener 9 caracteres (8 números + 1 letra)
+            String numeros = dni.substring(0, 8);
+            String letra = dni.substring(8);
+
+            // Verificar que los primeros 8 caracteres sean números
+            if (numeros.matches("\\d+")) {
+                // Verificar que el último caracter sea una letra
+                if (letra.matches("[a-zA-Z]")) {
+                    return true; // El formato es válido
+                }
+            }
+        }
+        return false; // El formato no es válido
     }
 
     //HACE QUE CAMBIE EL NUMERO DEL PAGINADOR Y A LA VEZ SE LO MANDE AL RESULTSET---------------------------------------
@@ -439,11 +460,60 @@ public class DashboardController {
         insertarFecha.setValue(null);
     }
 
-    //Si el campo del dni esta vacio se desactiva el boton de guardar y el de eliminar
+    //Si algun campo de insertar o actualizar Alumno está vacio no se activará
     public void botonDesactivado() {
-        botonGuardarAlumno.disableProperty().bind(dniClick.textProperty().isEmpty());
-        botonEliminarAlumno.disableProperty().bind(dniClick.textProperty().isEmpty());
+        botonGuardarAlumno.disableProperty().bind(
+                dniClick.textProperty().isEmpty()
+                        .or(nombreClick.textProperty().isEmpty())
+                        .or(apellido_1Click.textProperty().isEmpty())
+                        .or(direccionClick.textProperty().isEmpty())
+                        .or(localidadClick.textProperty().isEmpty())
+                        .or(provinciaClick.textProperty().isEmpty())
+                        .or(nacimientoClick.valueProperty().isNull())
+        );
 
+        botonEliminarAlumno.disableProperty().bind(
+                dniClick.textProperty().isEmpty()
+                        .or(nombreClick.textProperty().isEmpty())
+                        .or(apellido_1Click.textProperty().isEmpty())
+                        .or(direccionClick.textProperty().isEmpty())
+                        .or(localidadClick.textProperty().isEmpty())
+                        .or(provinciaClick.textProperty().isEmpty())
+                        .or(nacimientoClick.valueProperty().isNull())
+        );
+
+        botonInsertarAlumno.disableProperty().bind(
+                insertarDNI.textProperty().isEmpty()
+                        .or(insertarNombre.textProperty().isEmpty())
+                        .or(insertarApellido1.textProperty().isEmpty())
+                        .or(insertarLocalidad.textProperty().isEmpty())
+                        .or(insertarProvincia.textProperty().isEmpty())
+                        .or(insertarDireccion.textProperty().isEmpty())
+                        .or(insertarFecha.valueProperty().isNull())
+        );
+    }
+
+    //Valida que todos los campo para introducir toodo correcto
+    public void validacion(){
+        //Paginador
+        soloNumeros(actualPag);
+
+        //ActualizarAlumno
+        soloLetras(nombreClick);
+        soloLetras(apellido_1Click);
+        soloLetras(apellido_2Click);
+        soloLetras(localidadClick);
+        soloLetras(provinciaClick);
+        validarFecha(nacimientoClick);
+
+        //ActualizarAlumno
+        validarDNI(insertarDNI);
+        soloLetras(insertarNombre);
+        soloLetras(insertarApellido1);
+        soloLetras(insertarApellido2);
+        soloLetras(insertarLocalidad);
+        soloLetras(insertarProvincia);
+        validarFecha(insertarFecha);
 
     }
 
@@ -536,6 +606,9 @@ public class DashboardController {
         });
     }
 
+    //Validaciones para que no puedan escribir lo que quieran-----------------------------------------------------------
+
+    //Valida que solo puedan entrar numeros
     public void soloNumeros(TextField textField) {
 
         TextFormatter<Object> formatter = new TextFormatter<>(change -> {
@@ -548,6 +621,58 @@ public class DashboardController {
 
         textField.setTextFormatter(formatter);
 
+    }
+
+    //Valida que solo puedan poner caracteres
+    public void soloLetras(TextField textField) {
+
+        // Configurar el TextFormatter para permitir solo letras
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            String newText = change.getControlNewText();
+            if (Pattern.matches("[a-zA-Z ]*", newText)) {
+                return change;
+            } else {
+                return null;
+            }
+        };
+
+        TextFormatter<String> textFormatter = new TextFormatter<>(filter);
+        textField.setTextFormatter(textFormatter);
+    }
+
+    //Valida un dni español
+    public void validarDNI(TextField textField) {
+        // Configurar el TextFormatter para validar DNI español
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            String newText = change.getControlNewText();
+
+            // El DNI español tiene 8 dígitos seguidos de una letra (mayúscula)
+            if (Pattern.matches("\\d{0,8}[a-zA-Z]?", newText)) {
+                return change;
+            } else {
+                return null;
+            }
+        };
+
+        TextFormatter<String> textFormatter = new TextFormatter<>(filter);
+        textField.setTextFormatter(textFormatter);
+    }
+
+    //Valida fecha entre 2 años atras y 125 maximo
+    public void validarFecha(DatePicker datePicker) {
+        datePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+
+                LocalDate today = LocalDate.now();
+                LocalDate fechaInicio = today.minusYears(2);
+                LocalDate fechaLimite = today.minusYears(125);
+
+                // Deshabilitar fechas más de 2 años en el pasado y fechas más de 125 años en el pasado
+                setDisable(empty || date.isAfter(fechaInicio) || date.isBefore(fechaLimite));
+            }
+        });
     }
 
 

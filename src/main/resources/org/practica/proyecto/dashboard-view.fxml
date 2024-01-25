@@ -242,9 +242,9 @@
                      <Text fill="WHITE" layoutX="342.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Localidad" wrappingWidth="88.111328125" />
                      <Text fill="WHITE" layoutX="342.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Provincia" wrappingWidth="88.111328125" />
                      <Text fill="WHITE" layoutX="342.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Fecha nacimiento" wrappingWidth="122.111328125" />
-                  <Button fx:id="botonEliminarAlumno" focusTraversable="false" layoutX="868.0" layoutY="229.0" mnemonicParsing="false" onAction="#eliminarAlumnoClick" prefHeight="38.0" prefWidth="37.0" AnchorPane.leftAnchor="868.0" AnchorPane.topAnchor="229.0">
+                  <Button fx:id="botonEliminarAlumno" focusTraversable="false" layoutX="863.0" layoutY="225.0" mnemonicParsing="false" onAction="#eliminarAlumnoClick" prefHeight="38.0" prefWidth="37.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="863.0" AnchorPane.topAnchor="225.0">
                      <graphic>
-                        <ImageView fitHeight="25.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="35.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@imagen/eliminarBoton.png" />
                            </image>
@@ -349,9 +349,9 @@
                   </VBox>
 
                   <!-- Botón en la parte inferior derecha -->
-                  <Button fx:id="insertarBoton" focusTraversable="false" onAction="#insertarAlumno" prefHeight="57.0" prefWidth="47.0" style="-fx-background-color: transparent; -fx-padding: 0;" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                  <Button fx:id="botonInsertarAlumno" focusTraversable="false" onAction="#insertarAlumno" prefHeight="54.0" prefWidth="58.0" style="-fx-background-color: transparent; -fx-padding: 0;" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="10.0">
                      <graphic>
-                        <ImageView fitHeight="57.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="48.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@imagen/imagenInsertar.png" />
                            </image>
