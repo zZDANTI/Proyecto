@@ -6,14 +6,15 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.chart.PieChart;
-import javafx.scene.chart.StackedBarChart;
-import javafx.scene.chart.XYChart;
+import javafx.geometry.Side;
+import javafx.scene.Node;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.practica.proyecto.models.Alumno;
@@ -26,6 +27,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -87,7 +89,6 @@ public class DashboardController {
     public Text numeroTotalAlumnos;
 
 
-
     //VARIABLES PREDETERMINADAS
     int maxRegistros = 10;
     int paginaActual = 1;
@@ -118,7 +119,8 @@ public class DashboardController {
     public AnchorPane fondoNotif;
 
 
-    public PieChart pitochat;
+    //GRAFICOS ALUMNO
+    public PieChart quesitosLocalidad;
     public StackedBarChart<String, Number> barraAlumno;
 
 
@@ -128,7 +130,7 @@ public class DashboardController {
     @FXML
     public void initialize() throws SQLException {
 
-        pruebaDatos();
+
 
         if(inicializado){
             myChoiceBox.getItems().addAll(elegirRegistros);
@@ -140,23 +142,27 @@ public class DashboardController {
         myChoiceBox.setOnAction(this::elegirRegistros);
         botonDesactivado();
         cargarDatos();
+
     }
 
-    public void pruebaDatos() throws SQLException {
-        Graficos graficos2= new Graficos();
-        List<Graficos> graficos = graficos2.obtenerDatosPorAnio();
+    public void datosGrafico() throws SQLException {
+        Graficos graficos= new Graficos();
+        List<Graficos> listGraficos = graficos.graficoAnios();
 
         // Limpiar los datos existentes en el StackedBarChart
         barraAlumno.getData().clear();
 
+        //Inserta los datos con un for each
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        for (Graficos grafico : graficos) {
-            series.getData().add(new XYChart.Data<>(String.valueOf(grafico.getAnioNacimiento()), grafico.getCantidadAlumnos()));
+        for (Graficos grafico : listGraficos) {
+            series.getData().add(new XYChart.Data<>(String.valueOf(grafico.getCantidadBuscada()), grafico.getCantidadAlumnos()));
         }
 
-        // Añadir la serie al StackedBarChart
+        // Añade los datos
         barraAlumno.getData().add(series);
+
         series.setName("Alumnos agrupados por año de nacimiento");
+
 
         // Mostrar los valores en etiquetas
         for (XYChart.Series<String, Number> unaSerie : barraAlumno.getData()) {
@@ -164,19 +170,42 @@ public class DashboardController {
                 Label label = new Label(data.getYValue().toString());
                 StackPane stackPane = (StackPane) data.getNode();
                 stackPane.getChildren().add(label);
-                label.setStyle("-fx-font-size: 8pt;");
+                label.setStyle("-fx-text-fill: white; -fx-font-size: 15pt;");
+
+                CategoryAxis xAxis = (CategoryAxis) barraAlumno.getXAxis();
+                NumberAxis yAxis = (NumberAxis) barraAlumno.getYAxis();
+
+                // Cambiar color de los datos en el eje X (inferior)
+                xAxis.setStyle("-fx-tick-label-fill: white;");
+
+                // Cambiar color de los datos en el eje Y (lateral)
+                yAxis.setStyle("-fx-tick-label-fill: white;");
             }
         }
 
-        // Crear datos para el PieChart
-        PieChart.Data slice1 = new PieChart.Data("Santomera", 30);
-        PieChart.Data slice2 = new PieChart.Data("Categoria 2", 45);
-        PieChart.Data slice3 = new PieChart.Data("Categoria 3", 25);
-        PieChart.Data slice4 = new PieChart.Data("Categoria 3", 25);
 
-        // Crear el PieChart y agregar los datos
 
-        pitochat.getData().addAll(slice1, slice2, slice3, slice4);
+        // Limpiar los datos existentes en el PieChart
+        quesitosLocalidad.getData().clear();
+
+        // Obtener datos para el PieChart
+        List<Graficos> pieChartData2 = graficos.graficoProvincia();
+
+        // Crear datos para el PieChart y mostrar valores en etiquetas
+        for (Graficos grafico : pieChartData2) {
+            PieChart.Data newData = new PieChart.Data(grafico.getCantidadBuscada(), grafico.getCantidadAlumnos());
+            quesitosLocalidad.getData().add(newData); // Agregar nuevo dato
+        }
+
+        // Aplicar estilo CSS para cambiar el color del texto en los quesitos y el título a blanco
+        quesitosLocalidad.getStylesheets().add("data:text/css," +
+                ".chart-pie-label {-fx-fill: white;}" +
+                ".chart-title {-fx-text-fill: white;}"
+        );
+
+
+
+
 
     }
 
@@ -226,7 +255,13 @@ public class DashboardController {
             throw new RuntimeException(e);
         }
 
+
         alumnoClick();
+        try {
+            datosGrafico();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //Funcion para saber que alumno se ha clickeado en la tabla
@@ -343,7 +378,7 @@ public class DashboardController {
                 notificacion(false, "Operación de insercción cancelada.");
             }
         });
-        pruebaDatos();
+        datosGrafico();
     }
 
     private boolean validarFormatoDNI(String dni) {
@@ -364,7 +399,7 @@ public class DashboardController {
 
     //HACE QUE CAMBIE EL NUMERO DEL PAGINADOR Y A LA VEZ SE LO MANDE AL RESULTSET---------------------------------------
 
-    //Hace que funcione el paginador dependiendo del boton pulsado
+    //Cambia el numero del paginador dependiendo del boton pulsado
     @FXML
     public void paginador(ActionEvent event) throws SQLException {
         Button botonPresionado = (Button) event.getSource();

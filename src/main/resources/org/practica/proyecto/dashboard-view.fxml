@@ -141,18 +141,23 @@
                </children>
             </AnchorPane>
 
-            <AnchorPane fx:id="panelHome" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: yellow;" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
+            <AnchorPane fx:id="panelHome" prefHeight="400.0" prefWidth="600.0" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
                <children>
-                  <PieChart fx:id="pitochat" layoutX="544.0" layoutY="26.0" prefHeight="313.0" prefWidth="367.0" title="ALumnos" AnchorPane.bottomAnchor="400.0" AnchorPane.leftAnchor="544.0" AnchorPane.rightAnchor="45.0" AnchorPane.topAnchor="26.0" />
-                  <StackedBarChart fx:id="barraAlumno" layoutX="24.0" layoutY="394.0" prefHeight="331.0" prefWidth="908.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="24.0">
-                    <xAxis>
-                      <CategoryAxis side="BOTTOM" />
-                    </xAxis>
-                    <yAxis>
-                      <NumberAxis side="LEFT" />
-                    </yAxis>
+                  <PieChart fx:id="quesitosLocalidad" layoutX="152.0" layoutY="14.0" prefHeight="430.0" prefWidth="935.0" title="Provincia Por Alumnos" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="14.0" />
+                  <StackedBarChart fx:id="barraAlumno" layoutX="14.0" layoutY="442.0" prefHeight="287.0" prefWidth="931.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="442.0">
+                     <xAxis>
+                        <CategoryAxis side="BOTTOM" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis prefWidth="0.0" side="LEFT" />
+                     </yAxis>
                   </StackedBarChart>
-               </children></AnchorPane>
+               </children>
+            </AnchorPane>
+
+
+
+
             <AnchorPane fx:id="panelEditar" layoutX="6.0" layoutY="47.0" prefHeight="200.0" prefWidth="200.0" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
 
                   <AnchorPane prefHeight="399.0" prefWidth="938.0" AnchorPane.bottomAnchor="340.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0.0">
