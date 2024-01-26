@@ -149,11 +149,18 @@ public class DashboardController {
         try {
             github = new GitHubBuilder().withOAuthToken("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").build();
             GHRepository repository = github.getRepository("zZDANTI/Proyecto");
+
+            // Verificar si el repositorio es null
+            if (repository == null) {
+                System.out.println("El repositorio no fue encontrado en GitHub.");
+                return;
+            }
+
             GHRelease latestRelease = repository.getLatestRelease();
 
             if (latestRelease != null) {
                 String latestVersion = latestRelease.getTagName();
-                String currentVersion = "1.0"; // Versión actual de la aplicación
+                String currentVersion = "5.0"; // Versión actual de la aplicación
 
                 if (!latestVersion.equals(currentVersion)) {
                     mostrarNotificacionDeActualizacion();
@@ -167,6 +174,7 @@ public class DashboardController {
             e.printStackTrace();
         }
     }
+
 
 
 
