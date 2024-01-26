@@ -34,34 +34,4 @@ public class Singleton {
             }
         }
     }
-/*
-    public static void main(String[] args) {
-        try {
-            Connection conexion = obtenerConexion();
-
-            // Ejemplo de consulta
-            String consultaSQL = "SELECT * FROM alumno";
-            try (PreparedStatement statement = conexion.prepareStatement(consultaSQL);
-                 ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    // Aquí puedes procesar los resultados de la consulta
-                    String dni = resultSet.getString("dni");
-                    String nombre = resultSet.getString("nombre");
-                    System.out.println("DNI: " + dni + ", Nombre: " + nombre);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                throw new RuntimeException("Error al ejecutar la consulta.");
-            }
-
-            // Puedes realizar otras operaciones en la base de datos aquí, como inserciones o actualizaciones
-
-            // Cerrar la conexión al finalizar
-            cerrarConexion();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
- */
 }

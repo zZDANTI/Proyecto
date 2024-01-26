@@ -3,6 +3,8 @@ module org.practica.proyecto {
     requires javafx.fxml;
     requires java.sql;
     requires org.controlsfx.controls;
+    requires javafx.media;
+    requires github.api;
 
     opens org.practica.proyecto to javafx.fxml;
 
