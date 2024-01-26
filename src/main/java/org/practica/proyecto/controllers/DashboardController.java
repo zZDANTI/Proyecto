@@ -147,8 +147,9 @@ public class DashboardController {
     public void actualizacion() {
         GitHub github;
         try {
-            github = new GitHubBuilder().withOAuthToken("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").build();
+            github = new GitHubBuilder().build(); // No es necesario proporcionar un token de acceso
             GHRepository repository = github.getRepository("zZDANTI/Proyecto");
+            String latestVersion = ""; // Inicializar con una cadena vacía
 
             // Verificar si el repositorio es null
             if (repository == null) {
@@ -159,8 +160,10 @@ public class DashboardController {
             GHRelease latestRelease = repository.getLatestRelease();
 
             if (latestRelease != null) {
-                String latestVersion = latestRelease.getTagName();
+                latestVersion = latestRelease.getTagName();
                 String currentVersion = "1.0"; // Versión actual de la aplicación
+
+                System.out.println("Current Version: " + currentVersion);
 
                 if (!latestVersion.equals(currentVersion)) {
                     mostrarNotificacionDeActualizacion();
@@ -170,12 +173,12 @@ public class DashboardController {
                 System.out.println("No se encontró ninguna versión de release para el repositorio.");
             }
 
+            System.out.println("Latest Version: " + latestVersion); // Imprimir latestVersion fuera del bloque else
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
 
 
 
@@ -668,7 +671,7 @@ public class DashboardController {
     //Traduce la fecha para que pueda leerlo la base de datos en formato ENG
     public Date fechaDate(LocalDate fecha) throws ParseException {
         String fechaString = fecha.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        java.util.Date utilDate = dateFormat.parse(fechaString);
+        Date utilDate = dateFormat.parse(fechaString);
         return new java.sql.Date(utilDate.getTime());
     }
 
