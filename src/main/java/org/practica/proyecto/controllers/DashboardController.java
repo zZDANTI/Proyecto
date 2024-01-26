@@ -160,7 +160,7 @@ public class DashboardController {
 
             if (latestRelease != null) {
                 String latestVersion = latestRelease.getTagName();
-                String currentVersion = "5.0"; // Versión actual de la aplicación
+                String currentVersion = "1.0"; // Versión actual de la aplicación
 
                 if (!latestVersion.equals(currentVersion)) {
                     mostrarNotificacionDeActualizacion();
