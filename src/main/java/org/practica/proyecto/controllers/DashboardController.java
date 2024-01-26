@@ -6,15 +6,12 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Side;
-import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.practica.proyecto.models.Alumno;
@@ -22,12 +19,13 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import org.practica.proyecto.models.Graficos;
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import org.kohsuke.github.*;
 import java.util.Date;
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -128,8 +126,9 @@ public class DashboardController {
 
     // Arranca la clase con el initialize
     @FXML
-    public void initialize() throws SQLException {
+    public void initialize(){
 
+        actualizacion();
 
 
         if(inicializado){
@@ -143,6 +142,42 @@ public class DashboardController {
         botonDesactivado();
         cargarDatos();
 
+    }
+
+    public void actualizacion() {
+        GitHub github;
+        try {
+            github = new GitHubBuilder().withOAuthToken("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").build();
+            GHRepository repository = github.getRepository("zZDANTI/Proyecto");
+            GHRelease latestRelease = repository.getLatestRelease();
+
+            if (latestRelease != null) {
+                String latestVersion = latestRelease.getTagName();
+                String currentVersion = "1.0"; // Versión actual de la aplicación
+
+                if (!latestVersion.equals(currentVersion)) {
+                    mostrarNotificacionDeActualizacion();
+                }
+            } else {
+                // Tratar el caso en el que no hay versión de release disponible
+                System.out.println("No se encontró ninguna versión de release para el repositorio.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+    private void mostrarNotificacionDeActualizacion() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Actualización Disponible");
+        alert.setHeaderText("¡Hay una nueva versión disponible!");
+        alert.setContentText("Por favor, descargue la última versión desde nuestro sitio web.");
+
+        alert.showAndWait();
     }
 
     public void datosGrafico() throws SQLException {

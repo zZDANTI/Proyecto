@@ -4,6 +4,7 @@ module org.practica.proyecto {
     requires java.sql;
     requires org.controlsfx.controls;
     requires javafx.media;
+    requires github.api;
 
     opens org.practica.proyecto to javafx.fxml;
 
