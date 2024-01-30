@@ -141,7 +141,7 @@
                </children>
             </AnchorPane>
 
-            <AnchorPane fx:id="panelHome" prefHeight="400.0" prefWidth="600.0" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
+            <AnchorPane fx:id="panelHome" prefHeight="400.0" prefWidth="600.0" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
                <children>
                   <PieChart fx:id="quesitosLocalidad" layoutX="152.0" layoutY="14.0" prefHeight="430.0" prefWidth="935.0" title="Provincia Por Alumnos" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="14.0" />
                   <StackedBarChart fx:id="barraAlumno" layoutX="14.0" layoutY="442.0" prefHeight="287.0" prefWidth="931.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="442.0">
@@ -158,7 +158,7 @@
 
 
 
-            <AnchorPane fx:id="panelEditar" layoutX="6.0" layoutY="47.0" prefHeight="200.0" prefWidth="200.0" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
+            <AnchorPane fx:id="panelEditar" layoutX="6.0" layoutY="47.0" prefHeight="200.0" prefWidth="200.0" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
 
                   <AnchorPane prefHeight="399.0" prefWidth="938.0" AnchorPane.bottomAnchor="340.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0.0">
                         <TableView fx:id="tabla_alumnos" layoutX="-1.0" layoutY="47.0" prefHeight="348.0" prefWidth="926.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="47.0">
@@ -228,6 +228,14 @@
                         </ImageView>
                      </graphic></Button>
                      <Region HBox.hgrow="ALWAYS" />
+                  <Button fx:id="botonExportar" focusTraversable="false" mnemonicParsing="false" onAction="#botonExportar" prefHeight="36.0" prefWidth="57.0" style="-fx-background-color: transparent;">
+                     <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@imagen/exportar.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
                   </HBox>
                   <AnchorPane layoutX="16.0" layoutY="397.0" prefHeight="291.0" prefWidth="922.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="15.0">
                      <ImageView fitHeight="220.0" fitWidth="237.0" layoutX="670.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="35.0">

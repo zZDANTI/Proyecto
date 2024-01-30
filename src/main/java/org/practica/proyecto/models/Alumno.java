@@ -1,5 +1,13 @@
 package org.practica.proyecto.models;
 
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.stage.FileChooser;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -264,7 +272,55 @@ public class Alumno {
         return true;
     }
 
+    //Lo que contenga el resulset de datos lo exporta
+    public static boolean exportToCSV() {
+        // Crear un FileChooser para permitir al usuario elegir la ubicación y el nombre del archivo
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar CSV");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV", "*.csv"));
+        File file = fileChooser.showSaveDialog(null);
 
+        // Si el usuario selecciona un archivo y hace clic en "Guardar"
+        if (file != null) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                ResultSetMetaData metaData = resultSet.getMetaData();
+
+                // Escribir encabezados
+                for (int i = 1; i <= metaData.getColumnCount(); i++) {
+                    writer.write(metaData.getColumnLabel(i));
+                    if (i < metaData.getColumnCount()) {
+                        writer.write(";"); // Delimitador personalizado
+                    }
+                }
+                writer.newLine();
+
+                resultSet.absolute(0);
+
+                // Escribir datos
+                while (resultSet.next()) {
+                    for (int i = 1; i <= metaData.getColumnCount(); i++) {
+                        String value = resultSet.getString(i);
+                        if (metaData.getColumnName(i).equalsIgnoreCase("direccion")) {
+                            // Aplicar filtros solo a la columna "direccion"
+                            value = value.replace(",", " -"); // Reemplazar comas por guiones
+                        }
+                        writer.write(value);
+                        if (i < metaData.getColumnCount()) {
+                            writer.write(";"); // Delimitador personalizado
+                        }
+                    }
+                    writer.newLine();
+                }
+
+                return true;
+
+
+            } catch (IOException | SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 
 
 

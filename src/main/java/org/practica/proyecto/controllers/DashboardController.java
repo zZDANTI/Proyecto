@@ -18,8 +18,8 @@ import org.practica.proyecto.models.Alumno;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import org.practica.proyecto.models.Graficos;
-import java.io.File;
-import java.io.IOException;
+
+import java.io.*;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -128,22 +128,21 @@ public class DashboardController {
     @FXML
     public void initialize(){
 
-        actualizacion();
-
 
         if(inicializado){
+            actualizacion();
             myChoiceBox.getItems().addAll(elegirRegistros);
             myChoiceBox.setValue(10);
             inicializado = false;
         }
         validacion();
-
         myChoiceBox.setOnAction(this::elegirRegistros);
         botonDesactivado();
         cargarDatos();
 
     }
 
+    //Comprueba si hay actualizaciones
     public void actualizacion() {
         GitHub github;
         try {
@@ -180,8 +179,7 @@ public class DashboardController {
         }
     }
 
-
-
+    //Notifica en pantalla que hay una nueva version
     private void mostrarNotificacionDeActualizacion() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Actualización Disponible");
@@ -190,71 +188,6 @@ public class DashboardController {
 
         alert.showAndWait();
     }
-
-    public void datosGrafico() throws SQLException {
-        Graficos graficos= new Graficos();
-        List<Graficos> listGraficos = graficos.graficoAnios();
-
-        // Limpiar los datos existentes en el StackedBarChart
-        barraAlumno.getData().clear();
-
-        //Inserta los datos con un for each
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        for (Graficos grafico : listGraficos) {
-            series.getData().add(new XYChart.Data<>(String.valueOf(grafico.getCantidadBuscada()), grafico.getCantidadAlumnos()));
-        }
-
-        // Añade los datos
-        barraAlumno.getData().add(series);
-
-        series.setName("Alumnos agrupados por año de nacimiento");
-
-
-        // Mostrar los valores en etiquetas
-        for (XYChart.Series<String, Number> unaSerie : barraAlumno.getData()) {
-            for (XYChart.Data<String, Number> data : unaSerie.getData()) {
-                Label label = new Label(data.getYValue().toString());
-                StackPane stackPane = (StackPane) data.getNode();
-                stackPane.getChildren().add(label);
-                label.setStyle("-fx-text-fill: white; -fx-font-size: 15pt;");
-
-                CategoryAxis xAxis = (CategoryAxis) barraAlumno.getXAxis();
-                NumberAxis yAxis = (NumberAxis) barraAlumno.getYAxis();
-
-                // Cambiar color de los datos en el eje X (inferior)
-                xAxis.setStyle("-fx-tick-label-fill: white;");
-
-                // Cambiar color de los datos en el eje Y (lateral)
-                yAxis.setStyle("-fx-tick-label-fill: white;");
-            }
-        }
-
-
-
-        // Limpiar los datos existentes en el PieChart
-        quesitosLocalidad.getData().clear();
-
-        // Obtener datos para el PieChart
-        List<Graficos> pieChartData2 = graficos.graficoProvincia();
-
-        // Crear datos para el PieChart y mostrar valores en etiquetas
-        for (Graficos grafico : pieChartData2) {
-            PieChart.Data newData = new PieChart.Data(grafico.getCantidadBuscada(), grafico.getCantidadAlumnos());
-            quesitosLocalidad.getData().add(newData); // Agregar nuevo dato
-        }
-
-        // Aplicar estilo CSS para cambiar el color del texto en los quesitos y el título a blanco
-        quesitosLocalidad.getStylesheets().add("data:text/css," +
-                ".chart-pie-label {-fx-fill: white;}" +
-                ".chart-title {-fx-text-fill: white;}"
-        );
-
-
-
-
-
-    }
-
 
     // Obtiene los datos y los inserta en la tabla
     public void cargarDatos() {
@@ -425,22 +358,6 @@ public class DashboardController {
             }
         });
         datosGrafico();
-    }
-
-    private boolean validarFormatoDNI(String dni) {
-        if (dni.length() == 9) { // DNI debe tener 9 caracteres (8 números + 1 letra)
-            String numeros = dni.substring(0, 8);
-            String letra = dni.substring(8);
-
-            // Verificar que los primeros 8 caracteres sean números
-            if (numeros.matches("\\d+")) {
-                // Verificar que el último caracter sea una letra
-                if (letra.matches("[a-zA-Z]")) {
-                    return true; // El formato es válido
-                }
-            }
-        }
-        return false; // El formato no es válido
     }
 
     //HACE QUE CAMBIE EL NUMERO DEL PAGINADOR Y A LA VEZ SE LO MANDE AL RESULTSET---------------------------------------
@@ -626,7 +543,7 @@ public class DashboardController {
         );
     }
 
-    //Valida que todos los campo para introducir toodo correcto
+    //Valida que todos los campo para introducir en inserta o en editar sea toodo correcto
     public void validacion(){
         //Paginador
         soloNumeros(actualPag);
@@ -681,6 +598,7 @@ public class DashboardController {
         // Configurar la notificación
         if (validacion){
             fondoNotif.setStyle("-fx-background-color: #00ff00");  // Verde
+            reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/guardarSonido.wav");
         }else{
             fondoNotif.setStyle("-fx-background-color: #ff0000;");  // Rojo
             reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/errorSonido.wav");
@@ -739,7 +657,7 @@ public class DashboardController {
         });
     }
 
-    //Validaciones para que no puedan escribir lo que quieran-----------------------------------------------------------
+    //VALIDACIONES------------------------------------------------------------------------------------------------------
 
     //Valida que solo puedan entrar numeros
     public void soloNumeros(TextField textField) {
@@ -808,7 +726,95 @@ public class DashboardController {
         });
     }
 
+    //Valida que el formato del DNI sea Expañol
+    private boolean validarFormatoDNI(String dni) {
+        if (dni.length() == 9) { // DNI debe tener 9 caracteres (8 números + 1 letra)
+            String numeros = dni.substring(0, 8);
+            String letra = dni.substring(8);
+
+            // Verificar que los primeros 8 caracteres sean números
+            if (numeros.matches("\\d+")) {
+                // Verificar que el último caracter sea una letra
+                if (letra.matches("[a-zA-Z]")) {
+                    return true; // El formato es válido
+                }
+            }
+        }
+        return false; // El formato no es válido
+    }
+
+    //ACCIONES DE EXPORTACIONES-----------------------------------------------------------------------------------------
+
+    //Al darle al boton exporta el resultSet a CSV
+    public void botonExportar() {
+       if (Alumno.exportToCSV()){
+           notificacion(true,"CSV exportado exitosamente!");
+       }else{
+           notificacion(false,"La exportación ha sido cancelada.");
+       }
+    }
+
+    //GRAFICOS----------------------------------------------------------------------------------------------------------
+
+    //Carga los datos de la consultas que hay en graficos
+    public void datosGrafico() throws SQLException {
+        Graficos graficos= new Graficos();
+        List<Graficos> listGraficos = graficos.graficoAnios();
+
+        // Limpiar los datos existentes en el StackedBarChart
+        barraAlumno.getData().clear();
+
+        //Inserta los datos con un for each
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        for (Graficos grafico : listGraficos) {
+            series.getData().add(new XYChart.Data<>(String.valueOf(grafico.getCantidadBuscada()), grafico.getCantidadAlumnos()));
+        }
+
+        // Añade los datos
+        barraAlumno.getData().add(series);
+
+        series.setName("Alumnos agrupados por año de nacimiento");
 
 
+        // Mostrar los valores en etiquetas
+        for (XYChart.Series<String, Number> unaSerie : barraAlumno.getData()) {
+            for (XYChart.Data<String, Number> data : unaSerie.getData()) {
+                Label label = new Label(data.getYValue().toString());
+                StackPane stackPane = (StackPane) data.getNode();
+                stackPane.getChildren().add(label);
+                label.setStyle("-fx-text-fill: white; -fx-font-size: 15pt;");
+
+                CategoryAxis xAxis = (CategoryAxis) barraAlumno.getXAxis();
+                NumberAxis yAxis = (NumberAxis) barraAlumno.getYAxis();
+
+                // Cambiar color de los datos en el eje X (inferior)
+                xAxis.setStyle("-fx-tick-label-fill: white;");
+
+                // Cambiar color de los datos en el eje Y (lateral)
+                yAxis.setStyle("-fx-tick-label-fill: white;");
+            }
+        }
+
+
+
+        // Limpiar los datos existentes en el PieChart
+        quesitosLocalidad.getData().clear();
+
+        // Obtener datos para el PieChart
+        List<Graficos> pieChartData2 = graficos.graficoProvincia();
+
+        // Crear datos para el PieChart y mostrar valores en etiquetas
+        for (Graficos grafico : pieChartData2) {
+            PieChart.Data newData = new PieChart.Data(grafico.getCantidadBuscada(), grafico.getCantidadAlumnos());
+            quesitosLocalidad.getData().add(newData); // Agregar nuevo dato
+        }
+
+        // Aplicar estilo CSS para cambiar el color del texto en los quesitos y el título a blanco
+        quesitosLocalidad.getStylesheets().add("data:text/css," +
+                ".chart-pie-label {-fx-fill: white;}" +
+                ".chart-title {-fx-text-fill: white;}"
+        );
+
+    }
 
 }
