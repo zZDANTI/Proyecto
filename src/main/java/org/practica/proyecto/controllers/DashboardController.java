@@ -126,7 +126,7 @@ public class DashboardController {
 
     // Arranca la clase con el initialize
     @FXML
-    public void initialize(){
+    void initialize(){
 
 
         if(inicializado){

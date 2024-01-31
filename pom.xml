@@ -11,7 +11,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-<junit.version>5.10.0</junit.version>  </properties>
+    <junit.version>5.10.0</junit.version>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -54,7 +55,7 @@
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.23</version>
+      <version>8.0.28</version>
     </dependency>
       <dependency>
           <groupId>org.jetbrains</groupId>
@@ -72,6 +73,13 @@
       <artifactId>github-api</artifactId>
       <version>1.123</version> <!-- Versión específica de la biblioteca -->
     </dependency>
+
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>itextpdf</artifactId>
+      <version>5.5.13.3</version>
+    </dependency>
+
   </dependencies>
   <build>
     <plugins>
