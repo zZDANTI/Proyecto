@@ -1,31 +1,45 @@
 package org.practica.proyecto.controllers;
 
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfWriter;
+import io.github.gleidson28.GNAvatarView;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
-import javafx.beans.property.*;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
-import javafx.util.Duration;
-import org.practica.proyecto.models.Alumno;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.util.Duration;
+import org.kohsuke.github.GHRelease;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
+import org.practica.proyecto.models.Alumno;
 import org.practica.proyecto.models.Graficos;
-
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import org.kohsuke.github.*;
 import java.util.Date;
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -67,6 +81,8 @@ public class DashboardController {
 
 
     //DATOS DEL ALUMNO SELECCIONADO
+
+    public ImageView imagenAlumno;
     public TextField dniClick;
     public TextField provinciaClick;
     public TextField direccionClick;
@@ -76,6 +92,7 @@ public class DashboardController {
     public TextField apellido_2Click;
     public DatePicker nacimientoClick;
 
+
     //PAGINADOR
     public TextField actualPag;
     
@@ -83,6 +100,7 @@ public class DashboardController {
 
     public Button botonGuardarAlumno;
     public Button botonEliminarAlumno;
+    public Button deseleccionarAlumno;
     public Text numeroTotalPaginas;
     public Text numeroTotalAlumnos;
 
@@ -109,7 +127,9 @@ public class DashboardController {
     public TextField insertarApellido1;
     public TextField insertarNombre;
     public TextField insertarDNI;
+    public GNAvatarView avatarView;
 
+    //INSERTAR ALUMNO
     public Button botonInsertarAlumno;
 
     //TEXTO NOTIFICACIONES
@@ -121,13 +141,15 @@ public class DashboardController {
     public PieChart quesitosLocalidad;
     public StackedBarChart<String, Number> barraAlumno;
 
+    //PDF
+    public Button botonPDF;
+
 
     //CODIGO DE LA APLICACION DASHBOARD---------------------------------------------------------------------------------
 
     // Arranca la clase con el initialize
     @FXML
     void initialize(){
-
 
         if(inicializado){
             actualizacion();
@@ -140,53 +162,18 @@ public class DashboardController {
         botonDesactivado();
         cargarDatos();
 
-    }
 
-    //Comprueba si hay actualizaciones
-    public void actualizacion() {
-        GitHub github;
-        try {
-            github = new GitHubBuilder().build(); // No es necesario proporcionar un token de acceso
-            GHRepository repository = github.getRepository("zZDANTI/Proyecto");
-            String latestVersion = ""; // Inicializar con una cadena vacía
+        // Ruta de la imagen (asegúrate de que la ruta sea correcta y la imagen exista)
+        String imageUrl = "/org/practica/proyecto/imagen/foto-perfil.png";
 
-            // Verificar si el repositorio es null
-            if (repository == null) {
-                System.out.println("El repositorio no fue encontrado en GitHub.");
-                return;
-            }
 
-            GHRelease latestRelease = repository.getLatestRelease();
+        // Crear una instancia de Image de JavaFX
+        javafx.scene.image.Image javafxImage = new javafx.scene.image.Image("file:///" + imageUrl);
 
-            if (latestRelease != null) {
-                latestVersion = latestRelease.getTagName();
-                String currentVersion = "1.0"; // Versión actual de la aplicación
 
-                System.out.println("Current Version: " + currentVersion);
+        // Establecer la imagen en el GNAvatarView
+        avatarView.setImage(javafxImage);
 
-                if (!latestVersion.equals(currentVersion)) {
-                    mostrarNotificacionDeActualizacion();
-                }
-            } else {
-                // Tratar el caso en el que no hay versión de release disponible
-                System.out.println("No se encontró ninguna versión de release para el repositorio.");
-            }
-
-            System.out.println("Latest Version: " + latestVersion); // Imprimir latestVersion fuera del bloque else
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //Notifica en pantalla que hay una nueva version
-    private void mostrarNotificacionDeActualizacion() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Actualización Disponible");
-        alert.setHeaderText("¡Hay una nueva versión disponible!");
-        alert.setContentText("Por favor, descargue la última versión desde nuestro sitio web.");
-
-        alert.showAndWait();
     }
 
     // Obtiene los datos y los inserta en la tabla
@@ -235,16 +222,6 @@ public class DashboardController {
         }
 
 
-        alumnoClick();
-        try {
-            datosGrafico();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    //Funcion para saber que alumno se ha clickeado en la tabla
-    public void alumnoClick() {
         tabla_alumnos.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
                 Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
@@ -260,6 +237,12 @@ public class DashboardController {
                 }
             }
         });
+
+        try {
+            datosGrafico();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //ACCIONES PARA EL GUARDADO,INSERTAR Y ELIMINADO DEL ALUMNO --------------------------------------------------------
@@ -487,6 +470,9 @@ public class DashboardController {
 
     //limpia los datos donde se puede editar el alumno
     public void limpiarAlumno(){
+
+        tabla_alumnos.getSelectionModel().clearSelection();
+
         dniClick.clear();
         nombreClick.clear();
         apellido_1Click.clear();
@@ -512,35 +498,28 @@ public class DashboardController {
 
     //Si algun campo de insertar o actualizar Alumno está vacio no se activará
     public void botonDesactivado() {
-        botonGuardarAlumno.disableProperty().bind(
-                dniClick.textProperty().isEmpty()
-                        .or(nombreClick.textProperty().isEmpty())
-                        .or(apellido_1Click.textProperty().isEmpty())
-                        .or(direccionClick.textProperty().isEmpty())
-                        .or(localidadClick.textProperty().isEmpty())
-                        .or(provinciaClick.textProperty().isEmpty())
-                        .or(nacimientoClick.valueProperty().isNull())
-        );
+        BooleanBinding camposVacios = dniClick.textProperty().isEmpty()
+                .or(nombreClick.textProperty().isEmpty())
+                .or(apellido_1Click.textProperty().isEmpty())
+                .or(direccionClick.textProperty().isEmpty())
+                .or(localidadClick.textProperty().isEmpty())
+                .or(provinciaClick.textProperty().isEmpty())
+                .or(nacimientoClick.valueProperty().isNull());
 
-        botonEliminarAlumno.disableProperty().bind(
-                dniClick.textProperty().isEmpty()
-                        .or(nombreClick.textProperty().isEmpty())
-                        .or(apellido_1Click.textProperty().isEmpty())
-                        .or(direccionClick.textProperty().isEmpty())
-                        .or(localidadClick.textProperty().isEmpty())
-                        .or(provinciaClick.textProperty().isEmpty())
-                        .or(nacimientoClick.valueProperty().isNull())
-        );
+        botonGuardarAlumno.disableProperty().bind(camposVacios);
+        botonPDF.disableProperty().bind(camposVacios);
+        botonEliminarAlumno.disableProperty().bind(camposVacios);
+        deseleccionarAlumno.disableProperty().bind(camposVacios);
 
-        botonInsertarAlumno.disableProperty().bind(
-                insertarDNI.textProperty().isEmpty()
-                        .or(insertarNombre.textProperty().isEmpty())
-                        .or(insertarApellido1.textProperty().isEmpty())
-                        .or(insertarLocalidad.textProperty().isEmpty())
-                        .or(insertarProvincia.textProperty().isEmpty())
-                        .or(insertarDireccion.textProperty().isEmpty())
-                        .or(insertarFecha.valueProperty().isNull())
-        );
+        BooleanBinding camposInsertarVacios = insertarDNI.textProperty().isEmpty()
+                .or(insertarNombre.textProperty().isEmpty())
+                .or(insertarApellido1.textProperty().isEmpty())
+                .or(insertarLocalidad.textProperty().isEmpty())
+                .or(insertarProvincia.textProperty().isEmpty())
+                .or(insertarDireccion.textProperty().isEmpty())
+                .or(insertarFecha.valueProperty().isNull());
+
+        botonInsertarAlumno.disableProperty().bind(camposInsertarVacios);
     }
 
     //Valida que todos los campo para introducir en inserta o en editar sea toodo correcto
@@ -746,12 +725,70 @@ public class DashboardController {
     //ACCIONES DE EXPORTACIONES-----------------------------------------------------------------------------------------
 
     //Al darle al boton exporta el resultSet a CSV
-    public void botonExportar() {
+    public void botonExportarCSV() {
        if (Alumno.exportToCSV()){
            notificacion(true,"CSV exportado exitosamente!");
        }else{
            notificacion(false,"La exportación ha sido cancelada.");
        }
+    }
+
+    //Exporta el objeto seleccionado de la tabla a pdf
+    public void exportarAlumnoPDF() {
+        Document document = new Document();
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName("alumnoPDF.pdf");
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file != null) {
+            try {
+                PdfWriter.getInstance(document, new FileOutputStream(file));
+                document.open();
+
+                // Crear un párrafo para la imagen
+                Paragraph imageParagraph = new Paragraph();
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imagenAlumno.getImage(), null);
+                Image image = Image.getInstance(bufferedImage, null);
+                image.scaleToFit(400, 400);
+                image.setAlignment(Element.ALIGN_CENTER);
+                imageParagraph.add(image);
+                document.add(imageParagraph);
+
+                // Espacio entre la imagen y el contenido de texto
+                document.add(Chunk.NEWLINE);
+                document.add(Chunk.NEWLINE);
+
+                // Crear un párrafo para los campos y valores
+                Paragraph dataParagraph = new Paragraph();
+                dataParagraph.setAlignment(Element.ALIGN_CENTER);
+
+                String[] campos = {"DNI", "NOMBRE", "1º APELLIDO", "2º APELLIDO", "DIRECCIÓN", "LOCALIDAD", "PROVINCIA", "FECHA DE NACIMIENTO"};
+                String[] valores = {dniClick.getText(), nombreClick.getText(), apellido_1Click.getText(), apellido_2Click.getText(),
+                        direccionClick.getText(), localidadClick.getText(), provinciaClick.getText(),
+                        String.valueOf(nacimientoClick.getValue())};
+
+                // Agregar cada campo y su valor con un estilo adecuado
+                for (int i = 0; i < campos.length; i++) {
+                    dataParagraph.add(Chunk.NEWLINE);
+                    Chunk campoChunk = new Chunk(campos[i] + ": ", FontFactory.getFont(FontFactory.HELVETICA, 20, Font.BOLD));
+                    Chunk valorChunk = new Chunk(valores[i].toUpperCase(), FontFactory.getFont(FontFactory.HELVETICA, 15));
+
+                    // Alinear campos y valores en el mismo renglón
+                    dataParagraph.add(campoChunk);
+                    dataParagraph.add(valorChunk);
+                    dataParagraph.add(Chunk.NEWLINE);
+                }
+
+                document.add(dataParagraph);
+                document.close();
+                notificacion(true, "PDF exportado exitosamente!");
+            } catch (DocumentException | java.io.IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            notificacion(false, "La exportación a PDF ha sido cancelada.");
+        }
     }
 
     //GRAFICOS----------------------------------------------------------------------------------------------------------
@@ -815,6 +852,55 @@ public class DashboardController {
                 ".chart-title {-fx-text-fill: white;}"
         );
 
+    }
+
+    //ACTUALIZACION-----------------------------------------------------------------------------------------------------
+
+    //Comprueba si hay actualizaciones
+    public void actualizacion() {
+        GitHub github;
+        try {
+            github = new GitHubBuilder().build(); // No es necesario proporcionar un token de acceso
+            GHRepository repository = github.getRepository("zZDANTI/Proyecto");
+            String latestVersion = ""; // Inicializar con una cadena vacía
+
+            // Verificar si el repositorio es null
+            if (repository == null) {
+                System.out.println("El repositorio no fue encontrado en GitHub.");
+                return;
+            }
+
+            GHRelease latestRelease = repository.getLatestRelease();
+
+            if (latestRelease != null) {
+                latestVersion = latestRelease.getTagName();
+                String currentVersion = "1.0"; // Versión actual de la aplicación
+
+                System.out.println("Current Version: " + currentVersion);
+
+                if (!latestVersion.equals(currentVersion)) {
+                    mostrarNotificacionDeActualizacion();
+                }
+            } else {
+                // Tratar el caso en el que no hay versión de release disponible
+                System.out.println("No se encontró ninguna versión de release para el repositorio.");
+            }
+
+            System.out.println("Latest Version: " + latestVersion); // Imprimir latestVersion fuera del bloque else
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Notifica en pantalla que hay una nueva version
+    private void mostrarNotificacionDeActualizacion() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Actualización Disponible");
+        alert.setHeaderText("¡Hay una nueva versión disponible!");
+        alert.setContentText("Por favor, descargue la última versión desde nuestro sitio web.");
+
+        alert.showAndWait();
     }
 
 }

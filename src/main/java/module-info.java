@@ -5,6 +5,12 @@ module org.practica.proyecto {
     requires org.controlsfx.controls;
     requires javafx.media;
     requires github.api;
+    requires itextpdf;
+    requires javafx.graphics;
+    requires java.desktop;
+    requires javafx.swing;
+    requires GNAvatarView;
+
 
     opens org.practica.proyecto to javafx.fxml;
 
