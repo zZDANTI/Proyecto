@@ -1,7 +1,5 @@
 package org.practica.proyecto.controllers;
 
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfWriter;
 import io.github.gleidson28.GNAvatarView;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
@@ -10,11 +8,11 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -23,7 +21,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import org.kohsuke.github.GHRelease;
 import org.kohsuke.github.GHRepository;
@@ -31,10 +28,10 @@ import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.practica.proyecto.models.Alumno;
 import org.practica.proyecto.models.Graficos;
-import java.awt.image.BufferedImage;
+
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -163,16 +160,21 @@ public class DashboardController {
         cargarDatos();
 
 
-        // Ruta de la imagen (asegúrate de que la ruta sea correcta y la imagen exista)
-        String imageUrl = "/org/practica/proyecto/imagen/foto-perfil.png";
+
+        // Obtener la URL del recurso
+        URL imageUrl = getClass().getResource("/org/practica/proyecto/imagen/foto-perfil.png");
+
+        if (imageUrl != null) {
+            // Crear una instancia de Image
+            Image image = new Image(imageUrl.toExternalForm());
+
+            // Establecer la imagen en el GNAvatarView
+            avatarView.setImage(image);
+        } else {
+            System.err.println("No se pudo cargar la imagen: foto-perfil.png");
+        }
 
 
-        // Crear una instancia de Image de JavaFX
-        javafx.scene.image.Image javafxImage = new javafx.scene.image.Image("file:///" + imageUrl);
-
-
-        // Establecer la imagen en el GNAvatarView
-        avatarView.setImage(javafxImage);
 
     }
 
@@ -733,61 +735,13 @@ public class DashboardController {
        }
     }
 
-    //Exporta el objeto seleccionado de la tabla a pdf
-    public void exportarAlumnoPDF() {
-        Document document = new Document();
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialFileName("alumnoPDF.pdf");
-        File file = fileChooser.showSaveDialog(null);
-
-        if (file != null) {
-            try {
-                PdfWriter.getInstance(document, new FileOutputStream(file));
-                document.open();
-
-                // Crear un párrafo para la imagen
-                Paragraph imageParagraph = new Paragraph();
-                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imagenAlumno.getImage(), null);
-                Image image = Image.getInstance(bufferedImage, null);
-                image.scaleToFit(400, 400);
-                image.setAlignment(Element.ALIGN_CENTER);
-                imageParagraph.add(image);
-                document.add(imageParagraph);
-
-                // Espacio entre la imagen y el contenido de texto
-                document.add(Chunk.NEWLINE);
-                document.add(Chunk.NEWLINE);
-
-                // Crear un párrafo para los campos y valores
-                Paragraph dataParagraph = new Paragraph();
-                dataParagraph.setAlignment(Element.ALIGN_CENTER);
-
-                String[] campos = {"DNI", "NOMBRE", "1º APELLIDO", "2º APELLIDO", "DIRECCIÓN", "LOCALIDAD", "PROVINCIA", "FECHA DE NACIMIENTO"};
-                String[] valores = {dniClick.getText(), nombreClick.getText(), apellido_1Click.getText(), apellido_2Click.getText(),
-                        direccionClick.getText(), localidadClick.getText(), provinciaClick.getText(),
-                        String.valueOf(nacimientoClick.getValue())};
-
-                // Agregar cada campo y su valor con un estilo adecuado
-                for (int i = 0; i < campos.length; i++) {
-                    dataParagraph.add(Chunk.NEWLINE);
-                    Chunk campoChunk = new Chunk(campos[i] + ": ", FontFactory.getFont(FontFactory.HELVETICA, 20, Font.BOLD));
-                    Chunk valorChunk = new Chunk(valores[i].toUpperCase(), FontFactory.getFont(FontFactory.HELVETICA, 15));
-
-                    // Alinear campos y valores en el mismo renglón
-                    dataParagraph.add(campoChunk);
-                    dataParagraph.add(valorChunk);
-                    dataParagraph.add(Chunk.NEWLINE);
-                }
-
-                document.add(dataParagraph);
-                document.close();
-                notificacion(true, "PDF exportado exitosamente!");
-            } catch (DocumentException | java.io.IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            notificacion(false, "La exportación a PDF ha sido cancelada.");
+    public void botonExportarPDF() throws SQLException {
+        Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
+        int rowsAlumno = alumnoSeleccionado.getRow();
+        if (Alumno.exportarToPDF(rowsAlumno)){
+            notificacion(true,"PDF exportado exitosamente!");
+        }else{
+            notificacion(false,"La exportación ha sido cancelada.");
         }
     }
 

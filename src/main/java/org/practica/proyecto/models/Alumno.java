@@ -1,13 +1,10 @@
 package org.practica.proyecto.models;
 
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfWriter;
 import javafx.stage.FileChooser;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +24,7 @@ public class Alumno {
     private String localidad;
     private String provincia;
     private Date fechaNacimiento;
+    private byte[] fotoPerfil;
     private int row;
 
     //CONSTRUCTORES
@@ -144,6 +142,7 @@ public class Alumno {
                         resultSet.getString("localidad"),
                         resultSet.getString("provincia"),
                         resultSet.getDate("fecha_nacimiento"),
+                        resultSet.getBlob("foto_perfil"),
                         resultSet.getRow()
 
                 );
@@ -272,7 +271,7 @@ public class Alumno {
         return true;
     }
 
-    //Lo que contenga el resulset de datos lo exporta
+    //Lo que contenga el resulset de datos lo exporta a CSV
     public static boolean exportToCSV() {
         // Crear un FileChooser para permitir al usuario elegir la ubicación y el nombre del archivo
         FileChooser fileChooser = new FileChooser();
@@ -316,6 +315,77 @@ public class Alumno {
 
 
             } catch (IOException | SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    //Lo que contenga el resulset de datos lo exporta a PDF
+    public static boolean exportarToPDF(int row) throws SQLException {
+
+        // Posiciona el resultset
+        resultSet.absolute(row);
+
+
+        Document document = new Document();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName("alumnoPDF.pdf");
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file != null) {
+            try {
+                PdfWriter.getInstance(document, new FileOutputStream(file));
+                document.open();
+
+                /*
+                // Crear un párrafo para la imagen
+                Paragraph imageParagraph = new Paragraph();
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imagenAlumno.getImage(), null);
+                Image image = Image.getInstance(bufferedImage, null);
+                image.scaleToFit(400, 400);
+                image.setAlignment(Element.ALIGN_CENTER);
+                imageParagraph.add(image);
+                document.add(imageParagraph);
+                 */
+
+                // Espacio entre la imagen y el contenido de texto
+                document.add(Chunk.NEWLINE);
+                document.add(Chunk.NEWLINE);
+
+                // Crear un párrafo para los campos y valores
+                Paragraph dataParagraph = new Paragraph();
+                dataParagraph.setAlignment(Element.ALIGN_CENTER);
+
+                String[] campos = {"DNI", "NOMBRE", "1º APELLIDO", "2º APELLIDO", "DIRECCIÓN", "LOCALIDAD", "PROVINCIA", "FECHA DE NACIMIENTO"};
+
+                String[] valores = {
+                        resultSet.getString("dni"),
+                        resultSet.getString("nombre"),
+                        resultSet.getString("apellido_1"),
+                        resultSet.getString("apellido_2"),
+                        resultSet.getString("direccion"),
+                        resultSet.getString("localidad"),
+                        resultSet.getString("provincia"),
+                        resultSet.getDate("fecha_nacimiento").toString()
+                };
+
+                // Agregar cada campo y su valor con un estilo adecuado
+                for (int i = 0; i < campos.length; i++) {
+                    dataParagraph.add(Chunk.NEWLINE);
+                    Chunk campoChunk = new Chunk(campos[i] + ": ", FontFactory.getFont(FontFactory.HELVETICA, 20, Font.BOLD));
+                    Chunk valorChunk = new Chunk(valores[i].toUpperCase(), FontFactory.getFont(FontFactory.HELVETICA, 15));
+
+                    // Alinear campos y valores en el mismo renglón
+                    dataParagraph.add(campoChunk);
+                    dataParagraph.add(valorChunk);
+                    dataParagraph.add(Chunk.NEWLINE);
+                }
+
+                document.add(dataParagraph);
+                document.close();
+                return true;
+            } catch (DocumentException | java.io.IOException e) {
                 e.printStackTrace();
             }
         }
