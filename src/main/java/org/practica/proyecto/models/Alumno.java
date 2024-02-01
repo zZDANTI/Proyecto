@@ -29,6 +29,20 @@ public class Alumno {
 
     //CONSTRUCTORES
 
+
+    public Alumno(String dni, String nombre, String apellido1, String apellido2, String direccion, String localidad, String provincia, Date fechaNacimiento, byte[] fotoPerfil, int row) {
+        this.dni = dni;
+        this.nombre = nombre;
+        this.apellido1 = apellido1;
+        this.apellido2 = apellido2;
+        this.direccion = direccion;
+        this.localidad = localidad;
+        this.provincia = provincia;
+        this.fechaNacimiento = fechaNacimiento;
+        this.fotoPerfil = fotoPerfil;
+        this.row = row;
+    }
+
     public Alumno(String dni, String nombre, String apellido1, String apellido2, String direccion, String localidad, String provincia, Date fechaNacimiento, int row) {
         this.dni = dni;
         this.nombre = nombre;
@@ -75,6 +89,10 @@ public class Alumno {
 
     public Date getFechaNacimiento() {
         return fechaNacimiento;
+    }
+
+    public byte[] getFotoPerfil() {
+        return fotoPerfil;
     }
 
     public int getRow() {
@@ -142,12 +160,11 @@ public class Alumno {
                         resultSet.getString("localidad"),
                         resultSet.getString("provincia"),
                         resultSet.getDate("fecha_nacimiento"),
-                        resultSet.getBlob("foto_perfil"),
+                        resultSet.getBytes("foto_perfil"),
                         resultSet.getRow()
 
                 );
                 count++;
-
                 listaAlumnos.add(alumno);
             }
 

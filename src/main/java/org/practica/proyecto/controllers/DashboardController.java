@@ -7,7 +7,9 @@ import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
@@ -29,9 +31,11 @@ import org.kohsuke.github.GitHubBuilder;
 import org.practica.proyecto.models.Alumno;
 import org.practica.proyecto.models.Graficos;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -75,6 +79,7 @@ public class DashboardController {
     public TableColumn<Alumno, String> provincia_tabla;
     public TableColumn<Alumno, String> fecha_nacimiento_tabla;
     public TableColumn<Alumno, Integer> rowRs;
+    public TableColumn<Alumno, Byte> foto_perfil;
 
 
     //DATOS DEL ALUMNO SELECCIONADO
@@ -100,6 +105,7 @@ public class DashboardController {
     public Button deseleccionarAlumno;
     public Text numeroTotalPaginas;
     public Text numeroTotalAlumnos;
+
 
 
     //VARIABLES PREDETERMINADAS
@@ -142,11 +148,14 @@ public class DashboardController {
     public Button botonPDF;
 
 
+    public ImageView perfilUsuario;
+
     //CODIGO DE LA APLICACION DASHBOARD---------------------------------------------------------------------------------
 
     // Arranca la clase con el initialize
     @FXML
     void initialize(){
+
 
         if(inicializado){
             actualizacion();
@@ -160,27 +169,10 @@ public class DashboardController {
         cargarDatos();
 
 
-
-        // Obtener la URL del recurso
-        URL imageUrl = getClass().getResource("/org/practica/proyecto/imagen/foto-perfil.png");
-
-        if (imageUrl != null) {
-            // Crear una instancia de Image
-            Image image = new Image(imageUrl.toExternalForm());
-
-            // Establecer la imagen en el GNAvatarView
-            avatarView.setImage(image);
-        } else {
-            System.err.println("No se pudo cargar la imagen: foto-perfil.png");
-        }
-
-
-
     }
 
     // Obtiene los datos y los inserta en la tabla
     public void cargarDatos() {
-
 
         limpiarAlumno();
         botonAlumnos.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
@@ -201,8 +193,6 @@ public class DashboardController {
 
 
         // Configura las celdas de las columnas
-
-
         rowRs.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getRow()));
         dni_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getDni()));
         nombre_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getNombre()));
@@ -213,6 +203,11 @@ public class DashboardController {
         provincia_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getProvincia()));
         fecha_nacimiento_tabla.setCellValueFactory(cellData ->
                 new SimpleStringProperty(fechaString(cellData.getValue().getFechaNacimiento())));
+        foto_perfil.setCellValueFactory(cellData -> {
+            byte[] fotoBytes = cellData.getValue().getFotoPerfil();
+            Byte fotoByte = (fotoBytes != null && fotoBytes.length > 0) ? fotoBytes[0] : null;
+            return new SimpleObjectProperty<>(fotoByte);
+        });
 
 
         try {
@@ -236,7 +231,26 @@ public class DashboardController {
                     localidadClick.setText(alumnoSeleccionado.getLocalidad().toLowerCase());
                     provinciaClick.setText(alumnoSeleccionado.getProvincia().toLowerCase());
                     nacimientoClick.setValue(alumnoSeleccionado.getFechaNacimiento().toLocalDate());
+
+                    // Crear un GNAvatarView
+
+                    byte[] fotoBytes = alumnoSeleccionado.getFotoPerfil();
+
+                    if (fotoBytes != null && fotoBytes.length > 0) {
+                        // Convertir bytes a una imagen
+                        Image imagenOriginal = convertirBytesAImagen(fotoBytes);
+
+                        // Redimensionar la imagen a un tamaño específico
+
+
+                        // Establecer la imagen en el ImageView perfilUsuario
+                        avatarView.setImage(imagenOriginal);
+                    } else {
+                        avatarView.setImage(new Image("smile.jpg"));
+                    }
+
                 }
+
             }
         });
 
@@ -244,6 +258,28 @@ public class DashboardController {
             datosGrafico();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static Image redimensionarImagen(Image imagenOriginal, double nuevoAncho, double nuevoAlto) {
+        ImageView vista = new ImageView(imagenOriginal);
+        vista.setPreserveRatio(true);
+        vista.setFitWidth(nuevoAncho);
+        vista.setFitHeight(nuevoAlto);
+        return vista.snapshot(null, null);
+    }
+
+    public Image convertirBytesAImagen(byte[] bytesDeImagen) {
+        try {
+            // Convertir bytes a BufferedImage*
+            ByteArrayInputStream bis = new ByteArrayInputStream(bytesDeImagen);
+            BufferedImage bufferedImage = ImageIO.read(bis);
+
+            // Convertir BufferedImage a Image de JavaFX
+            return SwingFXUtils.toFXImage(bufferedImage, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -257,9 +293,7 @@ public class DashboardController {
                 direccionClick.getText(),localidadClick.getText(),provinciaClick.getText(), (java.sql.Date) fechaDate(nacimientoClick.getValue()),rowsAlumno);
         // Llama un método para guardar los datos del alumno
         alumno.actualizarAlumno();
-        limpiarAlumno();
         notificacion(true,"Alumno editado correctamente");
-        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/guardarSonido.wav");
         cargarDatos();
 
     }
@@ -284,7 +318,6 @@ public class DashboardController {
                 boolean eliminacionExitosa = alumno.eliminarAlumno(rowsAlumno);
                 if (eliminacionExitosa) {
                     notificacion(true,"Alumno eliminado correctamente");
-                    reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/eliminarSonido.wav");
                     limpiarAlumno();
                     cargarDatos();
                 } else {
@@ -328,7 +361,6 @@ public class DashboardController {
                     if (alumno.insertarAlumno()){
                         limpiarAlumnoInsertado();
                         notificacion(true, "Alumno insertado correctamente");
-                        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/guardarSonido.wav");
                         cargarDatos();
                     }else{
                         notificacion(false, "El DNI introducido ya existe");
@@ -478,7 +510,6 @@ public class DashboardController {
         dniClick.clear();
         nombreClick.clear();
         apellido_1Click.clear();
-
         apellido_2Click.clear();
         direccionClick.clear();
         localidadClick.clear();
@@ -555,7 +586,6 @@ public class DashboardController {
         paginaActual=1;
         actualPag.setText(String.valueOf(paginaActual));
         cargarDatos();
-
     }
 
     //FUNCIONES QUE MODIFICAN VISUALMENTE-------------------------------------------------------------------------------
@@ -848,7 +878,7 @@ public class DashboardController {
     }
 
     //Notifica en pantalla que hay una nueva version
-    private void mostrarNotificacionDeActualizacion() {
+    public void mostrarNotificacionDeActualizacion() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Actualización Disponible");
         alert.setHeaderText("¡Hay una nueva versión disponible!");
