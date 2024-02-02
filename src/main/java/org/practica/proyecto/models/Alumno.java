@@ -229,7 +229,6 @@ public class Alumno {
             // Actualiza la fila en la base de datos
             resultSet.updateRow();
 
-            System.out.println("Alumno actualizado en la base de datos: " + getRow() + nombre);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -243,8 +242,7 @@ public class Alumno {
 
             // Elimina la row seleccionada
             resultSet.deleteRow();
-            System.out.println("Alumno eliminado en la base de datos: " + row);
-            return true;  // Indica que la eliminación fue exitosa
+            return true;
 
         } catch (SQLException e) {
             System.err.println("Error al eliminar alumno: " + e.getMessage());
@@ -271,7 +269,6 @@ public class Alumno {
             // Insertar la nueva fila en la base de datos
             resultSet.insertRow();
 
-            System.out.println("Alumnom insertado correctamente");
 
         } catch (SQLException e) {
             return false;

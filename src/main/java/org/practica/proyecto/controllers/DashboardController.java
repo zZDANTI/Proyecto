@@ -296,8 +296,8 @@ public class DashboardController {
         // Llama un método para guardar los datos del alumno
         alumno.actualizarAlumno();
         notificacion(true,"Alumno editado correctamente");
+        limpiarAlumno();
         cargarDatos();
-
     }
 
     //Boton para eliminar los datos de los Alumnos
@@ -376,7 +376,6 @@ public class DashboardController {
                 notificacion(false, "Operación de insercción cancelada.");
             }
         });
-        datosGrafico();
     }
 
     //HACE QUE CAMBIE EL NUMERO DEL PAGINADOR Y A LA VEZ SE LO MANDE AL RESULTSET---------------------------------------
