@@ -25,6 +25,15 @@ public class Login extends Application {
         stage.setMinWidth(1250);
         stage.setMinHeight(850);
 
+        /*
+        ALTER TABLE `alumno`
+        ADD COLUMN `FOTO_PERFIL` MEDIUMBLOB;
+
+        SET GLOBAL max_allowed_packet=16777216; -- 16 MB en bytes
+
+        ALTER TABLE alumno MODIFY COLUMN foto_perfil MEDIUMBLOB;
+
+         */
 
 
         //Dependiendo lo que pongas en StageStyle cambia la ventana

@@ -10,6 +10,7 @@ module org.practica.proyecto {
     requires java.desktop;
     requires javafx.swing;
     requires GNAvatarView;
+    requires java.sql.rowset;
 
 
     opens org.practica.proyecto to javafx.fxml;

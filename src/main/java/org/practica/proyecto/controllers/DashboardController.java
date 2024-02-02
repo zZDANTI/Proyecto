@@ -7,7 +7,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -23,6 +22,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import org.kohsuke.github.GHRelease;
 import org.kohsuke.github.GHRepository;
@@ -30,12 +30,14 @@ import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.practica.proyecto.models.Alumno;
 import org.practica.proyecto.models.Graficos;
-
 import javax.imageio.ImageIO;
+import javax.sql.rowset.serial.SerialBlob;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,7 +47,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
-
 import static org.practica.proyecto.models.Alumno.obtenerDatosDeAlumnos;
 
 public class DashboardController {
@@ -79,12 +80,10 @@ public class DashboardController {
     public TableColumn<Alumno, String> provincia_tabla;
     public TableColumn<Alumno, String> fecha_nacimiento_tabla;
     public TableColumn<Alumno, Integer> rowRs;
-    public TableColumn<Alumno, Byte> foto_perfil;
 
 
     //DATOS DEL ALUMNO SELECCIONADO
 
-    public ImageView imagenAlumno;
     public TextField dniClick;
     public TextField provinciaClick;
     public TextField direccionClick;
@@ -93,6 +92,8 @@ public class DashboardController {
     public TextField apellido_1Click;
     public TextField apellido_2Click;
     public DatePicker nacimientoClick;
+
+    public GNAvatarView avatarUpdate;
 
 
     //PAGINADOR
@@ -103,9 +104,9 @@ public class DashboardController {
     public Button botonGuardarAlumno;
     public Button botonEliminarAlumno;
     public Button deseleccionarAlumno;
+    public Button actualizarFotoAlumno;
     public Text numeroTotalPaginas;
     public Text numeroTotalAlumnos;
-
 
 
     //VARIABLES PREDETERMINADAS
@@ -121,7 +122,6 @@ public class DashboardController {
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     //VARIABLES DE INSERTAR UN NUEVO ALUMNO
-
     public DatePicker insertarFecha;
     public TextField insertarProvincia;
     public TextField insertarLocalidad;
@@ -130,7 +130,7 @@ public class DashboardController {
     public TextField insertarApellido1;
     public TextField insertarNombre;
     public TextField insertarDNI;
-    public GNAvatarView avatarView;
+    public GNAvatarView avatarInsert;
 
     //INSERTAR ALUMNO
     public Button botonInsertarAlumno;
@@ -139,7 +139,6 @@ public class DashboardController {
     public Text textoNotif;
     public AnchorPane fondoNotif;
 
-
     //GRAFICOS ALUMNO
     public PieChart quesitosLocalidad;
     public StackedBarChart<String, Number> barraAlumno;
@@ -147,7 +146,7 @@ public class DashboardController {
     //PDF
     public Button botonPDF;
 
-
+    //PERFIL USUARIO
     public ImageView perfilUsuario;
 
     //CODIGO DE LA APLICACION DASHBOARD---------------------------------------------------------------------------------
@@ -156,26 +155,26 @@ public class DashboardController {
     @FXML
     void initialize(){
 
-
         if(inicializado){
             actualizacion();
+            botonHome.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
             myChoiceBox.getItems().addAll(elegirRegistros);
             myChoiceBox.setValue(10);
             inicializado = false;
+
         }
         validacion();
         myChoiceBox.setOnAction(this::elegirRegistros);
         botonDesactivado();
         cargarDatos();
 
-
     }
 
     // Obtiene los datos y los inserta en la tabla
     public void cargarDatos() {
 
-        limpiarAlumno();
-        botonAlumnos.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
+        //Carga los graficos
+        datosGrafico();
         if (buscarAlumno.getText() != null && !buscarAlumno.getText().isEmpty() && !buscarAlumno.getText().equals(filtroAnterior)) {
             filtroAnterior = buscarAlumno.getText();
             paginaActual=1;
@@ -201,14 +200,7 @@ public class DashboardController {
         direccion_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getDireccion()));
         localidad_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getLocalidad()));
         provincia_tabla.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getProvincia()));
-        fecha_nacimiento_tabla.setCellValueFactory(cellData ->
-                new SimpleStringProperty(fechaString(cellData.getValue().getFechaNacimiento())));
-        foto_perfil.setCellValueFactory(cellData -> {
-            byte[] fotoBytes = cellData.getValue().getFotoPerfil();
-            Byte fotoByte = (fotoBytes != null && fotoBytes.length > 0) ? fotoBytes[0] : null;
-            return new SimpleObjectProperty<>(fotoByte);
-        });
-
+        fecha_nacimiento_tabla.setCellValueFactory(cellData -> new SimpleStringProperty(fechaString(cellData.getValue().getFechaNacimiento())));
 
         try {
             numeroTotalPaginas.setText("Total paginas: "+Alumno.contPaginas(maxRegistros));
@@ -231,66 +223,76 @@ public class DashboardController {
                     localidadClick.setText(alumnoSeleccionado.getLocalidad().toLowerCase());
                     provinciaClick.setText(alumnoSeleccionado.getProvincia().toLowerCase());
                     nacimientoClick.setValue(alumnoSeleccionado.getFechaNacimiento().toLocalDate());
-
-                    // Crear un GNAvatarView
-
-                    byte[] fotoBytes = alumnoSeleccionado.getFotoPerfil();
-
-                    if (fotoBytes != null && fotoBytes.length > 0) {
-                        // Convertir bytes a una imagen
-                        Image imagenOriginal = convertirBytesAImagen(fotoBytes);
-
-                        // Redimensionar la imagen a un tamaño específico
-
-
-                        // Establecer la imagen en el ImageView perfilUsuario
-                        avatarView.setImage(imagenOriginal);
-                    } else {
-                        avatarView.setImage(new Image("smile.jpg"));
-                    }
+                    blobToImagen(alumnoSeleccionado.getFotoPerfil(),avatarUpdate);
 
                 }
 
             }
         });
+    }
 
-        try {
-            datosGrafico();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+    //Foto de perfil por defecto
+    public void fotoPorDefecto(GNAvatarView fotoDefault){
+        File file = new File("src/main/resources/org/practica/proyecto/imagen/perfilSinFoto.png");
+        Image image = new Image(file.toURI().toString());
+        fotoDefault.setImage(image);
+    }
+
+    //Convierte blob a Imagen
+    public void blobToImagen(Blob fotoBlob, GNAvatarView gnAvatarView){
+        if (fotoBlob != null) {
+
+            try {
+
+                if (fotoBlob.length() > 0) {
+
+                    // Obtener el flujo de entrada desde el Blob
+                    InputStream is = fotoBlob.getBinaryStream();
+
+                    // Crear la imagen directamente desde el flujo de entrada
+                    Image imagen = new Image(is);
+
+                    // Establecer la imagen en el ImageView perfilUsuario
+                    gnAvatarView.setImage(imagen);
+
+                    // Cerrar el flujo de entrada
+                    is.close();
+
+                }
+            } catch (SQLException | IOException e) {
+                System.out.println("Error al obtener los bytes de la imagen desde el Blob: " + e.getMessage());
+            }
+        }else{
+            fotoPorDefecto(gnAvatarView);
         }
+
     }
 
-    public static Image redimensionarImagen(Image imagenOriginal, double nuevoAncho, double nuevoAlto) {
-        ImageView vista = new ImageView(imagenOriginal);
-        vista.setPreserveRatio(true);
-        vista.setFitWidth(nuevoAncho);
-        vista.setFitHeight(nuevoAlto);
-        return vista.snapshot(null, null);
-    }
-
-    public Image convertirBytesAImagen(byte[] bytesDeImagen) {
+    //Convierte imagen a blob
+    public Blob imageToBlob(Image image) throws SQLException {
         try {
-            // Convertir bytes a BufferedImage*
-            ByteArrayInputStream bis = new ByteArrayInputStream(bytesDeImagen);
-            BufferedImage bufferedImage = ImageIO.read(bis);
+            // Convertir la imagen a un formato de entrada
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", outputStream);
 
-            // Convertir BufferedImage a Image de JavaFX
-            return SwingFXUtils.toFXImage(bufferedImage, null);
+            // Crear un objeto Blob a partir del flujo de entrada
+
+            return new SerialBlob(outputStream.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return null; // Maneja el error apropiadamente según tu aplicación
         }
     }
 
     //ACCIONES PARA EL GUARDADO,INSERTAR Y ELIMINADO DEL ALUMNO --------------------------------------------------------
 
     //Boton para guardar los datos de lo Alumnos que se hayan modificado de la tabla_
-    public void guardarAlumnoClick() throws ParseException {
+    public void guardarAlumnoClick() throws ParseException, SQLException {
         Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
         int rowsAlumno = alumnoSeleccionado.getRow();
+
         Alumno alumno = new Alumno(dniClick.getText(),nombreClick.getText(),apellido_1Click.getText(),apellido_2Click.getText(),
-                direccionClick.getText(),localidadClick.getText(),provinciaClick.getText(), (java.sql.Date) fechaDate(nacimientoClick.getValue()),rowsAlumno);
+                direccionClick.getText(),localidadClick.getText(),provinciaClick.getText(), (java.sql.Date) fechaDate(nacimientoClick.getValue()), imageToBlob(avatarUpdate.getImage()),rowsAlumno);
         // Llama un método para guardar los datos del alumno
         alumno.actualizarAlumno();
         notificacion(true,"Alumno editado correctamente");
@@ -333,7 +335,7 @@ public class DashboardController {
     }
 
     //Boton para inserta los datos del Alumno
-    public void insertarAlumno() throws SQLException {
+    public void insertarAlumno(){
         // Verificar si el DNI tiene un formato válido
         if (!validarFormatoDNI(insertarDNI.getText())) {
             notificacion(false, "El formato del DNI no es válido.");
@@ -357,16 +359,16 @@ public class DashboardController {
                     // Realizar la inserción del alumno
                     Alumno alumno = new Alumno(insertarDNI.getText(), insertarNombre.getText(), insertarApellido1.getText(),
                             insertarApellido2.getText(), insertarDireccion.getText(), insertarLocalidad.getText(),
-                            insertarProvincia.getText(), (java.sql.Date) fechaDate(insertarFecha.getValue()), 0);
+                            insertarProvincia.getText(), (java.sql.Date) fechaDate(insertarFecha.getValue()),imageToBlob(avatarInsert.getImage()), 0);
                     if (alumno.insertarAlumno()){
-                        limpiarAlumnoInsertado();
+                        limpiarAlumno();
                         notificacion(true, "Alumno insertado correctamente");
                         cargarDatos();
                     }else{
                         notificacion(false, "El DNI introducido ya existe");
                     }
 
-                } catch (ParseException e) {
+                } catch (ParseException | SQLException e) {
                     throw new RuntimeException(e);
                 }
             } else {
@@ -441,92 +443,66 @@ public class DashboardController {
         });
     }
 
-    //BOTONES PARA PODER NAVEGAR POR BARRA LATERAL----------------------------------------------------------------------
-
-    //Boton navegacion muestra datos del Colegio sobre los alumnos
-    @FXML
-    public void botonHome() {
-        setBotonActivo(botonHome, panelHome);
-        botonAlumnos.setStyle("");
-        botonAdd.setStyle("");
-        botonPerfil.setStyle("");
-        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
-    }
-
-    //Boton navegacion muestra todos los Alumnos y poder editarlos o eliminarlos
-    @FXML
-    public void botonAlumnos() {
-        setBotonActivo(botonAlumnos, panelEditar);
-        botonHome.setStyle("");
-        botonAdd.setStyle("");
-        botonPerfil.setStyle("");
-        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
-    }
-
-    //Boton navegacion añadir Alumno
-    @FXML
-    public void botonAdd() {
-        setBotonActivo(botonAdd, panelAdd);
-        botonHome.setStyle("");
-        botonAlumnos.setStyle("");
-        botonPerfil.setStyle("");
-        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
-
-    }
-
-    //Boton navegacion perfil
-    @FXML
-    public void botonPerfil() {
-        setBotonActivo(botonPerfil, panelPerfil);
-        botonHome.setStyle("");
-        botonAlumnos.setStyle("");
-        botonAdd.setStyle("");
-        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
-    }
-
-    //Contiene todos los botenes de navegacion y le pone el color alrededor
-    public void setBotonActivo(Button boton, AnchorPane panel) {
-        // Aplicar el estilo al nuevo botón activo
-        boton.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
-
-        // Ocultar todos los paneles
-        panelHome.setVisible(false);
-        panelEditar.setVisible(false);
-        panelAdd.setVisible(false);
-        panelPerfil.setVisible(false);
-
-        // Mostrar el panel correspondiente
-        panel.setVisible(true);
-
-    }
-
     //COMPLEMENTO PARA LA EDICION DEL ALUMNO----------------------------------------------------------------------------
+
+    //Carga una imagen dependiendo del boton
+    public void cargarImagen(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Seleccionar Imagen");
+        File file = fileChooser.showOpenDialog(null);
+        if (file != null) {
+            try {
+                BufferedImage bufferedImage = ImageIO.read(file);
+                // Comprimir la imagen al cargarla
+                ImageIO.write(bufferedImage, "jpg", file); // Comprime la imagen como JPEG
+                Image image = new Image(file.toURI().toString());
+
+                if (event.getSource() instanceof Button) {
+                    Button botonPresionado = (Button) event.getSource();
+                    if (botonPresionado.getId().equals("actualizarFotoAlumno")) {
+                        avatarUpdate.setImage(image);
+                    } else if (botonPresionado.getId().equals("insertarFotoAlumno")) {
+                        avatarInsert.setImage(image);
+                    }  else if (botonPresionado.getId().equals("boton2")) {
+                        // Lógica para el segundo botón
+                    }
+                    // Agrega más casos según sea necesario para otros botones
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     //limpia los datos donde se puede editar el alumno
     public void limpiarAlumno(){
 
-        tabla_alumnos.getSelectionModel().clearSelection();
+        if(panelEditar.isVisible()){
+            tabla_alumnos.getSelectionModel().clearSelection();
+            dniClick.clear();
+            nombreClick.clear();
+            apellido_1Click.clear();
+            apellido_2Click.clear();
+            direccionClick.clear();
+            localidadClick.clear();
+            provinciaClick.clear();
+            nacimientoClick.setValue(null);
+            fotoPorDefecto(avatarUpdate);
 
-        dniClick.clear();
-        nombreClick.clear();
-        apellido_1Click.clear();
-        apellido_2Click.clear();
-        direccionClick.clear();
-        localidadClick.clear();
-        provinciaClick.clear();
-        nacimientoClick.setValue(null);
-    }
+        }
 
-    //Limpia los datos cuando inserta un usuario
-    public void limpiarAlumnoInsertado(){
-        insertarDNI.clear();
-        insertarNombre.clear();
-        insertarApellido1.clear();
-        insertarApellido2.clear();
-        insertarDireccion.clear();
-        insertarLocalidad.clear();
-        insertarProvincia.clear();
-        insertarFecha.setValue(null);
+        if (panelAdd.isVisible()){
+            insertarDNI.clear();
+            insertarNombre.clear();
+            insertarApellido1.clear();
+            insertarApellido2.clear();
+            insertarDireccion.clear();
+            insertarLocalidad.clear();
+            insertarProvincia.clear();
+            insertarFecha.setValue(null);
+            fotoPorDefecto(avatarInsert);
+        }
+
     }
 
     //Si algun campo de insertar o actualizar Alumno está vacio no se activará
@@ -543,6 +519,7 @@ public class DashboardController {
         botonPDF.disableProperty().bind(camposVacios);
         botonEliminarAlumno.disableProperty().bind(camposVacios);
         deseleccionarAlumno.disableProperty().bind(camposVacios);
+        actualizarFotoAlumno.disableProperty().bind(camposVacios);
 
         BooleanBinding camposInsertarVacios = insertarDNI.textProperty().isEmpty()
                 .or(insertarNombre.textProperty().isEmpty())
@@ -691,7 +668,7 @@ public class DashboardController {
         // Configurar el TextFormatter para permitir solo letras
         UnaryOperator<TextFormatter.Change> filter = change -> {
             String newText = change.getControlNewText();
-            if (Pattern.matches("[a-zA-Z ]*", newText)) {
+            if (Pattern.matches("[a-zA-ZñÑ ]*", newText)) {
                 return change;
             } else {
                 return null;
@@ -746,9 +723,7 @@ public class DashboardController {
             // Verificar que los primeros 8 caracteres sean números
             if (numeros.matches("\\d+")) {
                 // Verificar que el último caracter sea una letra
-                if (letra.matches("[a-zA-Z]")) {
-                    return true; // El formato es válido
-                }
+                return letra.matches("[a-zA-Z]"); // El formato es válido
             }
         }
         return false; // El formato no es válido
@@ -756,7 +731,7 @@ public class DashboardController {
 
     //ACCIONES DE EXPORTACIONES-----------------------------------------------------------------------------------------
 
-    //Al darle al boton exporta el resultSet a CSV
+    //Exporta el resultSet a CSV
     public void botonExportarCSV() {
        if (Alumno.exportToCSV()){
            notificacion(true,"CSV exportado exitosamente!");
@@ -765,6 +740,7 @@ public class DashboardController {
        }
     }
 
+    //Exporta el resultSet a PDF
     public void botonExportarPDF() throws SQLException {
         Alumno alumnoSeleccionado = tabla_alumnos.getSelectionModel().getSelectedItem();
         int rowsAlumno = alumnoSeleccionado.getRow();
@@ -778,63 +754,66 @@ public class DashboardController {
     //GRAFICOS----------------------------------------------------------------------------------------------------------
 
     //Carga los datos de la consultas que hay en graficos
-    public void datosGrafico() throws SQLException {
+    public void datosGrafico(){
         Graficos graficos= new Graficos();
-        List<Graficos> listGraficos = graficos.graficoAnios();
+        List<Graficos> listGraficos;
+        try {
+            listGraficos = graficos.graficoAnios();
+            // Limpiar los datos existentes en el StackedBarChart
+            barraAlumno.getData().clear();
 
-        // Limpiar los datos existentes en el StackedBarChart
-        barraAlumno.getData().clear();
-
-        //Inserta los datos con un for each
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        for (Graficos grafico : listGraficos) {
-            series.getData().add(new XYChart.Data<>(String.valueOf(grafico.getCantidadBuscada()), grafico.getCantidadAlumnos()));
-        }
-
-        // Añade los datos
-        barraAlumno.getData().add(series);
-
-        series.setName("Alumnos agrupados por año de nacimiento");
-
-
-        // Mostrar los valores en etiquetas
-        for (XYChart.Series<String, Number> unaSerie : barraAlumno.getData()) {
-            for (XYChart.Data<String, Number> data : unaSerie.getData()) {
-                Label label = new Label(data.getYValue().toString());
-                StackPane stackPane = (StackPane) data.getNode();
-                stackPane.getChildren().add(label);
-                label.setStyle("-fx-text-fill: white; -fx-font-size: 15pt;");
-
-                CategoryAxis xAxis = (CategoryAxis) barraAlumno.getXAxis();
-                NumberAxis yAxis = (NumberAxis) barraAlumno.getYAxis();
-
-                // Cambiar color de los datos en el eje X (inferior)
-                xAxis.setStyle("-fx-tick-label-fill: white;");
-
-                // Cambiar color de los datos en el eje Y (lateral)
-                yAxis.setStyle("-fx-tick-label-fill: white;");
+            //Inserta los datos con un for each
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            for (Graficos grafico : listGraficos) {
+                series.getData().add(new XYChart.Data<>(String.valueOf(grafico.getCantidadBuscada()), grafico.getCantidadAlumnos()));
             }
+
+            // Añade los datos
+            barraAlumno.getData().add(series);
+
+            series.setName("Alumnos agrupados por año de nacimiento");
+
+
+            // Mostrar los valores en etiquetas
+            for (XYChart.Series<String, Number> unaSerie : barraAlumno.getData()) {
+                for (XYChart.Data<String, Number> data : unaSerie.getData()) {
+                    Label label = new Label(data.getYValue().toString());
+                    StackPane stackPane = (StackPane) data.getNode();
+                    stackPane.getChildren().add(label);
+                    label.setStyle("-fx-text-fill: white; -fx-font-size: 15pt;");
+
+                    CategoryAxis xAxis = (CategoryAxis) barraAlumno.getXAxis();
+                    NumberAxis yAxis = (NumberAxis) barraAlumno.getYAxis();
+
+                    // Cambiar color de los datos en el eje X (inferior)
+                    xAxis.setStyle("-fx-tick-label-fill: white;");
+
+                    // Cambiar color de los datos en el eje Y (lateral)
+                    yAxis.setStyle("-fx-tick-label-fill: white;");
+                }
+            }
+
+            // Limpiar los datos existentes en el PieChart
+            quesitosLocalidad.getData().clear();
+
+            // Obtener datos para el PieChart
+            List<Graficos> pieChartData2 = graficos.graficoProvincia();
+
+            // Crear datos para el PieChart y mostrar valores en etiquetas
+            for (Graficos grafico : pieChartData2) {
+                PieChart.Data newData = new PieChart.Data(grafico.getCantidadBuscada(), grafico.getCantidadAlumnos());
+                quesitosLocalidad.getData().add(newData); // Agregar nuevo dato
+            }
+
+            // Aplicar estilo CSS para cambiar el color del texto en los quesitos y el título a blanco
+            quesitosLocalidad.getStylesheets().add("data:text/css," +
+                    ".chart-pie-label {-fx-fill: white;}" +
+                    ".chart-title {-fx-text-fill: white;}"
+            );
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-
-
-        // Limpiar los datos existentes en el PieChart
-        quesitosLocalidad.getData().clear();
-
-        // Obtener datos para el PieChart
-        List<Graficos> pieChartData2 = graficos.graficoProvincia();
-
-        // Crear datos para el PieChart y mostrar valores en etiquetas
-        for (Graficos grafico : pieChartData2) {
-            PieChart.Data newData = new PieChart.Data(grafico.getCantidadBuscada(), grafico.getCantidadAlumnos());
-            quesitosLocalidad.getData().add(newData); // Agregar nuevo dato
-        }
-
-        // Aplicar estilo CSS para cambiar el color del texto en los quesitos y el título a blanco
-        quesitosLocalidad.getStylesheets().add("data:text/css," +
-                ".chart-pie-label {-fx-fill: white;}" +
-                ".chart-title {-fx-text-fill: white;}"
-        );
 
     }
 
@@ -885,6 +864,65 @@ public class DashboardController {
         alert.setContentText("Por favor, descargue la última versión desde nuestro sitio web.");
 
         alert.showAndWait();
+    }
+
+    //BOTONES PARA PODER NAVEGAR POR BARRA LATERAL----------------------------------------------------------------------
+
+    //Boton navegacion muestra datos del Colegio sobre los alumnos
+    @FXML
+    public void botonHome() {
+        setBotonActivo(botonHome, panelHome);
+        botonAlumnos.setStyle("");
+        botonAdd.setStyle("");
+        botonPerfil.setStyle("");
+        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
+    }
+
+    //Boton navegacion muestra todos los Alumnos y poder editarlos o eliminarlos
+    @FXML
+    public void botonAlumnos() {
+        setBotonActivo(botonAlumnos, panelEditar);
+        botonHome.setStyle("");
+        botonAdd.setStyle("");
+        botonPerfil.setStyle("");
+        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
+    }
+
+    //Boton navegacion añadir Alumno
+    @FXML
+    public void botonAdd() {
+        setBotonActivo(botonAdd, panelAdd);
+        botonHome.setStyle("");
+        botonAlumnos.setStyle("");
+        botonPerfil.setStyle("");
+        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
+
+    }
+
+    //Boton navegacion perfil
+    @FXML
+    public void botonPerfil() {
+        setBotonActivo(botonPerfil, panelPerfil);
+        botonHome.setStyle("");
+        botonAlumnos.setStyle("");
+        botonAdd.setStyle("");
+        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
+    }
+
+    //Contiene todos los botenes de navegacion y le pone el color alrededor
+    public void setBotonActivo(Button boton, AnchorPane panel) {
+        // Aplicar el estilo al nuevo botón activo
+        boton.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
+
+        // Ocultar todos los paneles
+        panelHome.setVisible(false);
+        panelEditar.setVisible(false);
+        panelAdd.setVisible(false);
+        panelPerfil.setVisible(false);
+
+        // Mostrar el panel correspondiente
+        panel.setVisible(true);
+
     }
 
 }

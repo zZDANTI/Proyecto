@@ -3,7 +3,8 @@ package org.practica.proyecto.models;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import javafx.stage.FileChooser;
-
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
@@ -24,13 +25,13 @@ public class Alumno {
     private String localidad;
     private String provincia;
     private Date fechaNacimiento;
-    private byte[] fotoPerfil;
+    private Blob fotoPerfil;
     private int row;
 
     //CONSTRUCTORES
 
 
-    public Alumno(String dni, String nombre, String apellido1, String apellido2, String direccion, String localidad, String provincia, Date fechaNacimiento, byte[] fotoPerfil, int row) {
+    public Alumno(String dni, String nombre, String apellido1, String apellido2, String direccion, String localidad, String provincia, Date fechaNacimiento, Blob fotoPerfil, int row) {
         this.dni = dni;
         this.nombre = nombre;
         this.apellido1 = apellido1;
@@ -40,18 +41,6 @@ public class Alumno {
         this.provincia = provincia;
         this.fechaNacimiento = fechaNacimiento;
         this.fotoPerfil = fotoPerfil;
-        this.row = row;
-    }
-
-    public Alumno(String dni, String nombre, String apellido1, String apellido2, String direccion, String localidad, String provincia, Date fechaNacimiento, int row) {
-        this.dni = dni;
-        this.nombre = nombre;
-        this.apellido1 = apellido1;
-        this.apellido2 = apellido2;
-        this.direccion = direccion;
-        this.localidad = localidad;
-        this.provincia = provincia;
-        this.fechaNacimiento = fechaNacimiento;
         this.row = row;
     }
 
@@ -91,7 +80,7 @@ public class Alumno {
         return fechaNacimiento;
     }
 
-    public byte[] getFotoPerfil() {
+    public Blob getFotoPerfil() {
         return fotoPerfil;
     }
 
@@ -160,7 +149,7 @@ public class Alumno {
                         resultSet.getString("localidad"),
                         resultSet.getString("provincia"),
                         resultSet.getDate("fecha_nacimiento"),
-                        resultSet.getBytes("foto_perfil"),
+                        resultSet.getBlob("foto_perfil"),
                         resultSet.getRow()
 
                 );
@@ -235,6 +224,7 @@ public class Alumno {
             resultSet.updateString("localidad", localidad.toUpperCase());
             resultSet.updateString("provincia", provincia.toUpperCase());
             resultSet.updateDate("fecha_nacimiento", fechaNacimiento);
+            resultSet.updateBlob("foto_perfil",fotoPerfil);
 
             // Actualiza la fila en la base de datos
             resultSet.updateRow();
@@ -276,6 +266,7 @@ public class Alumno {
             resultSet.updateString("localidad", localidad.toUpperCase());
             resultSet.updateString("provincia", provincia.toUpperCase());
             resultSet.updateDate("fecha_nacimiento", fechaNacimiento);
+            resultSet.updateBlob("foto_perfil",fotoPerfil);
 
             // Insertar la nueva fila en la base de datos
             resultSet.insertRow();
@@ -303,9 +294,12 @@ public class Alumno {
 
                 // Escribir encabezados
                 for (int i = 1; i <= metaData.getColumnCount(); i++) {
-                    writer.write(metaData.getColumnLabel(i));
-                    if (i < metaData.getColumnCount()) {
-                        writer.write(";"); // Delimitador personalizado
+                    String columnName = metaData.getColumnLabel(i);
+                    if (!columnName.equalsIgnoreCase("FOTO_PERFIL")) {
+                        writer.write(columnName);
+                        if (i < metaData.getColumnCount()) {
+                            writer.write(";"); // Delimitador personalizado
+                        }
                     }
                 }
                 writer.newLine();
@@ -315,22 +309,22 @@ public class Alumno {
                 // Escribir datos
                 while (resultSet.next()) {
                     for (int i = 1; i <= metaData.getColumnCount(); i++) {
-                        String value = resultSet.getString(i);
-                        if (metaData.getColumnName(i).equalsIgnoreCase("direccion")) {
-                            // Aplicar filtros solo a la columna "direccion"
-                            value = value.replace(",", " -"); // Reemplazar comas por guiones
-                        }
-                        writer.write(value);
-                        if (i < metaData.getColumnCount()) {
-                            writer.write(";"); // Delimitador personalizado
+                        String columnName = metaData.getColumnName(i);
+                        if (!columnName.equalsIgnoreCase("FOTO_PERFIL")) {
+                            String value = resultSet.getString(i);
+                            if (columnName.equalsIgnoreCase("direccion")) {
+                                // Aplicar filtros solo a la columna "direccion"
+                                value = value.replace(",", " -"); // Reemplazar comas por guiones
+                            }
+                            writer.write(value);
+                            if (i < metaData.getColumnCount()) {
+                                writer.write(";"); // Delimitador personalizado
+                            }
                         }
                     }
                     writer.newLine();
                 }
-
                 return true;
-
-
             } catch (IOException | SQLException e) {
                 e.printStackTrace();
             }
@@ -344,7 +338,6 @@ public class Alumno {
         // Posiciona el resultset
         resultSet.absolute(row);
 
-
         Document document = new Document();
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialFileName("alumnoPDF.pdf");
@@ -355,16 +348,33 @@ public class Alumno {
                 PdfWriter.getInstance(document, new FileOutputStream(file));
                 document.open();
 
-                /*
                 // Crear un párrafo para la imagen
                 Paragraph imageParagraph = new Paragraph();
-                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imagenAlumno.getImage(), null);
-                Image image = Image.getInstance(bufferedImage, null);
-                image.scaleToFit(400, 400);
-                image.setAlignment(Element.ALIGN_CENTER);
-                imageParagraph.add(image);
-                document.add(imageParagraph);
-                 */
+                Blob fotoBlob = resultSet.getBlob("FOTO_PERFIL");
+                if (fotoBlob != null) {
+                    BufferedImage bufferedImage = ImageIO.read(fotoBlob.getBinaryStream());
+                    Image image = Image.getInstance(bufferedImage, null);
+                    image.scaleToFit(400, 400);
+                    image.setAlignment(Element.ALIGN_CENTER);
+                    imageParagraph.add(image);
+                    document.add(imageParagraph);
+                } else {
+                    // Si la imagen es nula, cargar una imagen predeterminada
+                    try (InputStream inputStream = Alumno.class.getResourceAsStream("/org/practica/proyecto/imagen/perfilSinFoto.png")) {
+                        if (inputStream != null) {
+                            BufferedImage defaultImage = ImageIO.read(inputStream);
+                            if (defaultImage != null) {
+                                Image defaultPdfImage = Image.getInstance(defaultImage, null);
+                                defaultPdfImage.scaleToFit(400, 400);
+                                defaultPdfImage.setAlignment(Element.ALIGN_CENTER);
+                                imageParagraph.add(defaultPdfImage);
+                                document.add(imageParagraph);
+                            }
+                        }
+                    } catch (IOException | BadElementException e) {
+                        e.printStackTrace();
+                    }
+                }
 
                 // Espacio entre la imagen y el contenido de texto
                 document.add(Chunk.NEWLINE);
@@ -402,13 +412,12 @@ public class Alumno {
                 document.add(dataParagraph);
                 document.close();
                 return true;
-            } catch (DocumentException | java.io.IOException e) {
+            } catch (DocumentException | IOException e) {
                 e.printStackTrace();
             }
         }
         return false;
     }
-
 
 
 
