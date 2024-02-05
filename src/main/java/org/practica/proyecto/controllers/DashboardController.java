@@ -451,9 +451,28 @@ public class DashboardController {
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             try {
+                // Verificar el tamaño del archivo
+                long fileSize = file.length(); // Tamaño del archivo en bytes
+
+                long maxFileSizeBytes = 16 * 1024 * 1024; // Tamaño máximo permitido (16 MB)
+                if (fileSize > maxFileSizeBytes) {
+                    notificacion(false, "La imagen es demasiado grande. Tamaño máximo: 16 MB.");
+                    return;
+                }
+
+                // Verificar la resolución de la imagen
                 BufferedImage bufferedImage = ImageIO.read(file);
-                // Comprimir la imagen al cargarla
-                ImageIO.write(bufferedImage, "jpg", file); // Comprime la imagen como JPEG
+                int imageWidth = bufferedImage.getWidth();
+                int imageHeight = bufferedImage.getHeight();
+
+                int maxResolutionWidth = 1920; // Ancho máximo permitido (1080p)
+                int maxResolutionHeight = 1080; // Alto máximo permitido (1080p)
+                if (imageWidth > maxResolutionWidth || imageHeight > maxResolutionHeight) {
+                    notificacion(false, "Resolución máxima de la imagen: 1920x1080.");
+                    return;
+                }
+
+                // Si pasa ambas verificaciones, cargar la imagen
                 Image image = new Image(file.toURI().toString());
 
                 if (event.getSource() instanceof Button) {
@@ -467,11 +486,14 @@ public class DashboardController {
                     }
                     // Agrega más casos según sea necesario para otros botones
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException | RuntimeException e) {
+                notificacion(false, "Error al cargar la imagen.");
             }
+        } else {
+            notificacion(false, "La imagen adjuntada ha sido cancelada.");
         }
     }
+
 
     //limpia los datos donde se puede editar el alumno
     public void limpiarAlumno(){

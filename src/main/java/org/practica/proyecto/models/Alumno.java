@@ -229,8 +229,10 @@ public class Alumno {
             // Actualiza la fila en la base de datos
             resultSet.updateRow();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException e ) {
+            String mensaje = e.getMessage();
+            System.out.println("Error " + mensaje);
+
         }
     }
 
