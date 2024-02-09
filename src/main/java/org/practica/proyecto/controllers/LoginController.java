@@ -59,6 +59,12 @@ public class LoginController {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/practica/proyecto/dashboard-view.fxml"));
                 Parent parentDash = fxmlLoader.load();
 
+                // Obtener el controlador del panel de control
+                DashboardController dashboardController = fxmlLoader.getController();
+
+                // Pasar el objeto Profesor al controlador del panel de control
+                dashboardController.perfilProfesor(usuarioVerificado);
+
                 // Crear la escena y agregar hoja de estilos CSS
                 Scene dashBoard = new Scene(parentDash);
                 dashBoard.getStylesheets().add(getClass().getResource("/org/practica/proyecto/css/style.css").toExternalForm());

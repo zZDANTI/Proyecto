@@ -14,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
@@ -30,6 +29,8 @@ import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.practica.proyecto.models.Alumno;
 import org.practica.proyecto.models.Graficos;
+import org.practica.proyecto.models.Profesor;
+
 import javax.imageio.ImageIO;
 import javax.sql.rowset.serial.SerialBlob;
 import java.awt.image.BufferedImage;
@@ -47,6 +48,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
+
 import static org.practica.proyecto.models.Alumno.obtenerDatosDeAlumnos;
 
 public class DashboardController {
@@ -79,6 +81,8 @@ public class DashboardController {
     public TextField perfilProvincia;
     public DatePicker perfilFecha;
     public Button botonGuardarPerfil;
+    public Text usuarioProfesor;
+    public GNAvatarView avatarDashboard;
 
     //TABLA ALUMNOS
     @FXML
@@ -104,7 +108,6 @@ public class DashboardController {
     public TextField apellido_1Click;
     public TextField apellido_2Click;
     public DatePicker nacimientoClick;
-
     public GNAvatarView avatarUpdate;
 
 
@@ -119,6 +122,7 @@ public class DashboardController {
     public Button actualizarFotoAlumno;
     public Text numeroTotalPaginas;
     public Text numeroTotalAlumnos;
+
 
 
     //VARIABLES PREDETERMINADAS
@@ -157,9 +161,6 @@ public class DashboardController {
 
     //PDF
     public Button botonPDF;
-
-    //PERFIL USUARIO
-    public ImageView perfilUsuario;
 
     //CODIGO DE LA APLICACION DASHBOARD---------------------------------------------------------------------------------
 
@@ -956,6 +957,24 @@ public class DashboardController {
 
         // Mostrar el panel correspondiente
         panel.setVisible(true);
+
+    }
+
+    //PERFIL DEL PROFESOR-----------------------------------------------------------------------------------------------
+
+    public void perfilProfesor(Profesor profesor) {
+        perfilDNI.setText(profesor.getDni());
+        perfilNombre.setText(profesor.getNombre());
+        perfilApellido1.setText(profesor.getApellido1());
+        perfilApellido2.setText(profesor.getApellido2());
+        perfilDireccion.setText(profesor.getDireccion());
+        perfilLocalidad.setText(profesor.getLocalidad());
+        perfilProvincia.setText(profesor.getProvincia());
+        perfilFecha.setValue(profesor.getFechaIngreso().toLocalDate());
+
+        usuarioProfesor.setText("Profesor: " + profesor.getNombre());
+
+
 
     }
 

@@ -39,11 +39,11 @@
                </font>
             </Label>
             <Label layoutX="80.0" layoutY="361.0" text="¿Contraseña olvidada?" visible="false" />
-            <CustomTextField fx:id="textUser" focusTraversable="false" layoutX="80.0" layoutY="242.0" prefHeight="48.0" prefWidth="333.0" promptText="Usuario" styleClass="textUser">
+            <CustomTextField fx:id="textUser" focusTraversable="false" layoutX="80.0" layoutY="242.0" prefHeight="48.0" prefWidth="333.0" promptText="Usuario" styleClass="textUser" text="123">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font></CustomTextField>
-            <CustomPasswordField fx:id="textPass" focusTraversable="false" layoutX="80.0" layoutY="305.0" prefHeight="48.0" prefWidth="333.0" promptText="Contraseña" styleClass="textPassword">
+            <CustomPasswordField fx:id="textPass" focusTraversable="false" layoutX="80.0" layoutY="305.0" prefHeight="48.0" prefWidth="333.0" promptText="Contraseña" styleClass="textPassword" text="123">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>

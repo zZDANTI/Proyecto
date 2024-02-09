@@ -38,22 +38,22 @@
                   <Insets left="18.0" top="10.0" />
                </VBox.margin>
             </Text>
-            <ImageView fx:id="perfilUsuario" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+            <GNAvatarView fx:id="avatarDashboard" prefHeight="317.0" prefWidth="200.0" type="CIRCLE">
+               <image>
+                  <Image url="@imagen/Foto_Perfil_.jpg" />
+               </image>
                <VBox.margin>
-                  <Insets left="8.0" top="40.0" />
+                  <Insets left="10" right="10" top="10" bottom="10"/>
                </VBox.margin>
-            </ImageView>
-            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Usuario: EMILIO" textAlignment="CENTER" wrappingWidth="215.13671875">
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
+            </GNAvatarView>
+            <Text fx:id="usuarioProfesor" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="215.13671875">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Text>
             <Button fx:id="botonHome" mnemonicParsing="false" onAction="#botonHome" prefHeight="45.0" prefWidth="163.0" styleClass="boton-menu" text="Home" textFill="#999999">
                <VBox.margin>
-                  <Insets left="26.0" top="60.0" />
+                  <Insets left="26.0" top="20.0" />
                </VBox.margin>
                <graphic>
                   <ImageView fitHeight="36.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -441,7 +441,7 @@
                                           <Font size="17.0" />
                                        </font>
                                     </Label>
-                                    <TextField fx:id="perfilDNI" prefHeight="40.0" prefWidth="240.0" promptText="DNI" VBox.vgrow="ALWAYS" />
+                                    <TextField fx:id="perfilDNI" disable="true" prefHeight="40.0" prefWidth="240.0" promptText="DNI" VBox.vgrow="ALWAYS" />
                                     <Label text="Nombre:" textFill="WHITE">
                                        <font>
                                           <Font size="17.0" />
@@ -487,7 +487,7 @@
                                           <Font size="17.0" />
                                        </font>
                                     </Label>
-                                    <DatePicker fx:id="perfilFecha" prefHeight="40.0" prefWidth="240.0" promptText="Fecha de nacimiento" VBox.vgrow="ALWAYS" />
+                                    <DatePicker fx:id="perfilFecha" disable="true" prefHeight="40.0" prefWidth="240.0" promptText="Fecha de ingreso" VBox.vgrow="ALWAYS" />
                                  </children>
                               </VBox>
                            </children>
