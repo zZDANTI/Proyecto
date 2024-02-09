@@ -19,6 +19,8 @@ import org.practica.proyecto.models.Profesor;
 
 import java.io.IOException;
 
+import static org.practica.proyecto.controllers.DashboardController.reproducirSonido;
+
 public class LoginController {
 
 
@@ -88,6 +90,8 @@ public class LoginController {
 
     // Método para mostrar el Tooltip en caso de error
     public void mostrarTooltipError(TextField campo, String mensaje) {
+        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/errorSonido.wav");
+
         Tooltip tooltip = new Tooltip(mensaje);
         tooltip.show(campo, campo.localToScreen(0, 0).getX() + campo.getWidth() / 2, campo.localToScreen(0, 0).getY() + campo.getHeight() / 2);
 

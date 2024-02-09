@@ -645,7 +645,7 @@ public class DashboardController {
     }
 
     //Le pasas un sonido y lo reproduce
-    public void reproducirSonido(String rutaArchivo) {
+    public static void reproducirSonido(String rutaArchivo) {
         Platform.runLater(() -> {
             try {
                 Media media = new Media(new File(rutaArchivo).toURI().toString());

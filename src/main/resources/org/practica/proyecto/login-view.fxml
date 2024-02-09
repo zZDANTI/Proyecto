@@ -38,7 +38,7 @@
                   <Font name="System Bold" size="40.0" />
                </font>
             </Label>
-            <Label layoutX="80.0" layoutY="361.0" text="¿Contraseña olvidada?" />
+            <Label layoutX="80.0" layoutY="361.0" text="¿Contraseña olvidada?" visible="false" />
             <CustomTextField fx:id="textUser" focusTraversable="false" layoutX="80.0" layoutY="242.0" prefHeight="48.0" prefWidth="333.0" promptText="Usuario" styleClass="textUser">
                <font>
                   <Font name="System Bold" size="12.0" />
@@ -50,6 +50,25 @@
             </CustomPasswordField>
             <Button fx:id="loginButton" layoutX="140.0" layoutY="431.0" mnemonicParsing="false" onAction="#comprobarUser" prefHeight="66.0" prefWidth="220.0" styleClass="loginButton" text="Iniciar Sesión" textFill="WHITE" />
             <TextField fx:id="errorNoti" layoutX="73.0" layoutY="182.0" prefHeight="23.0" prefWidth="2.0" visible="false" />
+
+            <Button fx:id="minimizeButton" layoutX="413.0" layoutY="2.0" mnemonicParsing="false" onAction="#minimizeWindow" prefHeight="34.0" prefWidth="24.0" style="-fx-background-color: transparent;">
+               <graphic>
+                  <ImageView fitHeight="42.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@imagen/minimizarVentana.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <Button fx:id="closeButton" layoutX="458.0" layoutY="2.0" mnemonicParsing="false" onAction="#closeWindow" prefHeight="25.0" prefWidth="33.0" style="-fx-background-color: transparent;">
+               <graphic>
+                  <ImageView fitHeight="42.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@imagen/cerrarVentana.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+
          </children>
       </AnchorPane>
    </children>
