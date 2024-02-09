@@ -151,7 +151,7 @@
                </children>
             </AnchorPane>
 
-            <AnchorPane fx:id="panelEditar" layoutX="6.0" layoutY="47.0" prefHeight="200.0" prefWidth="200.0" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
+            <AnchorPane fx:id="panelEditar" layoutX="6.0" layoutY="47.0" prefHeight="200.0" prefWidth="200.0" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
 
                   <AnchorPane prefHeight="399.0" prefWidth="938.0" AnchorPane.bottomAnchor="340.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0.0">
                         <TableView fx:id="tabla_alumnos" layoutX="-1.0" layoutY="47.0" prefHeight="348.0" prefWidth="926.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="47.0">
@@ -410,25 +410,101 @@
                   </Button>
                </children>
             </AnchorPane>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <AnchorPane fx:id="panelPerfil" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: pink;" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0" />
+            <AnchorPane fx:id="panelPerfil" focusTraversable="true" prefHeight="200.0" prefWidth="800.0" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
+               <children>
+                  <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="286.0" prefWidth="956.0" spacing="10" style="-fx-padding: 20 0 0 0;" VBox.vgrow="ALWAYS">
+                           <children>
+                              <GNAvatarView fx:id="avatarPerfil" prefHeight="264.0" prefWidth="956.0">
+                                 <image>
+                                    <Image url="@imagen/perfilSinFoto.png" />
+                                 </image>
+                              </GNAvatarView>
+                              <Button fx:id="insertarFotoPerfil" onAction="#cargarImagen" prefHeight="43.0" prefWidth="39.0" style="-fx-background-color: transparent;">
+                                 <graphic>
+                                    <ImageView fitHeight="37.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@imagen/botonAñadirFoto.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </VBox>
+                        <HBox alignment="CENTER" prefWidth="956.0" spacing="20" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                           <children>
+                              <VBox alignment="CENTER" prefHeight="414.0" prefWidth="466.0" spacing="17.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Label text="DNI:" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="perfilDNI" prefHeight="40.0" prefWidth="240.0" promptText="DNI" VBox.vgrow="ALWAYS" />
+                                    <Label text="Nombre:" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="perfilNombre" prefHeight="40.0" prefWidth="240.0" promptText="Nombre" VBox.vgrow="ALWAYS" />
+                                    <Label text="1ºApellido" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="perfilApellido1" prefHeight="40.0" prefWidth="240.0" promptText="1ºApellido" VBox.vgrow="ALWAYS" />
+                                    <Label text="2ºApellido" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="perfilApellido2" prefHeight="40.0" prefWidth="240.0" promptText="2ºApellido" VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </VBox>
+                              <VBox alignment="CENTER" prefHeight="412.0" prefWidth="468.0" spacing="17" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Label text="Direccion:" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="perfilDireccion" prefHeight="40.0" prefWidth="240.0" promptText="Dirección" VBox.vgrow="ALWAYS" />
+                                    <Label text="Localidad:" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="perfilLocalidad" prefHeight="40.0" prefWidth="240.0" promptText="Localidad" VBox.vgrow="ALWAYS" />
+                                    <Label text="Provincia:" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="perfilProvincia" prefHeight="40.0" prefWidth="240.0" promptText="Provincia" VBox.vgrow="ALWAYS" />
+                                    <Label text="Fecha de Ingreso" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <DatePicker fx:id="perfilFecha" prefHeight="40.0" prefWidth="240.0" promptText="Fecha de nacimiento" VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <Button fx:id="botonGuardarPerfil" focusTraversable="false" onAction="#insertarAlumno" prefHeight="54.0" prefWidth="58.0" style="-fx-background-color: transparent; -fx-padding: 0;" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="10.0">
+                     <graphic>
+                        <ImageView fitHeight="48.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@imagen/imagenInsertar.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </AnchorPane>
          </children>
       </AnchorPane>
    </center>

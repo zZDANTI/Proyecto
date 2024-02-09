@@ -68,6 +68,18 @@ public class DashboardController {
 
     public AnchorPane panelPerfil;
 
+    //PERFIL USUARIO
+
+    public TextField perfilDNI;
+    public TextField perfilNombre;
+    public TextField perfilApellido1;
+    public TextField perfilApellido2;
+    public TextField perfilDireccion;
+    public TextField perfilLocalidad;
+    public TextField perfilProvincia;
+    public DatePicker perfilFecha;
+    public Button botonGuardarPerfil;
+
     //TABLA ALUMNOS
     @FXML
     public TableView<Alumno> tabla_alumnos;
