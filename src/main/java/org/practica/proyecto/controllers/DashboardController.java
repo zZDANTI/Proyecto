@@ -83,6 +83,7 @@ public class DashboardController {
     public Button botonGuardarPerfil;
     public Text usuarioProfesor;
     public GNAvatarView avatarDashboard;
+    public GNAvatarView avatarPerfil;
 
     //TABLA ALUMNOS
     @FXML
@@ -495,8 +496,8 @@ public class DashboardController {
                         avatarUpdate.setImage(image);
                     } else if (botonPresionado.getId().equals("insertarFotoAlumno")) {
                         avatarInsert.setImage(image);
-                    }  else if (botonPresionado.getId().equals("boton2")) {
-                        // Lógica para el segundo botón
+                    }  else if(botonPresionado.getId().equals("insertarFotoPerfil")) {
+                        avatarPerfil.setImage(image);
                     }
                     // Agrega más casos según sea necesario para otros botones
                 }
@@ -507,7 +508,6 @@ public class DashboardController {
             notificacion(false, "La imagen adjuntada ha sido cancelada.");
         }
     }
-
 
     //limpia los datos donde se puede editar el alumno
     public void limpiarAlumno(){
@@ -588,6 +588,14 @@ public class DashboardController {
         soloLetras(insertarLocalidad);
         soloLetras(insertarProvincia);
         validarFecha(insertarFecha);
+
+        //ActualizarPerfil
+        soloLetras(perfilNombre);
+        soloLetras(perfilApellido1);
+        soloLetras(perfilApellido2);
+        soloLetras(perfilLocalidad);
+        soloLetras(perfilProvincia);
+
 
     }
 
@@ -962,7 +970,7 @@ public class DashboardController {
 
     //PERFIL DEL PROFESOR-----------------------------------------------------------------------------------------------
 
-    public void perfilProfesor(Profesor profesor) {
+    public void perfilProfesor(Profesor profesor){
         perfilDNI.setText(profesor.getDni());
         perfilNombre.setText(profesor.getNombre());
         perfilApellido1.setText(profesor.getApellido1());
@@ -971,11 +979,34 @@ public class DashboardController {
         perfilLocalidad.setText(profesor.getLocalidad());
         perfilProvincia.setText(profesor.getProvincia());
         perfilFecha.setValue(profesor.getFechaIngreso().toLocalDate());
+        blobToImagen(profesor.getFotoPerfil(),avatarPerfil);
 
         usuarioProfesor.setText("Profesor: " + profesor.getNombre());
+        blobToImagen(profesor.getFotoPerfil(),avatarDashboard);
 
+    }
+
+    public void modificarProfesor() throws SQLException {
+        Profesor profesor = new Profesor();
+        profesor.setNombre(perfilNombre.getText());
+        profesor.setApellido1(perfilApellido1.getText());
+        profesor.setApellido2(perfilApellido2.getText());
+        profesor.setDireccion(perfilDireccion.getText());
+        profesor.setLocalidad(perfilLocalidad.getText());
+        profesor.setProvincia(perfilProvincia.getText());
+        profesor.setFotoPerfil(imageToBlob(avatarPerfil.getImage()));
+        if (profesor.actualizarProfesor()){
+            notificacion(true, "Se ha actualizado tu perfil");
+            //Resetea para ver lo modificado
+            usuarioProfesor.setText("Profesor: " + profesor.getNombre());
+            avatarDashboard.setImage(avatarPerfil.getImage());
+        }else{
+            notificacion(false, "Error al actualizar tu perfil");
+        }
 
 
     }
+
+
 
 }

@@ -18,6 +18,7 @@ import org.controlsfx.control.textfield.CustomTextField;
 import org.practica.proyecto.models.Profesor;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import static org.practica.proyecto.controllers.DashboardController.reproducirSonido;
 
@@ -36,7 +37,7 @@ public class LoginController {
 
 
     @FXML
-    public boolean comprobarUser() {
+    public boolean comprobarUser() throws SQLException {
         // Obtener los datos del usuario y la contraseña
         String usuario = textUser.getText();
         String contrasenya = textPass.getText();
@@ -73,6 +74,9 @@ public class LoginController {
                 Stage stage = new Stage();
                 stage.setScene(dashBoard);
                 stage.setTitle("Dashboard"); // Establecer el título de la ventana
+
+                stage.setMinWidth(1250);
+                stage.setMinHeight(850);
 
                 // Aplicar el estilo de decoración de la ventana
                 stage.initStyle(StageStyle.DECORATED);

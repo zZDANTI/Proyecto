@@ -36,6 +36,7 @@ public class Profesor {
         this.fotoPerfil = fotoPerfil;
     }
 
+
     public Profesor() {
 
     }
@@ -78,6 +79,42 @@ public class Profesor {
         return fotoPerfil;
     }
 
+    public void setDni(String dni) {
+        this.dni = dni;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setApellido1(String apellido1) {
+        this.apellido1 = apellido1;
+    }
+
+    public void setApellido2(String apellido2) {
+        this.apellido2 = apellido2;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public void setLocalidad(String localidad) {
+        this.localidad = localidad;
+    }
+
+    public void setProvincia(String provincia) {
+        this.provincia = provincia;
+    }
+
+    public void setFechaIngreso(Date fechaIngreso) {
+        this.fechaIngreso = fechaIngreso;
+    }
+
+    public void setFotoPerfil(Blob fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
+    }
+
     //FUNCIONES PROFESOR
 
     public Profesor checkUser(String inputUsuario, String inputContrasenya) {
@@ -89,7 +126,7 @@ public class Profesor {
             connection = Singleton.obtenerConexion();
 
             // Preparar la consulta SQL
-            preparedStatement = connection.prepareStatement(consultaSQL);
+            preparedStatement = connection.prepareStatement(consultaSQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
             preparedStatement.setString(1, inputUsuario);
             preparedStatement.setString(2, inputContrasenya);
 
@@ -118,6 +155,33 @@ public class Profesor {
         }
 
         return null;
+    }
+
+    public boolean actualizarProfesor() {
+        try {
+
+            resultSet.absolute(1);
+
+            // Actualiza los valores en el ResultSet
+            resultSet.updateString("nombre", nombre.toUpperCase());
+            resultSet.updateString("apellido_1", apellido1.toUpperCase());
+            resultSet.updateString("apellido_2", apellido2.toUpperCase());
+            resultSet.updateString("direccion", direccion.toUpperCase());
+            resultSet.updateString("localidad", localidad.toUpperCase());
+            resultSet.updateString("provincia", provincia.toUpperCase());
+            resultSet.updateBlob("foto_perfil",fotoPerfil);
+
+            // Actualiza la fila en la base de datos
+            resultSet.updateRow();
+
+            return true;
+
+        } catch (SQLException e ) {
+            String mensaje = e.getMessage();
+            System.out.println("Error " + mensaje);
+
+        }
+        return false;
     }
 
 
