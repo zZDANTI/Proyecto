@@ -162,6 +162,7 @@ public class DashboardController {
             myChoiceBox.setValue(10);
             inicializado = false;
 
+
         }
         validacion();
         myChoiceBox.setOnAction(this::elegirRegistros);
