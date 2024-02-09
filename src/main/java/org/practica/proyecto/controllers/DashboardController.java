@@ -93,6 +93,7 @@ public class DashboardController {
     public Button botonInsertarProfe;
     public CheckBox esAdmin;
     public GNAvatarView avatarInsertarProfe;
+    public Button crearAvatarProfe;
 
     //TABLA ALUMNOS
     @FXML
@@ -505,8 +506,10 @@ public class DashboardController {
                         avatarUpdate.setImage(image);
                     } else if (botonPresionado.getId().equals("insertarFotoAlumno")) {
                         avatarInsert.setImage(image);
-                    }  else if(botonPresionado.getId().equals("insertarFotoPerfil")) {
+                    } else if(botonPresionado.getId().equals("insertarFotoPerfil")) {
                         avatarPerfil.setImage(image);
+                    }else if (botonPresionado.getId().equals("crearAvatarProfe")) {
+                        avatarInsertarProfe.setImage(image);
                     }
                     // Agrega más casos según sea necesario para otros botones
                 }
@@ -548,6 +551,12 @@ public class DashboardController {
         }
 
         if (panelCrearProfe.isVisible()){
+
+            profesorDNI.clear();
+            profesorNombre.clear();
+            profesorApellido1.clear();
+            profesorConsatrenya.clear();
+            fotoPorDefecto(avatarInsertarProfe);
 
         }
 
@@ -1051,7 +1060,7 @@ public class DashboardController {
     //Inserta un profesor
     public void insertarProfesor() throws SQLException {
         LocalDate fechaActual = LocalDate.now();
-        Date fechaActualDate = java.sql.Date.valueOf(fechaActual);
+        java.sql.Date fechaActualDate = java.sql.Date.valueOf(fechaActual);
         int admin;
         if (esAdmin.isSelected()){
             admin = 1;
@@ -1060,10 +1069,11 @@ public class DashboardController {
         }
 
         Profesor profesor = new Profesor(profesorDNI.getText(),profesorNombre.getText(),profesorApellido1.getText(),
-                "","","","", (java.sql.Date) fechaActualDate,profesorConsatrenya.getText(),imageToBlob(avatarInsertarProfe.getImage()),admin);
+                "","","","", fechaActualDate,profesorConsatrenya.getText(),imageToBlob(avatarInsertarProfe.getImage()),admin);
 
         if (profesor.insertarProfesor()){
             notificacion(true, "Se ha creado un nuevo profesor");
+            limpiarAlumno();
         }else{
             notificacion(false, "El profesor con ese DNI ya existe");
         }

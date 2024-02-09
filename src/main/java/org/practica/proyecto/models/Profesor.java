@@ -230,8 +230,6 @@ public class Profesor {
             // Insertar la nueva fila en la base de datos
             resultSet.insertRow();
 
-
-
         } catch (SQLException e) {
             return false;
         }

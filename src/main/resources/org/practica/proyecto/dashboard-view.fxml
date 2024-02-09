@@ -532,7 +532,7 @@
                                     <Image url="@imagen/perfilSinFoto.png" />
                                  </image>
                               </GNAvatarView>
-                              <Button fx:id="insertarFotoPerfil1" onAction="#cargarImagen" prefHeight="43.0" prefWidth="39.0" style="-fx-background-color: transparent;">
+                              <Button fx:id="crearAvatarProfe" onAction="#cargarImagen" prefHeight="43.0" prefWidth="39.0" style="-fx-background-color: transparent;">
                                  <graphic>
                                     <ImageView fitHeight="37.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
