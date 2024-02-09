@@ -66,6 +66,8 @@ public class LoginController {
                 // Pasar el objeto Profesor al controlador del panel de control
                 dashboardController.perfilProfesor(usuarioVerificado);
 
+                dashboardController.admin(usuarioVerificado.getAdmin());
+
                 // Crear la escena y agregar hoja de estilos CSS
                 Scene dashBoard = new Scene(parentDash);
                 dashBoard.getStylesheets().add(getClass().getResource("/org/practica/proyecto/css/style.css").toExternalForm());

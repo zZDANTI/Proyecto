@@ -1,5 +1,7 @@
 package org.practica.proyecto.models;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 
 public class Profesor {
@@ -20,10 +22,11 @@ public class Profesor {
     private String contrasenya;
     private Blob fotoPerfil;
 
+    private int admin;
+
     //CONSTRUCTORES
 
-
-    public Profesor(String dni, String nombre, String apellido1, String apellido2, String direccion, String localidad, String provincia, Date fechaIngreso, String contrasenya, Blob fotoPerfil) {
+    public Profesor(String dni, String nombre, String apellido1, String apellido2, String direccion, String localidad, String provincia, Date fechaIngreso, String contrasenya, Blob fotoPerfil, int admin) {
         this.dni = dni;
         this.nombre = nombre;
         this.apellido1 = apellido1;
@@ -34,8 +37,8 @@ public class Profesor {
         this.fechaIngreso = fechaIngreso;
         this.contrasenya = contrasenya;
         this.fotoPerfil = fotoPerfil;
+        this.admin = admin;
     }
-
 
     public Profesor() {
 
@@ -47,76 +50,95 @@ public class Profesor {
         return dni;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getApellido1() {
-        return apellido1;
-    }
-
-    public String getApellido2() {
-        return apellido2;
-    }
-
-    public String getDireccion() {
-        return direccion;
-    }
-
-    public String getLocalidad() {
-        return localidad;
-    }
-
-    public String getProvincia() {
-        return provincia;
-    }
-
-    public Date getFechaIngreso() {
-        return fechaIngreso;
-    }
-
-    public Blob getFotoPerfil() {
-        return fotoPerfil;
-    }
-
     public void setDni(String dni) {
         this.dni = dni;
+    }
+
+    public String getNombre() {
+        return nombre;
     }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
+    public String getApellido1() {
+        return apellido1;
+    }
+
     public void setApellido1(String apellido1) {
         this.apellido1 = apellido1;
+    }
+
+    public String getApellido2() {
+        return apellido2;
     }
 
     public void setApellido2(String apellido2) {
         this.apellido2 = apellido2;
     }
 
+    public String getDireccion() {
+        return direccion;
+    }
+
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+    }
+
+    public String getLocalidad() {
+        return localidad;
     }
 
     public void setLocalidad(String localidad) {
         this.localidad = localidad;
     }
 
+    public String getProvincia() {
+        return provincia;
+    }
+
     public void setProvincia(String provincia) {
         this.provincia = provincia;
+    }
+
+    public Date getFechaIngreso() {
+        return fechaIngreso;
     }
 
     public void setFechaIngreso(Date fechaIngreso) {
         this.fechaIngreso = fechaIngreso;
     }
 
+    public String getContrasenya() {
+        return contrasenya;
+    }
+
+    public void setContrasenya(String contrasenya) {
+        this.contrasenya = contrasenya;
+    }
+
+    public Blob getFotoPerfil() {
+        return fotoPerfil;
+    }
+
     public void setFotoPerfil(Blob fotoPerfil) {
         this.fotoPerfil = fotoPerfil;
     }
 
+    public int getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(int admin) {
+        this.admin = admin;
+    }
+
+
     //FUNCIONES PROFESOR
 
+
+    //Comprueba si hay un usuario con los datos introducidos
     public Profesor checkUser(String inputUsuario, String inputContrasenya) {
         Connection connection;
         String consultaSQL = "SELECT * FROM profesor WHERE dni = ? AND contrasenya = ?";
@@ -128,7 +150,7 @@ public class Profesor {
             // Preparar la consulta SQL
             preparedStatement = connection.prepareStatement(consultaSQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
             preparedStatement.setString(1, inputUsuario);
-            preparedStatement.setString(2, inputContrasenya);
+            preparedStatement.setString(2, hashPassword(inputContrasenya));
 
             // Ejecutar la consulta
             resultSet = preparedStatement.executeQuery();
@@ -145,7 +167,8 @@ public class Profesor {
                         resultSet.getString("provincia"),
                         resultSet.getDate("fecha_ingreso"),
                         resultSet.getString("contrasenya"),
-                        resultSet.getBlob("foto_perfil")
+                        resultSet.getBlob("foto_perfil"),
+                        resultSet.getInt("admin")
                 );
                 return profesor;
             }
@@ -157,6 +180,7 @@ public class Profesor {
         return null;
     }
 
+    //Modifica los datos de un profesor
     public boolean actualizarProfesor() {
         try {
 
@@ -184,5 +208,58 @@ public class Profesor {
         return false;
     }
 
+    //Crea un usuario profesor nuevo
+    public boolean insertarProfesor(){
+
+        try {
+            // Mover el cursor a la fila de inserción
+            resultSet.moveToInsertRow();
+
+            resultSet.updateString("dni", dni.toUpperCase());
+            resultSet.updateString("nombre", nombre.toUpperCase());
+            resultSet.updateString("apellido_1", apellido1.toUpperCase());
+            resultSet.updateString("apellido_2", apellido2.toUpperCase());
+            resultSet.updateString("direccion", direccion.toUpperCase());
+            resultSet.updateString("localidad", localidad.toUpperCase());
+            resultSet.updateString("provincia", provincia.toUpperCase());
+            resultSet.updateString("contrasenya",hashPassword(contrasenya));
+            resultSet.updateInt("admin",admin);
+            resultSet.updateDate("fecha_ingreso", fechaIngreso);
+            resultSet.updateBlob("foto_perfil",fotoPerfil);
+
+            // Insertar la nueva fila en la base de datos
+            resultSet.insertRow();
+
+
+
+        } catch (SQLException e) {
+            return false;
+        }
+
+        return true;
+
+    }
+
+    //Hashea la contraseña
+    public static String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(password.getBytes());
+
+            // Convertir el hash a una cadena hexadecimal
+            StringBuilder hexString = new StringBuilder();
+            for (byte hashByte : hashBytes) {
+                String hex = Integer.toHexString(0xff & hashByte);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 }

@@ -59,16 +59,16 @@ public class DashboardController {
     public Button botonAlumnos;
     public Button botonPerfil;
     public Button botonAdd;
+    public Button botonAddProfesor;
 
     //PANELES DE NAVEGACION
 
     public AnchorPane panelHome;
-
     public AnchorPane panelEditar;
-
     public AnchorPane panelAdd;
-
     public AnchorPane panelPerfil;
+    public AnchorPane panelCrearProfe;
+
 
     //PERFIL USUARIO
 
@@ -84,6 +84,15 @@ public class DashboardController {
     public Text usuarioProfesor;
     public GNAvatarView avatarDashboard;
     public GNAvatarView avatarPerfil;
+
+    //INSERTAR PROFESOR
+    public TextField profesorDNI;
+    public TextField profesorNombre;
+    public TextField profesorApellido1;
+    public PasswordField profesorConsatrenya;
+    public Button botonInsertarProfe;
+    public CheckBox esAdmin;
+    public GNAvatarView avatarInsertarProfe;
 
     //TABLA ALUMNOS
     @FXML
@@ -538,6 +547,10 @@ public class DashboardController {
             fotoPorDefecto(avatarInsert);
         }
 
+        if (panelCrearProfe.isVisible()){
+
+        }
+
     }
 
     //Si algun campo de insertar o actualizar Alumno está vacio no se activará
@@ -565,6 +578,13 @@ public class DashboardController {
                 .or(insertarFecha.valueProperty().isNull());
 
         botonInsertarAlumno.disableProperty().bind(camposInsertarVacios);
+
+        BooleanBinding camposInsertarProfesor = profesorDNI.textProperty().isEmpty()
+                .or(profesorNombre.textProperty().isEmpty())
+                .or(profesorApellido1.textProperty().isEmpty())
+                .or(profesorConsatrenya.textProperty().isEmpty());
+
+        botonInsertarProfe.disableProperty().bind(camposInsertarProfesor);
     }
 
     //Valida que todos los campo para introducir en inserta o en editar sea toodo correcto
@@ -595,6 +615,12 @@ public class DashboardController {
         soloLetras(perfilApellido2);
         soloLetras(perfilLocalidad);
         soloLetras(perfilProvincia);
+
+        //InsertarProfesor
+        validarDNI(profesorDNI);
+        soloLetras(profesorNombre);
+        soloLetras(profesorApellido1);
+
 
 
     }
@@ -928,6 +954,7 @@ public class DashboardController {
         botonHome.setStyle("");
         botonAdd.setStyle("");
         botonPerfil.setStyle("");
+        botonAddProfesor.setStyle("");
         reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
     }
 
@@ -938,6 +965,7 @@ public class DashboardController {
         botonHome.setStyle("");
         botonAlumnos.setStyle("");
         botonPerfil.setStyle("");
+        botonAddProfesor.setStyle("");
         reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
 
     }
@@ -949,6 +977,17 @@ public class DashboardController {
         botonHome.setStyle("");
         botonAlumnos.setStyle("");
         botonAdd.setStyle("");
+        botonAddProfesor.setStyle("");
+        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
+    }
+
+    @FXML
+    public void botonAddProfesor() {
+        setBotonActivo(botonAddProfesor, panelCrearProfe);
+        botonHome.setStyle("");
+        botonAlumnos.setStyle("");
+        botonAdd.setStyle("");
+        botonPerfil.setStyle("");
         reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
     }
 
@@ -962,6 +1001,7 @@ public class DashboardController {
         panelEditar.setVisible(false);
         panelAdd.setVisible(false);
         panelPerfil.setVisible(false);
+        panelCrearProfe.setVisible(false);
 
         // Mostrar el panel correspondiente
         panel.setVisible(true);
@@ -970,6 +1010,7 @@ public class DashboardController {
 
     //PERFIL DEL PROFESOR-----------------------------------------------------------------------------------------------
 
+    //Rellena los datos del perfil del profesor
     public void perfilProfesor(Profesor profesor){
         perfilDNI.setText(profesor.getDni());
         perfilNombre.setText(profesor.getNombre());
@@ -980,12 +1021,12 @@ public class DashboardController {
         perfilProvincia.setText(profesor.getProvincia());
         perfilFecha.setValue(profesor.getFechaIngreso().toLocalDate());
         blobToImagen(profesor.getFotoPerfil(),avatarPerfil);
-
         usuarioProfesor.setText("Profesor: " + profesor.getNombre());
         blobToImagen(profesor.getFotoPerfil(),avatarDashboard);
 
     }
 
+    //Para que el profesor pueda editar sus datos
     public void modificarProfesor() throws SQLException {
         Profesor profesor = new Profesor();
         profesor.setNombre(perfilNombre.getText());
@@ -998,7 +1039,7 @@ public class DashboardController {
         if (profesor.actualizarProfesor()){
             notificacion(true, "Se ha actualizado tu perfil");
             //Resetea para ver lo modificado
-            usuarioProfesor.setText("Profesor: " + profesor.getNombre());
+            usuarioProfesor.setText("Profesor: " + profesor.getNombre().toUpperCase());
             avatarDashboard.setImage(avatarPerfil.getImage());
         }else{
             notificacion(false, "Error al actualizar tu perfil");
@@ -1006,6 +1047,39 @@ public class DashboardController {
 
 
     }
+
+    //Inserta un profesor
+    public void insertarProfesor() throws SQLException {
+        LocalDate fechaActual = LocalDate.now();
+        Date fechaActualDate = java.sql.Date.valueOf(fechaActual);
+        int admin;
+        if (esAdmin.isSelected()){
+            admin = 1;
+        }else{
+            admin = 0;
+        }
+
+        Profesor profesor = new Profesor(profesorDNI.getText(),profesorNombre.getText(),profesorApellido1.getText(),
+                "","","","", (java.sql.Date) fechaActualDate,profesorConsatrenya.getText(),imageToBlob(avatarInsertarProfe.getImage()),admin);
+
+        if (profesor.insertarProfesor()){
+            notificacion(true, "Se ha creado un nuevo profesor");
+        }else{
+            notificacion(false, "El profesor con ese DNI ya existe");
+        }
+
+    }
+
+    //Habilita en caso de que sea admin
+    public void admin(int admin){
+        if (admin==0){
+            botonAddProfesor.setVisible(false);
+            panelCrearProfe.setVisible(false);
+        }
+
+    }
+
+
 
 
 
