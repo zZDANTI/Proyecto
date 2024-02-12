@@ -17,16 +17,19 @@ import org.controlsfx.control.textfield.CustomPasswordField;
 import org.controlsfx.control.textfield.CustomTextField;
 import org.practica.proyecto.models.Profesor;
 
-import java.io.BufferedWriter;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.security.Key;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -69,10 +72,17 @@ public class LoginController {
         String usuario;
         String contrasenya;
 
-        if (textUser == null || textUser.getText() == null || textUser.getText().isEmpty() ||
-                textPass == null || textPass.getText() == null || textPass.getText().isEmpty()) {
+        if (textUser == null || textPass == null ) {
+
             String[] tokens = obtenerTokenUsuario();
             String fecha;
+
+            if(!(tokens.length >= 3)) {
+                login();
+                File archivo = new File("TOKEN_USUARIO.txt");
+                archivo.delete();
+                return false;
+            }
 
             // Acceder al primer elemento
             usuario = tokens[0];
@@ -82,10 +92,8 @@ public class LoginController {
 
             fecha = tokens[2];
 
-            System.out.println("Fecha guardada" + fecha);
-
             // Comparar la fecha con la fecha actual
-            SimpleDateFormat formato = new SimpleDateFormat("HH.mm.ss dd-MM-yyyy");
+            SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
 
             Date fechaArchivoDate = formato.parse(fecha);
             Date fechaActual = new Date();
@@ -124,7 +132,7 @@ public class LoginController {
             }
 
 
-            crearArchivoUsuario(usuario,contrasenya);
+            crearTokenUsuario(usuario,contrasenya);
 
             System.out.println("Inicio de sesión exitoso");
 
@@ -167,7 +175,16 @@ public class LoginController {
 
         } else {
 
-            mostrarTooltipError(errorNoti,"Credenciales incorrectas. Por favor, inténtalo de nuevo.");
+            try {
+                mostrarTooltipError(errorNoti,"Credenciales incorrectas. Por favor, inténtalo de nuevo.");
+            }catch (NullPointerException e){
+                login();
+                File archivo = new File("TOKEN_USUARIO.txt");
+                archivo.delete();
+                return false;
+            }
+
+
         }
 
         return false;
@@ -208,11 +225,13 @@ public class LoginController {
         stage.close();
     }
 
-    public void crearArchivoUsuario(String usuario, String contrasena) {
+    public void crearTokenUsuario(String usuario, String contrasena) {
+
+        Path filePath = Paths.get("TOKEN_USUARIO.txt");
         try {
             // Obtener la fecha y hora actual
             Date date = new Date();
-            DateFormat dateFormat = new SimpleDateFormat("HH.mm.ss dd-MM-yyyy");
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
             // Crear un objeto Calendar y establecer la fecha y hora actual
             Calendar calendar = Calendar.getInstance();
@@ -225,10 +244,12 @@ public class LoginController {
             Date nuevaFechaHora = calendar.getTime();
             String nuevaFechaHoraFormateada = dateFormat.format(nuevaFechaHora);
 
-            // Crear el archivo y escribir los datos
-            try (FileWriter fw = new FileWriter("TOKEN_USUARIO.txt");
-                 BufferedWriter bw = new BufferedWriter(fw)) {
-                bw.write(usuario + ";" + contrasena + ";" + nuevaFechaHoraFormateada);
+
+            String contenidoEncriptado = encriptar(usuario + ";" + contrasena + ";" + nuevaFechaHoraFormateada);
+            try {
+                Files.write(filePath, contenidoEncriptado.getBytes(), StandardOpenOption.CREATE);
+            } catch (IOException e) {
+                throw new IOException("Error al guardar el token y el nombre de usuario", e);
             }
 
             System.out.println("Archivo creado exitosamente.");
@@ -246,11 +267,40 @@ public class LoginController {
 
         try {
             byte[] contenido = Files.readAllBytes(filePath);
-            String contenidoDesencriptado = new String(contenido);
+            String contenidoDesencriptado = desencriptar(new String(contenido));
             return contenidoDesencriptado.split(";");
         } catch (IOException e) {
             throw new IOException("Error al obtener el token y el nombre de usuario", e);
         }
+    }
+
+    private static final String claveEncriptacion = "1234567890123456"; // Clave de encriptación, debe tener 16 caracteres.
+
+    public String encriptar(String datos) throws IOException {
+        try {
+            Key clave = new SecretKeySpec(claveEncriptacion.getBytes(), "AES");
+            Cipher cifrador = Cipher.getInstance("AES");
+            cifrador.init(Cipher.ENCRYPT_MODE, clave);
+            byte[] datosEncriptados = cifrador.doFinal(datos.getBytes());
+            return Base64.getEncoder().encodeToString(datosEncriptados);
+        } catch (Exception e) {
+            throw new IOException("Error al encriptar los datos", e);
+        }
+    }
+
+    public String desencriptar(String datosEncriptados) throws IOException {
+        try {
+            Key clave = new SecretKeySpec(claveEncriptacion.getBytes(), "AES");
+            Cipher cifrador = Cipher.getInstance("AES");
+            cifrador.init(Cipher.DECRYPT_MODE, clave);
+            byte[] datosDesencriptados = cifrador.doFinal(Base64.getDecoder().decode(datosEncriptados));
+            return new String(datosDesencriptados);
+        } catch (Exception e) {
+            login();
+            File archivo = new File("TOKEN_USUARIO.txt");
+            archivo.delete();
+        }
+        return datosEncriptados;
     }
 
 }

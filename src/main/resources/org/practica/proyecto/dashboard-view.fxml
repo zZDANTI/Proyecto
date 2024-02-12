@@ -129,7 +129,7 @@
                </VBox.margin>
             </Button>
             <AnchorPane prefHeight="228.0" prefWidth="216.0" />
-            <Button mnemonicParsing="false" prefHeight="46.0" prefWidth="193.0" styleClass="boton-exit" text="Cerrar Sesión" textFill="#262626">
+            <Button mnemonicParsing="false" onAction="#cerrarSesion" prefHeight="46.0" prefWidth="193.0" styleClass="boton-exit" text="Cerrar Sesión" textFill="#262626">
                <font>
                   <Font name="Segoe UI Semibold" size="22.0" />
                </font>

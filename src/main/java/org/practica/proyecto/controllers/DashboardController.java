@@ -18,10 +18,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.kohsuke.github.GHRelease;
 import org.kohsuke.github.GHRepository;
@@ -1088,6 +1090,44 @@ public class DashboardController {
         }
 
     }
+
+    public void cerrarSesion(){
+        Button cerrarSesionButton = new Button("Cerrar Sesión");
+        Button salirButton = new Button("Salir");
+
+        VBox root = new VBox(10, cerrarSesionButton, salirButton);
+        root.setPrefSize(200, 100);
+
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Alerta");
+        alert.setHeaderText("¿Desea salir de la Aplicación?");
+        alert.getButtonTypes().clear();
+        alert.getButtonTypes().addAll(ButtonType.CANCEL);
+
+        // Cambiando los textos de los botones de la alerta
+        ButtonType salir = new ButtonType("Salir");
+        ButtonType salirSession = new ButtonType("Salir y Cerrar Sesión");
+        alert.getButtonTypes().addAll(salir, salirSession);
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == salirSession) {
+                // Cerrar la ventana de inicio de sesión
+                Stage ventanaLogin = (Stage) avatarDashboard.getScene().getWindow();
+                ventanaLogin.close();
+                try {
+                    LoginController loginController = new LoginController();
+                    loginController.login();
+                    File archivo = new File("TOKEN_USUARIO.txt");
+                    archivo.delete();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else if (response == salir) {
+                System.exit(1);
+            }
+        });
+    }
+
 
 
 
