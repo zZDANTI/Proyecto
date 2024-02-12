@@ -17,8 +17,19 @@ import org.controlsfx.control.textfield.CustomPasswordField;
 import org.controlsfx.control.textfield.CustomTextField;
 import org.practica.proyecto.models.Profesor;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Objects;
 
 import static org.practica.proyecto.controllers.DashboardController.reproducirSonido;
 
@@ -35,23 +46,85 @@ public class LoginController {
 
     private Stage stage;
 
+    public void login() throws IOException {
+        stage = new Stage();
+        Parent parentLogin = FXMLLoader.load(Objects.requireNonNull(LoginController.class.getResource("/org/practica/proyecto/login-view.fxml")));
+
+        //Crea una nueva escena (Scene) utilizando el nodo raíz (root) que se obtuvo al cargar el archivo FXML.
+        Scene login = new Scene(parentLogin);
+
+        login.getStylesheets().add(Objects.requireNonNull(LoginController.class.getResource("/org/practica/proyecto/css/style.css")).toExternalForm());
+
+
+        //Dependiendo lo que pongas en StageStyle cambia la ventana
+        stage.initStyle(StageStyle.UNDECORATED);
+
+        stage.setScene(login);
+        stage.show();
+    }
 
     @FXML
-    public boolean comprobarUser() throws SQLException {
-        // Obtener los datos del usuario y la contraseña
-        String usuario = textUser.getText();
-        String contrasenya = textPass.getText();
+    public boolean comprobarUser() throws IOException, ParseException {
+
+        String usuario;
+        String contrasenya;
+
+        if (textUser == null || textUser.getText() == null || textUser.getText().isEmpty() ||
+                textPass == null || textPass.getText() == null || textPass.getText().isEmpty()) {
+            String[] tokens = obtenerTokenUsuario();
+            String fecha;
+
+            // Acceder al primer elemento
+            usuario = tokens[0];
+
+            // Acceder al segundo elemento
+            contrasenya = tokens[1];
+
+            fecha = tokens[2];
+
+            System.out.println("Fecha guardada" + fecha);
+
+            // Comparar la fecha con la fecha actual
+            SimpleDateFormat formato = new SimpleDateFormat("HH.mm.ss dd-MM-yyyy");
+
+            Date fechaArchivoDate = formato.parse(fecha);
+            Date fechaActual = new Date();
+
+            // Comparar las fechas
+            if (fechaArchivoDate.compareTo(fechaActual) < 0) {
+                System.out.println("La fecha del archivo es anterior a la fecha actual.");
+                // Realizar acciones específicas si la fecha del archivo es anterior a la fecha actual
+                login();
+                File archivo = new File("TOKEN_USUARIO.txt");
+                archivo.delete();
+                return false;
+            }
+
+        }else{
+            // Obtener los datos del usuario y la contraseña
+            usuario = textUser.getText();
+            contrasenya = textPass.getText();
+        }
+
+
 
         // Realizar la verificación del usuario en la base de datos
         Profesor profesorModel = new Profesor();
         Profesor usuarioVerificado = profesorModel.checkUser(usuario, contrasenya);
 
+
+
         // Aquí puedes realizar acciones adicionales según el resultado de la verificación
         if (usuarioVerificado != null) {
 
-            // Cerrar la ventana de inicio de sesión
-            Stage ventanaLogin = (Stage) textUser.getScene().getWindow();
-            ventanaLogin.close();
+            if (!(textUser == null)){
+                // Cerrar la ventana de inicio de sesión
+                Stage ventanaLogin = (Stage) textUser.getScene().getWindow();
+                ventanaLogin.close();
+            }
+
+
+            crearArchivoUsuario(usuario,contrasenya);
 
             System.out.println("Inicio de sesión exitoso");
 
@@ -134,4 +207,50 @@ public class LoginController {
         this.stage = (Stage) errorNoti.getScene().getWindow();
         stage.close();
     }
+
+    public void crearArchivoUsuario(String usuario, String contrasena) {
+        try {
+            // Obtener la fecha y hora actual
+            Date date = new Date();
+            DateFormat dateFormat = new SimpleDateFormat("HH.mm.ss dd-MM-yyyy");
+
+            // Crear un objeto Calendar y establecer la fecha y hora actual
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+
+            // Sumar una hora
+            calendar.add(Calendar.DAY_OF_MONTH, 30);
+
+            // Obtener la nueva fecha y hora
+            Date nuevaFechaHora = calendar.getTime();
+            String nuevaFechaHoraFormateada = dateFormat.format(nuevaFechaHora);
+
+            // Crear el archivo y escribir los datos
+            try (FileWriter fw = new FileWriter("TOKEN_USUARIO.txt");
+                 BufferedWriter bw = new BufferedWriter(fw)) {
+                bw.write(usuario + ";" + contrasena + ";" + nuevaFechaHoraFormateada);
+            }
+
+            System.out.println("Archivo creado exitosamente.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String[] obtenerTokenUsuario() throws IOException {
+        Path filePath = Paths.get("TOKEN_USUARIO.txt");
+
+        if (!Files.exists(filePath)) {
+            return null;
+        }
+
+        try {
+            byte[] contenido = Files.readAllBytes(filePath);
+            String contenidoDesencriptado = new String(contenido);
+            return contenidoDesencriptado.split(";");
+        } catch (IOException e) {
+            throw new IOException("Error al obtener el token y el nombre de usuario", e);
+        }
+    }
+
 }
