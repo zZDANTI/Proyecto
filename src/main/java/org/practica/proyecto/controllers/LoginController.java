@@ -39,6 +39,8 @@ import static org.practica.proyecto.controllers.DashboardController.reproducirSo
 public class LoginController {
 
 
+    private static final String claveEncriptacion = "1234567890123456"; // Clave de encriptación, debe tener 16 caracteres.
+
     public TextField errorNoti;
 
     @FXML
@@ -49,6 +51,7 @@ public class LoginController {
 
     private Stage stage;
 
+    //Ventana del login
     public void login() throws IOException {
         stage = new Stage();
         Parent parentLogin = FXMLLoader.load(Objects.requireNonNull(LoginController.class.getResource("/org/practica/proyecto/login-view.fxml")));
@@ -225,6 +228,7 @@ public class LoginController {
         stage.close();
     }
 
+    //Crea el token en el archivo
     public void crearTokenUsuario(String usuario, String contrasena) {
 
         Path filePath = Paths.get("TOKEN_USUARIO.txt");
@@ -258,6 +262,7 @@ public class LoginController {
         }
     }
 
+    //Coge el token guardado en el archivo
     public String[] obtenerTokenUsuario() throws IOException {
         Path filePath = Paths.get("TOKEN_USUARIO.txt");
 
@@ -274,8 +279,7 @@ public class LoginController {
         }
     }
 
-    private static final String claveEncriptacion = "1234567890123456"; // Clave de encriptación, debe tener 16 caracteres.
-
+    //Encripta al guardar los datos en el archivo
     public String encriptar(String datos) throws IOException {
         try {
             Key clave = new SecretKeySpec(claveEncriptacion.getBytes(), "AES");
@@ -288,6 +292,7 @@ public class LoginController {
         }
     }
 
+    //Desencripta al coger los datos del archivo
     public String desencriptar(String datosEncriptados) throws IOException {
         try {
             Key clave = new SecretKeySpec(claveEncriptacion.getBytes(), "AES");

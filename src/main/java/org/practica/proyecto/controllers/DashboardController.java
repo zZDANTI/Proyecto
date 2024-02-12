@@ -1084,13 +1084,15 @@ public class DashboardController {
 
     //Habilita en caso de que sea admin
     public void admin(int admin){
-        if (admin==0){
-            botonAddProfesor.setVisible(false);
-            panelCrearProfe.setVisible(false);
+
+        if (admin==1){
+            botonAddProfesor.setVisible(true);
+            panelCrearProfe.setVisible(true);
         }
 
     }
 
+    //Cierra la sesion
     public void cerrarSesion(){
         Button cerrarSesionButton = new Button("Cerrar Sesión");
         Button salirButton = new Button("Salir");
@@ -1106,7 +1108,7 @@ public class DashboardController {
 
         // Cambiando los textos de los botones de la alerta
         ButtonType salir = new ButtonType("Salir");
-        ButtonType salirSession = new ButtonType("Salir y Cerrar Sesión");
+        ButtonType salirSession = new ButtonType("Cerrar Sesión");
         alert.getButtonTypes().addAll(salir, salirSession);
 
         alert.showAndWait().ifPresent(response -> {
