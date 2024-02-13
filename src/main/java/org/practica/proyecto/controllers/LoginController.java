@@ -94,7 +94,7 @@ public class LoginController {
             Profesor usuarioVerificado = profesorModel.checkUser(usuario, contrasenya);
             if (usuarioVerificado != null) {
                 // Verificar la fecha del token
-                if (obtenerFechaToken().before(Timestamp.valueOf(LocalDateTime.now()))) {
+                if (obtenerFechaToken() == null || obtenerFechaToken().before(Timestamp.valueOf(LocalDateTime.now()))) {
                     System.out.println("La fecha del archivo es anterior a la fecha actual.");
                     login();
                     new File("TOKEN_USUARIO.txt").delete();
