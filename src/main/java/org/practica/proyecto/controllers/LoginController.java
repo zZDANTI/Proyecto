@@ -131,10 +131,10 @@ public class LoginController {
                 // Cerrar la ventana de inicio de sesión
                 Stage ventanaLogin = (Stage) textUser.getScene().getWindow();
                 ventanaLogin.close();
+                crearTokenUsuario(usuario,contrasenya);
             }
 
 
-            crearTokenUsuario(usuario,contrasenya);
 
             System.out.println("Inicio de sesión exitoso");
 
@@ -228,7 +228,7 @@ public class LoginController {
     }
 
     //Crea el token en el archivo
-    public void crearTokenUsuario(String usuario, String contrasena) throws SQLException {
+    public void crearTokenUsuario(String usuario, String contrasena){
 
         Path filePath = Paths.get("TOKEN_USUARIO.txt");
         try {
