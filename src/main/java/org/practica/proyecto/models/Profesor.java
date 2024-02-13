@@ -3,6 +3,7 @@ package org.practica.proyecto.models;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
+import java.time.LocalDateTime;
 
 public class Profesor {
 
@@ -21,10 +22,10 @@ public class Profesor {
     private Date fechaIngreso;
     private String contrasenya;
     private Blob fotoPerfil;
-
     private int admin;
 
     //CONSTRUCTORES
+
 
     public Profesor(String dni, String nombre, String apellido1, String apellido2, String direccion, String localidad, String provincia, Date fechaIngreso, String contrasenya, Blob fotoPerfil, int admin) {
         this.dni = dni;
@@ -239,7 +240,7 @@ public class Profesor {
     }
 
     //Hashea la contraseña
-    public static String hashPassword(String password) {
+    public String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(password.getBytes());
@@ -260,4 +261,45 @@ public class Profesor {
         }
     }
 
+    public static Timestamp obtenerFechaToken() {
+        try {
+
+            resultSet.absolute(1);
+
+            return resultSet.getTimestamp("fecha_token");
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Imprimir la traza de la excepción (puedes cambiar esto según tus necesidades)
+            return null; // Devolver un valor predeterminado o manejar el error de otra manera según tu lógica de negocio
+        }
+    }
+
+    public static void insertarFechaToken() {
+
+        try {
+            // Mover el cursor a la fila de inserción
+            resultSet.absolute(1);
+
+            // Obtener la fecha y hora actual
+            LocalDateTime fechaHoraActual = LocalDateTime.now();
+
+            // Agregar 15 minutos a la fecha y hora actual
+            LocalDateTime fechaHoraToken = fechaHoraActual.plusMinutes(15);
+
+            // Convertir LocalDateTime a Timestamp
+            Timestamp nuevaFechaToken = Timestamp.valueOf(fechaHoraToken);
+
+            resultSet.updateTimestamp("fecha_token",nuevaFechaToken);
+
+            // Insertar la nueva fila en la base de datos
+            resultSet.updateRow();
+
+        } catch (SQLException e) {
+
+        }
+
+
+
+
+    }
 }

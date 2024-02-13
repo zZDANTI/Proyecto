@@ -26,15 +26,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.Key;
-import java.text.DateFormat;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Base64;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Objects;
 
 import static org.practica.proyecto.controllers.DashboardController.reproducirSonido;
+import static org.practica.proyecto.models.Profesor.insertarFechaToken;
+import static org.practica.proyecto.models.Profesor.obtenerFechaToken;
+
 
 public class LoginController {
 
@@ -70,17 +72,17 @@ public class LoginController {
     }
 
     @FXML
-    public boolean comprobarUser() throws IOException, ParseException {
+    public boolean comprobarUser() throws IOException, ParseException, SQLException {
 
         String usuario;
         String contrasenya;
+        Profesor profesorModel = new Profesor();
 
         if (textUser == null || textPass == null ) {
 
             String[] tokens = obtenerTokenUsuario();
-            String fecha;
 
-            if(!(tokens.length >= 3)) {
+            if(!(tokens.length >= 2)) {
                 login();
                 File archivo = new File("TOKEN_USUARIO.txt");
                 archivo.delete();
@@ -93,24 +95,24 @@ public class LoginController {
             // Acceder al segundo elemento
             contrasenya = tokens[1];
 
-            fecha = tokens[2];
 
-            // Comparar la fecha con la fecha actual
-            SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
+            LocalDateTime fechaHoraActual = LocalDateTime.now();
+            // Convertir LocalDateTime a Timestamp
+            Timestamp fechaToken = Timestamp.valueOf(fechaHoraActual);
 
-            Date fechaArchivoDate = formato.parse(fecha);
-            Date fechaActual = new Date();
+            // Realizar la verificación del usuario en la base de datos
+            Profesor usuarioVerificado = profesorModel.checkUser(usuario, contrasenya);
 
-            // Comparar las fechas
-            if (fechaArchivoDate.compareTo(fechaActual) < 0) {
+            if (usuarioVerificado != null) {
+                if (obtenerFechaToken().before(fechaToken)){
                 System.out.println("La fecha del archivo es anterior a la fecha actual.");
                 // Realizar acciones específicas si la fecha del archivo es anterior a la fecha actual
                 login();
                 File archivo = new File("TOKEN_USUARIO.txt");
                 archivo.delete();
                 return false;
+                }
             }
-
         }else{
             // Obtener los datos del usuario y la contraseña
             usuario = textUser.getText();
@@ -118,11 +120,8 @@ public class LoginController {
         }
 
 
-
         // Realizar la verificación del usuario en la base de datos
-        Profesor profesorModel = new Profesor();
         Profesor usuarioVerificado = profesorModel.checkUser(usuario, contrasenya);
-
 
 
         // Aquí puedes realizar acciones adicionales según el resultado de la verificación
@@ -229,33 +228,20 @@ public class LoginController {
     }
 
     //Crea el token en el archivo
-    public void crearTokenUsuario(String usuario, String contrasena) {
+    public void crearTokenUsuario(String usuario, String contrasena) throws SQLException {
 
         Path filePath = Paths.get("TOKEN_USUARIO.txt");
         try {
-            // Obtener la fecha y hora actual
-            Date date = new Date();
-            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-            // Crear un objeto Calendar y establecer la fecha y hora actual
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
+            String contenidoEncriptado = encriptar(usuario + ";" + contrasena);
 
-            // Sumar una hora
-            calendar.add(Calendar.DAY_OF_MONTH, 30);
-
-            // Obtener la nueva fecha y hora
-            Date nuevaFechaHora = calendar.getTime();
-            String nuevaFechaHoraFormateada = dateFormat.format(nuevaFechaHora);
-
-
-            String contenidoEncriptado = encriptar(usuario + ";" + contrasena + ";" + nuevaFechaHoraFormateada);
             try {
                 Files.write(filePath, contenidoEncriptado.getBytes(), StandardOpenOption.CREATE);
             } catch (IOException e) {
                 throw new IOException("Error al guardar el token y el nombre de usuario", e);
             }
 
+            insertarFechaToken();
             System.out.println("Archivo creado exitosamente.");
         } catch (IOException e) {
             e.printStackTrace();

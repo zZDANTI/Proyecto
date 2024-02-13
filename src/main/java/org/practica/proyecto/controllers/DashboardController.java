@@ -25,14 +25,9 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.kohsuke.github.GHRelease;
-import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GitHub;
-import org.kohsuke.github.GitHubBuilder;
 import org.practica.proyecto.models.Alumno;
 import org.practica.proyecto.models.Graficos;
 import org.practica.proyecto.models.Profesor;
-
 import javax.imageio.ImageIO;
 import javax.sql.rowset.serial.SerialBlob;
 import java.awt.image.BufferedImage;
@@ -182,12 +177,10 @@ public class DashboardController {
     void initialize(){
 
         if(inicializado){
-            actualizacion();
             botonHome.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
             myChoiceBox.getItems().addAll(elegirRegistros);
             myChoiceBox.setValue(10);
             inicializado = false;
-
 
         }
         validacion();
@@ -895,55 +888,6 @@ public class DashboardController {
             throw new RuntimeException(e);
         }
 
-    }
-
-    //ACTUALIZACION-----------------------------------------------------------------------------------------------------
-
-    //Comprueba si hay actualizaciones
-    public void actualizacion() {
-        GitHub github;
-        try {
-            github = new GitHubBuilder().build(); // No es necesario proporcionar un token de acceso
-            GHRepository repository = github.getRepository("zZDANTI/Proyecto");
-            String latestVersion = ""; // Inicializar con una cadena vacía
-
-            // Verificar si el repositorio es null
-            if (repository == null) {
-                System.out.println("El repositorio no fue encontrado en GitHub.");
-                return;
-            }
-
-            GHRelease latestRelease = repository.getLatestRelease();
-
-            if (latestRelease != null) {
-                latestVersion = latestRelease.getTagName();
-                String currentVersion = "1.0"; // Versión actual de la aplicación
-
-                System.out.println("Current Version: " + currentVersion);
-
-                if (!latestVersion.equals(currentVersion)) {
-                    mostrarNotificacionDeActualizacion();
-                }
-            } else {
-                // Tratar el caso en el que no hay versión de release disponible
-                System.out.println("No se encontró ninguna versión de release para el repositorio.");
-            }
-
-            System.out.println("Latest Version: " + latestVersion); // Imprimir latestVersion fuera del bloque else
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //Notifica en pantalla que hay una nueva version
-    public void mostrarNotificacionDeActualizacion() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Actualización Disponible");
-        alert.setHeaderText("¡Hay una nueva versión disponible!");
-        alert.setContentText("Por favor, descargue la última versión desde nuestro sitio web.");
-
-        alert.showAndWait();
     }
 
     //BOTONES PARA PODER NAVEGAR POR BARRA LATERAL----------------------------------------------------------------------
