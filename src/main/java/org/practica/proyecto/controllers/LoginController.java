@@ -26,9 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.Key;
-import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Objects;
@@ -72,7 +70,7 @@ public class LoginController {
     }
 
     @FXML
-    public boolean comprobarUser() throws IOException, ParseException, SQLException {
+    public boolean comprobarUser() throws IOException{
 
         String usuario;
         String contrasenya;
@@ -89,30 +87,21 @@ public class LoginController {
                 return false;
             }
 
-            // Acceder al primer elemento
             usuario = tokens[0];
-
-            // Acceder al segundo elemento
             contrasenya = tokens[1];
-
-
-            LocalDateTime fechaHoraActual = LocalDateTime.now();
-            // Convertir LocalDateTime a Timestamp
-            Timestamp fechaToken = Timestamp.valueOf(fechaHoraActual);
 
             // Realizar la verificación del usuario en la base de datos
             Profesor usuarioVerificado = profesorModel.checkUser(usuario, contrasenya);
-
             if (usuarioVerificado != null) {
-                if (obtenerFechaToken().before(fechaToken)){
-                System.out.println("La fecha del archivo es anterior a la fecha actual.");
-                // Realizar acciones específicas si la fecha del archivo es anterior a la fecha actual
-                login();
-                File archivo = new File("TOKEN_USUARIO.txt");
-                archivo.delete();
-                return false;
+                // Verificar la fecha del token
+                if (obtenerFechaToken().before(Timestamp.valueOf(LocalDateTime.now()))) {
+                    System.out.println("La fecha del archivo es anterior a la fecha actual.");
+                    login();
+                    new File("TOKEN_USUARIO.txt").delete();
+                    return false;
                 }
             }
+
         }else{
             // Obtener los datos del usuario y la contraseña
             usuario = textUser.getText();
@@ -185,7 +174,6 @@ public class LoginController {
                 archivo.delete();
                 return false;
             }
-
 
         }
 
