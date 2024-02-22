@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -53,7 +54,10 @@ public class LoginController {
 
     //Ventana del login
     public void login() throws IOException {
+
         stage = new Stage();
+
+
         Parent parentLogin = FXMLLoader.load(Objects.requireNonNull(LoginController.class.getResource("/org/practica/proyecto/login-view.fxml")));
 
         //Crea una nueva escena (Scene) utilizando el nodo raíz (root) que se obtuvo al cargar el archivo FXML.
@@ -102,6 +106,8 @@ public class LoginController {
                 }
             }
 
+
+
         }else{
             // Obtener los datos del usuario y la contraseña
             usuario = textUser.getText();
@@ -116,6 +122,8 @@ public class LoginController {
         // Aquí puedes realizar acciones adicionales según el resultado de la verificación
         if (usuarioVerificado != null) {
 
+
+
             if (!(textUser == null)){
                 // Cerrar la ventana de inicio de sesión
                 Stage ventanaLogin = (Stage) textUser.getScene().getWindow();
@@ -126,6 +134,7 @@ public class LoginController {
 
 
             System.out.println("Inicio de sesión exitoso");
+
 
             try {
                 // Cargar el archivo FXML
