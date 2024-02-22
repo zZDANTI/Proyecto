@@ -336,8 +336,8 @@ public class DashboardController {
         // Mostrar el diálogo y esperar la respuesta del usuario
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                Alumno alumno = new Alumno();
-                boolean eliminacionExitosa = alumno.eliminarAlumno(rowsAlumno);
+                Alumno alumno = new Alumno(null,null,null,null,null,null,null,null,null,rowsAlumno);
+                boolean eliminacionExitosa = alumno.eliminarAlumno();
                 if (eliminacionExitosa) {
                     notificacion(true,"Alumno eliminado correctamente");
                     limpiarAlumno();
