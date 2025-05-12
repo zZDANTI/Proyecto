@@ -247,7 +247,7 @@
                         </ImageView>
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Exporta los alumnos buscado a csv"/>
+                        <Tooltip text="Exporta los alumnos buscado a csv"/> 
                      </tooltip>
                   </Button>
                   </HBox>
