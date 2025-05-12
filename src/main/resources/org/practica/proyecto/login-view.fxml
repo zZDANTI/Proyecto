@@ -53,7 +53,7 @@
 
             <Button fx:id="minimizeButton" layoutX="413.0" layoutY="2.0" mnemonicParsing="false" onAction="#minimizeWindow" prefHeight="34.0" prefWidth="24.0" style="-fx-background-color: transparent;">
                <graphic>
-                  <ImageView fitHeight="42.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="minimizar" fitHeight="42.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@imagen/minimizarVentana.png" />
                      </image>

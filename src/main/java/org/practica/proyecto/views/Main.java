@@ -1,48 +1,38 @@
 package org.practica.proyecto.views;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.practica.proyecto.controllers.LoginController;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
+import java.sql.SQLException;
+import java.text.ParseException;
 
 
 public class Main extends Application {
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws IOException{
 
-        /*
-        ALTER TABLE `alumno`
-        ADD COLUMN `FOTO_PERFIL` MEDIUMBLOB;
-
-        SET GLOBAL max_allowed_packet=16777216; -- 16 MB en bytes
-
-        ALTER TABLE alumno MODIFY COLUMN foto_perfil MEDIUMBLOB;
-
-        ALTER TABLE `profesor`
-        ADD COLUMN `contrasenya` VARCHAR(255);
-
-         */
-
-        stage = new Stage();
-        Parent parentLogin = FXMLLoader.load(Objects.requireNonNull(LoginController.class.getResource("/org/practica/proyecto/login-view.fxml")));
-
-        //Crea una nueva escena (Scene) utilizando el nodo raíz (root) que se obtuvo al cargar el archivo FXML.
-        Scene login = new Scene(parentLogin);
-
-        login.getStylesheets().add(Objects.requireNonNull(LoginController.class.getResource("/org/practica/proyecto/css/style.css")).toExternalForm());
+        /* SET GLOBAL max_allowed_packet=16777216; -- 16 MB en bytes
+        * ALTER TABLE `profesor`
+          ADD COLUMN `fecha_token` DATETIME;
+        * */
 
 
-        //Dependiendo lo que pongas en StageStyle cambia la ventana
-        stage.initStyle(StageStyle.UNDECORATED);
+        LoginController loginController = new LoginController();
+        File archivo = new File("TOKEN_USUARIO.txt");
 
-        stage.setScene(login);
-        stage.show();
+        if (archivo.exists()) {
+
+           loginController.comprobarUser();
+
+        } else {
+            loginController.login();
+
+        }
+
 
     }
 }

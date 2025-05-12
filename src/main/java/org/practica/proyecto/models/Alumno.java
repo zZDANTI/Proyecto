@@ -237,7 +237,7 @@ public class Alumno {
     }
 
     //Elimina el Alumno y ejecuta el resultset
-    public boolean eliminarAlumno(int row) {
+    public boolean eliminarAlumno() {
         try {
             // Posiciona el resultset
             resultSet.absolute(row);

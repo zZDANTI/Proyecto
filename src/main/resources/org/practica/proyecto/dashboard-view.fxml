@@ -7,9 +7,11 @@
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.chart.StackedBarChart?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -23,6 +25,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.control.Tooltip?>
 <BorderPane id="background" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="background" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.practica.proyecto.controllers.DashboardController">
    <left>
       <VBox prefHeight="747.0" prefWidth="216.0" styleClass="nav-bar" BorderPane.alignment="CENTER">
@@ -38,22 +41,22 @@
                   <Insets left="18.0" top="10.0" />
                </VBox.margin>
             </Text>
-            <ImageView fx:id="perfilUsuario" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+            <GNAvatarView fx:id="avatarDashboard" prefHeight="317.0" prefWidth="200.0" type="CIRCLE">
+               <image>
+                  <Image url="@imagen/perfilSinFoto.png" />
+               </image>
                <VBox.margin>
-                  <Insets left="8.0" top="40.0" />
+                  <Insets bottom="10" left="10" right="10" top="10" />
                </VBox.margin>
-            </ImageView>
-            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Usuario: EMILIO" textAlignment="CENTER" wrappingWidth="215.13671875">
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
+            </GNAvatarView>
+            <Text fx:id="usuarioProfesor" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="215.13671875">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Text>
             <Button fx:id="botonHome" mnemonicParsing="false" onAction="#botonHome" prefHeight="45.0" prefWidth="163.0" styleClass="boton-menu" text="Home" textFill="#999999">
                <VBox.margin>
-                  <Insets left="26.0" top="60.0" />
+                  <Insets left="26.0" top="20.0" />
                </VBox.margin>
                <graphic>
                   <ImageView fitHeight="36.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -81,7 +84,7 @@
                   <Insets left="26.0" top="20.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="botonAdd" mnemonicParsing="false" onAction="#botonAdd" prefHeight="45.0" prefWidth="163.0" styleClass="boton-menu" text="Añadir" textFill="#999999">
+            <Button fx:id="botonAdd" mnemonicParsing="false" onAction="#botonAdd" prefHeight="45.0" prefWidth="163.0" styleClass="boton-menu" text="Alumno" textFill="#999999">
                <graphic>
                   <ImageView fitHeight="36.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -111,9 +114,23 @@
                   <Insets left="26.0" top="20.0" />
                </VBox.margin>
             </Button>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+            <Button fx:id="botonAddProfesor" mnemonicParsing="false" onAction="#botonAddProfesor" prefHeight="45.0" prefWidth="163.0" styleClass="boton-menu" text="Profesor" textFill="#999999" visible="false">
+               <graphic>
+                  <ImageView fitHeight="36.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@imagen/añadir.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <font>
+                  <Font name="Segoe UI Semibold" size="22.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="26.0" top="20.0" />
+               </VBox.margin>
+            </Button>
             <AnchorPane prefHeight="228.0" prefWidth="216.0" />
-            <Button mnemonicParsing="false" prefHeight="46.0" prefWidth="193.0" styleClass="boton-exit" text="Cerrar Sesión" textFill="#262626">
+            <Button mnemonicParsing="false" onAction="#cerrarSesion" prefHeight="46.0" prefWidth="193.0" styleClass="boton-exit" text="Cerrar Sesión" textFill="#262626">
                <font>
                   <Font name="Segoe UI Semibold" size="22.0" />
                </font>
@@ -137,7 +154,7 @@
                </children>
             </AnchorPane>
 
-            <AnchorPane fx:id="panelHome" prefHeight="400.0" prefWidth="600.0" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
+            <AnchorPane fx:id="panelHome" prefHeight="400.0" prefWidth="600.0" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
                <children>
                   <PieChart fx:id="quesitosLocalidad" layoutX="152.0" layoutY="14.0" prefHeight="430.0" prefWidth="935.0" title="Provincia Por Alumnos" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="14.0" />
                   <StackedBarChart fx:id="barraAlumno" layoutX="14.0" layoutY="442.0" prefHeight="287.0" prefWidth="931.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="442.0">
@@ -151,7 +168,7 @@
                </children>
             </AnchorPane>
 
-            <AnchorPane fx:id="panelEditar" layoutX="6.0" layoutY="47.0" prefHeight="200.0" prefWidth="200.0" styleClass="paneles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
+            <AnchorPane fx:id="panelEditar" layoutX="6.0" layoutY="47.0" prefHeight="200.0" prefWidth="200.0" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
 
                   <AnchorPane prefHeight="399.0" prefWidth="938.0" AnchorPane.bottomAnchor="340.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0.0">
                         <TableView fx:id="tabla_alumnos" layoutX="-1.0" layoutY="47.0" prefHeight="348.0" prefWidth="926.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="47.0">
@@ -229,6 +246,9 @@
                            </image>
                         </ImageView>
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Exporta los alumnos buscado a csv"/> 
+                     </tooltip>
                   </Button>
                   </HBox>
                   <AnchorPane layoutX="16.0" layoutY="397.0" prefHeight="291.0" prefWidth="922.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="15.0">
@@ -246,7 +266,11 @@
                               <Image url="@imagen/imagenInsertar.png" />
                            </image>
                         </ImageView>
-                     </graphic></Button>
+                     </graphic>
+                        <tooltip>
+                           <Tooltip text="Actualiza los datos modificados de alumno"/>
+                        </tooltip>
+                     </Button>
                      <TextField fx:id="localidadClick" focusTraversable="false" layoutX="342.0" layoutY="92.0" prefHeight="43.0" prefWidth="306.0" promptText="Localidad" />
                      <TextField fx:id="direccionClick" focusTraversable="false" layoutX="342.0" layoutY="24.0" prefHeight="43.0" prefWidth="306.0" promptText="Direccion" />
                      <TextField fx:id="provinciaClick" focusTraversable="false" layoutX="342.0" layoutY="159.0" prefHeight="43.0" prefWidth="306.0" promptText="Provincia" />
@@ -275,6 +299,9 @@
                            </image>
                         </ImageView>
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Elimina el alumno"/>
+                     </tooltip>
                   </Button>
                   <Button fx:id="botonPDF" focusTraversable="false" layoutX="656.0" layoutY="93.0" mnemonicParsing="false" onAction="#botonExportarPDF" prefHeight="33.0" prefWidth="34.0" style="-fx-background-color: transparent;">
                      <graphic>
@@ -283,8 +310,12 @@
                               <Image url="@imagen/exportarPDF.png" />
                            </image>
                         </ImageView>
-                     </graphic></Button>
-                  <Button fx:id="deseleccionarAlumno" focusTraversable="false" layoutX="655.0" layoutY="25.0" mnemonicParsing="false" onAction="#limpiarAlumno" prefHeight="36.0" prefWidth="46.0" style="-fx-background-color: transparent;">
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Exporta a PDF el alumno seleccionado"/>
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="deseleccionarAlumno" focusTraversable="false" layoutX="655.0" layoutY="25.0" mnemonicParsing="false" onAction="#limpiarAlumno" prefHeight="36.0" prefWidth="46.0" style="-fx-background-color: transparent;" >
                      <graphic>
                         <ImageView fitHeight="78.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -292,6 +323,9 @@
                            </image>
                         </ImageView>
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Limpia el alumno seleccionado, no lo elimina"/>
+                     </tooltip>
                   </Button>
                   <Button fx:id="actualizarFotoAlumno" focusTraversable="false" layoutX="848.0" layoutY="206.0" mnemonicParsing="false" onAction="#cargarImagen" prefHeight="48.0" prefWidth="63.0" style="-fx-background-color: transparent;">
                      <graphic>
@@ -301,6 +335,9 @@
                            </image>
                         </ImageView>
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Añade una foto al perfil alumno"/>
+                     </tooltip>
                   </Button>
                      
                   </AnchorPane>
@@ -410,25 +447,169 @@
                   </Button>
                </children>
             </AnchorPane>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <AnchorPane fx:id="panelPerfil" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: pink;" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0" />
+            <AnchorPane fx:id="panelPerfil" focusTraversable="true" prefHeight="200.0" prefWidth="800.0" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
+               <children>
+                  <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="286.0" prefWidth="956.0" spacing="10" style="-fx-padding: 20 0 0 0;" VBox.vgrow="ALWAYS">
+                           <children>
+                              <GNAvatarView fx:id="avatarPerfil" prefHeight="264.0" prefWidth="956.0">
+                                 <image>
+                                    <Image url="@imagen/perfilSinFoto.png" />
+                                 </image>
+                              </GNAvatarView>
+                              <Button fx:id="insertarFotoPerfil" onAction="#cargarImagen" prefHeight="43.0" prefWidth="39.0" style="-fx-background-color: transparent;">
+                                 <graphic>
+                                    <ImageView fitHeight="37.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@imagen/botonAñadirFoto.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </VBox>
+                        <HBox alignment="CENTER" prefWidth="956.0" spacing="20" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                           <children>
+                              <VBox alignment="CENTER" prefHeight="414.0" prefWidth="466.0" spacing="17.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Label text="DNI:" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="perfilDNI" disable="true" prefHeight="40.0" prefWidth="240.0" promptText="DNI" VBox.vgrow="ALWAYS" />
+                                    <Label text="Nombre:" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="perfilNombre" prefHeight="40.0" prefWidth="240.0" promptText="Nombre" VBox.vgrow="ALWAYS" />
+                                    <Label text="1ºApellido" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="perfilApellido1" prefHeight="40.0" prefWidth="240.0" promptText="1ºApellido" VBox.vgrow="ALWAYS" />
+                                    <Label text="2ºApellido" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="perfilApellido2" prefHeight="40.0" prefWidth="240.0" promptText="2ºApellido" VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </VBox>
+                              <VBox alignment="CENTER" prefHeight="412.0" prefWidth="468.0" spacing="17" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Label text="Direccion:" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="perfilDireccion" prefHeight="40.0" prefWidth="240.0" promptText="Dirección" VBox.vgrow="ALWAYS" />
+                                    <Label text="Localidad:" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="perfilLocalidad" prefHeight="40.0" prefWidth="240.0" promptText="Localidad" VBox.vgrow="ALWAYS" />
+                                    <Label text="Provincia:" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="perfilProvincia" prefHeight="40.0" prefWidth="240.0" promptText="Provincia" VBox.vgrow="ALWAYS" />
+                                    <Label text="Fecha de Ingreso" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <DatePicker fx:id="perfilFecha" disable="true" prefHeight="40.0" prefWidth="240.0" promptText="Fecha de ingreso" VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <Button fx:id="botonGuardarPerfil" focusTraversable="false" onAction="#modificarProfesor" prefHeight="54.0" prefWidth="58.0" style="-fx-background-color: transparent; -fx-padding: 0;" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="10.0">
+                     <graphic>
+                        <ImageView fitHeight="48.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@imagen/imagenInsertar.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="panelCrearProfe" focusTraversable="true" prefHeight="200.0" prefWidth="800.0" styleClass="paneles" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="47.0">
+               <children>
+                  <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="286.0" prefWidth="956.0" spacing="10" style="-fx-padding: 20 0 0 0;" VBox.vgrow="ALWAYS">
+                           <children>
+                              <GNAvatarView fx:id="avatarInsertarProfe" prefHeight="264.0" prefWidth="956.0">
+                                 <image>
+                                    <Image url="@imagen/perfilSinFoto.png" />
+                                 </image>
+                              </GNAvatarView>
+                              <Button fx:id="crearAvatarProfe" onAction="#cargarImagen" prefHeight="43.0" prefWidth="39.0" style="-fx-background-color: transparent;">
+                                 <graphic>
+                                    <ImageView fitHeight="37.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@imagen/botonAñadirFoto.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </VBox>
+                        <HBox alignment="CENTER" prefWidth="956.0" spacing="20" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                           <children>
+                              <VBox alignment="CENTER" prefHeight="414.0" prefWidth="466.0" spacing="17.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Label text="DNI:" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="profesorDNI" prefHeight="40.0" prefWidth="240.0" promptText="DNI" VBox.vgrow="ALWAYS" />
+                                    <Label text="Nombre:" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="profesorNombre" prefHeight="40.0" prefWidth="240.0" promptText="Nombre" VBox.vgrow="ALWAYS" />
+                                    <Label text="1ºApellido" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="profesorApellido1" prefHeight="40.0" prefWidth="240.0" promptText="1ºApellido" VBox.vgrow="ALWAYS" />
+                                    <Label text="Contraseña" textFill="WHITE">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <PasswordField fx:id="profesorConsatrenya" prefHeight="40.0" prefWidth="240.0" promptText="Contraseña" />
+                                    <CheckBox fx:id="esAdmin" mnemonicParsing="false" text="Admin" textFill="WHITE" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <Button fx:id="botonInsertarProfe" focusTraversable="false" onAction="#insertarProfesor" prefHeight="54.0" prefWidth="58.0" style="-fx-background-color: transparent; -fx-padding: 0;" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="10.0">
+                     <graphic>
+                        <ImageView fitHeight="48.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@imagen/imagenInsertar.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </AnchorPane>
          </children>
       </AnchorPane>
    </center>

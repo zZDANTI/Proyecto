@@ -14,22 +14,20 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.kohsuke.github.GHRelease;
-import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GitHub;
-import org.kohsuke.github.GitHubBuilder;
 import org.practica.proyecto.models.Alumno;
 import org.practica.proyecto.models.Graficos;
+import org.practica.proyecto.models.Profesor;
 import javax.imageio.ImageIO;
 import javax.sql.rowset.serial.SerialBlob;
 import java.awt.image.BufferedImage;
@@ -47,6 +45,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
+
 import static org.practica.proyecto.models.Alumno.obtenerDatosDeAlumnos;
 
 public class DashboardController {
@@ -57,16 +56,41 @@ public class DashboardController {
     public Button botonAlumnos;
     public Button botonPerfil;
     public Button botonAdd;
+    public Button botonAddProfesor;
 
     //PANELES DE NAVEGACION
 
     public AnchorPane panelHome;
-
     public AnchorPane panelEditar;
-
     public AnchorPane panelAdd;
-
     public AnchorPane panelPerfil;
+    public AnchorPane panelCrearProfe;
+
+
+    //PERFIL USUARIO
+
+    public TextField perfilDNI;
+    public TextField perfilNombre;
+    public TextField perfilApellido1;
+    public TextField perfilApellido2;
+    public TextField perfilDireccion;
+    public TextField perfilLocalidad;
+    public TextField perfilProvincia;
+    public DatePicker perfilFecha;
+    public Button botonGuardarPerfil;
+    public Text usuarioProfesor;
+    public GNAvatarView avatarDashboard;
+    public GNAvatarView avatarPerfil;
+
+    //INSERTAR PROFESOR
+    public TextField profesorDNI;
+    public TextField profesorNombre;
+    public TextField profesorApellido1;
+    public PasswordField profesorConsatrenya;
+    public Button botonInsertarProfe;
+    public CheckBox esAdmin;
+    public GNAvatarView avatarInsertarProfe;
+    public Button crearAvatarProfe;
 
     //TABLA ALUMNOS
     @FXML
@@ -92,7 +116,6 @@ public class DashboardController {
     public TextField apellido_1Click;
     public TextField apellido_2Click;
     public DatePicker nacimientoClick;
-
     public GNAvatarView avatarUpdate;
 
 
@@ -107,6 +130,7 @@ public class DashboardController {
     public Button actualizarFotoAlumno;
     public Text numeroTotalPaginas;
     public Text numeroTotalAlumnos;
+
 
 
     //VARIABLES PREDETERMINADAS
@@ -146,9 +170,6 @@ public class DashboardController {
     //PDF
     public Button botonPDF;
 
-    //PERFIL USUARIO
-    public ImageView perfilUsuario;
-
     //CODIGO DE LA APLICACION DASHBOARD---------------------------------------------------------------------------------
 
     // Arranca la clase con el initialize
@@ -156,12 +177,10 @@ public class DashboardController {
     void initialize(){
 
         if(inicializado){
-            actualizacion();
             botonHome.setStyle("-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.8), 10,0,0,1); -fx-background-color: #181818;");
             myChoiceBox.getItems().addAll(elegirRegistros);
             myChoiceBox.setValue(10);
             inicializado = false;
-
 
         }
         validacion();
@@ -317,8 +336,8 @@ public class DashboardController {
         // Mostrar el diálogo y esperar la respuesta del usuario
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                Alumno alumno = new Alumno();
-                boolean eliminacionExitosa = alumno.eliminarAlumno(rowsAlumno);
+                Alumno alumno = new Alumno(null,null,null,null,null,null,null,null,null,rowsAlumno);
+                boolean eliminacionExitosa = alumno.eliminarAlumno();
                 if (eliminacionExitosa) {
                     notificacion(true,"Alumno eliminado correctamente");
                     limpiarAlumno();
@@ -482,8 +501,10 @@ public class DashboardController {
                         avatarUpdate.setImage(image);
                     } else if (botonPresionado.getId().equals("insertarFotoAlumno")) {
                         avatarInsert.setImage(image);
-                    }  else if (botonPresionado.getId().equals("boton2")) {
-                        // Lógica para el segundo botón
+                    } else if(botonPresionado.getId().equals("insertarFotoPerfil")) {
+                        avatarPerfil.setImage(image);
+                    }else if (botonPresionado.getId().equals("crearAvatarProfe")) {
+                        avatarInsertarProfe.setImage(image);
                     }
                     // Agrega más casos según sea necesario para otros botones
                 }
@@ -494,7 +515,6 @@ public class DashboardController {
             notificacion(false, "La imagen adjuntada ha sido cancelada.");
         }
     }
-
 
     //limpia los datos donde se puede editar el alumno
     public void limpiarAlumno(){
@@ -525,6 +545,16 @@ public class DashboardController {
             fotoPorDefecto(avatarInsert);
         }
 
+        if (panelCrearProfe.isVisible()){
+
+            profesorDNI.clear();
+            profesorNombre.clear();
+            profesorApellido1.clear();
+            profesorConsatrenya.clear();
+            fotoPorDefecto(avatarInsertarProfe);
+
+        }
+
     }
 
     //Si algun campo de insertar o actualizar Alumno está vacio no se activará
@@ -552,6 +582,13 @@ public class DashboardController {
                 .or(insertarFecha.valueProperty().isNull());
 
         botonInsertarAlumno.disableProperty().bind(camposInsertarVacios);
+
+        BooleanBinding camposInsertarProfesor = profesorDNI.textProperty().isEmpty()
+                .or(profesorNombre.textProperty().isEmpty())
+                .or(profesorApellido1.textProperty().isEmpty())
+                .or(profesorConsatrenya.textProperty().isEmpty());
+
+        botonInsertarProfe.disableProperty().bind(camposInsertarProfesor);
     }
 
     //Valida que todos los campo para introducir en inserta o en editar sea toodo correcto
@@ -575,6 +612,20 @@ public class DashboardController {
         soloLetras(insertarLocalidad);
         soloLetras(insertarProvincia);
         validarFecha(insertarFecha);
+
+        //ActualizarPerfil
+        soloLetras(perfilNombre);
+        soloLetras(perfilApellido1);
+        soloLetras(perfilApellido2);
+        soloLetras(perfilLocalidad);
+        soloLetras(perfilProvincia);
+
+        //InsertarProfesor
+        validarDNI(profesorDNI);
+        soloLetras(profesorNombre);
+        soloLetras(profesorApellido1);
+
+
 
     }
 
@@ -839,55 +890,6 @@ public class DashboardController {
 
     }
 
-    //ACTUALIZACION-----------------------------------------------------------------------------------------------------
-
-    //Comprueba si hay actualizaciones
-    public void actualizacion() {
-        GitHub github;
-        try {
-            github = new GitHubBuilder().build(); // No es necesario proporcionar un token de acceso
-            GHRepository repository = github.getRepository("zZDANTI/Proyecto");
-            String latestVersion = ""; // Inicializar con una cadena vacía
-
-            // Verificar si el repositorio es null
-            if (repository == null) {
-                System.out.println("El repositorio no fue encontrado en GitHub.");
-                return;
-            }
-
-            GHRelease latestRelease = repository.getLatestRelease();
-
-            if (latestRelease != null) {
-                latestVersion = latestRelease.getTagName();
-                String currentVersion = "1.0"; // Versión actual de la aplicación
-
-                System.out.println("Current Version: " + currentVersion);
-
-                if (!latestVersion.equals(currentVersion)) {
-                    mostrarNotificacionDeActualizacion();
-                }
-            } else {
-                // Tratar el caso en el que no hay versión de release disponible
-                System.out.println("No se encontró ninguna versión de release para el repositorio.");
-            }
-
-            System.out.println("Latest Version: " + latestVersion); // Imprimir latestVersion fuera del bloque else
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //Notifica en pantalla que hay una nueva version
-    public void mostrarNotificacionDeActualizacion() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Actualización Disponible");
-        alert.setHeaderText("¡Hay una nueva versión disponible!");
-        alert.setContentText("Por favor, descargue la última versión desde nuestro sitio web.");
-
-        alert.showAndWait();
-    }
-
     //BOTONES PARA PODER NAVEGAR POR BARRA LATERAL----------------------------------------------------------------------
 
     //Boton navegacion muestra datos del Colegio sobre los alumnos
@@ -907,6 +909,7 @@ public class DashboardController {
         botonHome.setStyle("");
         botonAdd.setStyle("");
         botonPerfil.setStyle("");
+        botonAddProfesor.setStyle("");
         reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
     }
 
@@ -917,6 +920,7 @@ public class DashboardController {
         botonHome.setStyle("");
         botonAlumnos.setStyle("");
         botonPerfil.setStyle("");
+        botonAddProfesor.setStyle("");
         reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
 
     }
@@ -928,6 +932,17 @@ public class DashboardController {
         botonHome.setStyle("");
         botonAlumnos.setStyle("");
         botonAdd.setStyle("");
+        botonAddProfesor.setStyle("");
+        reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
+    }
+
+    @FXML
+    public void botonAddProfesor() {
+        setBotonActivo(botonAddProfesor, panelCrearProfe);
+        botonHome.setStyle("");
+        botonAlumnos.setStyle("");
+        botonAdd.setStyle("");
+        botonPerfil.setStyle("");
         reproducirSonido("src/main/resources/org/practica/proyecto/sonidos/deslizarSonido.wav");
     }
 
@@ -941,10 +956,127 @@ public class DashboardController {
         panelEditar.setVisible(false);
         panelAdd.setVisible(false);
         panelPerfil.setVisible(false);
+        panelCrearProfe.setVisible(false);
 
         // Mostrar el panel correspondiente
         panel.setVisible(true);
 
     }
+
+    //PERFIL DEL PROFESOR-----------------------------------------------------------------------------------------------
+
+    //Rellena los datos del perfil del profesor
+    public void perfilProfesor(Profesor profesor){
+        perfilDNI.setText(profesor.getDni());
+        perfilNombre.setText(profesor.getNombre());
+        perfilApellido1.setText(profesor.getApellido1());
+        perfilApellido2.setText(profesor.getApellido2());
+        perfilDireccion.setText(profesor.getDireccion());
+        perfilLocalidad.setText(profesor.getLocalidad());
+        perfilProvincia.setText(profesor.getProvincia());
+        perfilFecha.setValue(profesor.getFechaIngreso().toLocalDate());
+        blobToImagen(profesor.getFotoPerfil(),avatarPerfil);
+        usuarioProfesor.setText("Profesor: " + profesor.getNombre());
+        blobToImagen(profesor.getFotoPerfil(),avatarDashboard);
+
+    }
+
+    //Para que el profesor pueda editar sus datos
+    public void modificarProfesor() throws SQLException {
+        Profesor profesor = new Profesor();
+        profesor.setNombre(perfilNombre.getText());
+        profesor.setApellido1(perfilApellido1.getText());
+        profesor.setApellido2(perfilApellido2.getText());
+        profesor.setDireccion(perfilDireccion.getText());
+        profesor.setLocalidad(perfilLocalidad.getText());
+        profesor.setProvincia(perfilProvincia.getText());
+        profesor.setFotoPerfil(imageToBlob(avatarPerfil.getImage()));
+        if (profesor.actualizarProfesor()){
+            notificacion(true, "Se ha actualizado tu perfil");
+            //Resetea para ver lo modificado
+            usuarioProfesor.setText("Profesor: " + profesor.getNombre().toUpperCase());
+            avatarDashboard.setImage(avatarPerfil.getImage());
+        }else{
+            notificacion(false, "Error al actualizar tu perfil");
+        }
+
+
+    }
+
+    //Inserta un profesor
+    public void insertarProfesor() throws SQLException {
+        LocalDate fechaActual = LocalDate.now();
+        java.sql.Date fechaActualDate = java.sql.Date.valueOf(fechaActual);
+        int admin;
+        if (esAdmin.isSelected()){
+            admin = 1;
+        }else{
+            admin = 0;
+        }
+
+        Profesor profesor = new Profesor(profesorDNI.getText(),profesorNombre.getText(),profesorApellido1.getText(),
+                "","","","", fechaActualDate,profesorConsatrenya.getText(),imageToBlob(avatarInsertarProfe.getImage()),admin);
+
+        if (profesor.insertarProfesor()){
+            notificacion(true, "Se ha creado un nuevo profesor");
+            limpiarAlumno();
+        }else{
+            notificacion(false, "El profesor con ese DNI ya existe");
+        }
+
+    }
+
+    //Habilita en caso de que sea admin
+    public void admin(int admin){
+
+        if (admin==1){
+            botonAddProfesor.setVisible(true);
+            panelCrearProfe.setVisible(true);
+        }
+
+    }
+
+    //Cierra la sesion
+    public void cerrarSesion(){
+        Button cerrarSesionButton = new Button("Cerrar Sesión");
+        Button salirButton = new Button("Salir");
+
+        VBox root = new VBox(10, cerrarSesionButton, salirButton);
+        root.setPrefSize(200, 100);
+
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Alerta");
+        alert.setHeaderText("¿Desea salir de la Aplicación?");
+        alert.getButtonTypes().clear();
+        alert.getButtonTypes().addAll(ButtonType.CANCEL);
+
+        // Cambiando los textos de los botones de la alerta
+        ButtonType salir = new ButtonType("Salir");
+        ButtonType salirSession = new ButtonType("Cerrar Sesión");
+        alert.getButtonTypes().addAll(salir, salirSession);
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == salirSession) {
+                // Cerrar la ventana de inicio de sesión
+                Stage ventanaLogin = (Stage) avatarDashboard.getScene().getWindow();
+                ventanaLogin.close();
+                try {
+                    LoginController loginController = new LoginController();
+                    loginController.login();
+                    File archivo = new File("TOKEN_USUARIO.txt");
+                    archivo.delete();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else if (response == salir) {
+                System.exit(1);
+            }
+        });
+    }
+
+
+
+
+
 
 }
